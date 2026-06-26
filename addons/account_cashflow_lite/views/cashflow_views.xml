@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_afr_cashflow_form" model="ir.ui.view">
+        <field name="name">afr.cashflow.form</field>
+        <field name="model">afr.cashflow</field>
+        <field name="arch" type="xml">
+            <form string="Cash Flow Statement" create="false" edit="false">
+                <header>
+                    <button name="action_refresh" type="object" string="Refresh"
+                            class="btn-secondary"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <group string="Cash Flow">
+                        <field name="opening_balance"/>
+                        <field name="operating" string="Operating Activities"/>
+                        <field name="investing" string="Investing Activities"/>
+                        <field name="financing" string="Financing Activities"/>
+                        <field name="net_change" string="Net Change in Cash"/>
+                        <field name="closing_balance"/>
+                    </group>
+                    <div class="text-muted">
+                        Simplified statement: cash &amp; bank movements in the period,
+                        classified by the counterpart of each journal entry
+                        (fixed assets → investing; equity / long-term liabilities →
+                        financing; everything else → operating).
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_afr_cashflow" model="ir.actions.act_window">
+        <field name="name">Cash Flow Statement</field>
+        <field name="res_model">afr.cashflow</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+    </record>
+
+    <menuitem id="menu_afr_cashflow" name="Cash Flow Statement"
+              parent="account.menu_finance_reports" action="action_afr_cashflow"
+              sequence="50"/>
+
+</odoo>

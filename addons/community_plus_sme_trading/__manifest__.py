@@ -20,6 +20,7 @@ Open-source addons may be installed separately after license and version audit.
     "license": "LGPL-3",
     "depends": [
         "account",
+        "account_cashflow_lite",
         "account_deferred_lite",
         "account_financial_reports_lite",
         "account_loan_lite",
