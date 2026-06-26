@@ -11,6 +11,7 @@
         "data/cron.xml",
         "views/subscription_views.xml",
         "views/mrr_log_views.xml",
+        "views/config_views.xml",
     ],
     "installable": True,
     "application": True,

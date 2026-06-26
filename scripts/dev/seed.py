@@ -293,6 +293,12 @@ if has("helpdesk.lite.ticket"):
 else:
     print("– helpdesk: skipped (app not installed)")
 
+if has("subscription.lite.close.reason"):
+    CR = env["subscription.lite.close.reason"]
+    for r in ["Too expensive", "Switched competitor", "No longer needed", "Payment failed"]:
+        if not CR.search([("name", "=", r)], limit=1):
+            CR.create({"name": r})
+
 if has("subscription.lite.contract") and seed_customers:
     Plan = env["subscription.lite.plan"]
     plan = (Plan.search([("name", "=", "Monthly")], limit=1)

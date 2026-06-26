@@ -46,6 +46,8 @@ class SubscriptionContract(models.Model):
                               default=lambda self: self.env.user, tracking=True)
     activated_date = fields.Date(readonly=True, copy=False)
     churned_date = fields.Date(readonly=True, copy=False)
+    close_reason_id = fields.Many2one("subscription.lite.close.reason",
+                                      string="Close Reason", copy=False)
     auto_post = fields.Boolean(
         string="Auto-post Invoices", default=False,
         help="Post generated invoices automatically instead of leaving them in draft.")
