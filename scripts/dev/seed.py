@@ -21,6 +21,8 @@ N_PROD  = n("SEED_PRODUCTS", 15)
 N_SALE  = n("SEED_SALES", 10)
 N_PURCH = n("SEED_PURCHASES", 6)
 N_LEAD  = n("SEED_LEADS", 8)
+N_EMP   = n("SEED_EMPLOYEES", 8)
+STOCK_QTY_BASE = n("SEED_STOCK", 100)        # on-hand qty for the first product, +10 each
 RESET   = os.environ.get("SEED_RESET") == "1"
 
 def has(model): return model in env
@@ -34,6 +36,7 @@ if RESET:
         ("sale.order",     [("client_order_ref", "like", "SEED-SO-%")]),
         ("purchase.order", [("partner_ref", "like", "SEED-PO-%")]),
         ("crm.lead",       [("name", "like", "SEED-LEAD-%")]),
+        ("hr.employee",    [("name", "like", "Demo Employee %")]),
     ]:
         if has(mdl):
             try: env[mdl].search(dom).unlink()
@@ -166,6 +169,61 @@ if has("crm.lead") and customers:
     print(f"✓ crm opportunities: +{made} (target {N_LEAD})")
 else:
     print("– crm: skipped (crm app not installed)")
+
+# ── Inventory: set on-hand stock via inventory adjustment ───────────────────
+if has("stock.quant") and products:
+    wh = env["stock.warehouse"].search([], limit=1)
+    loc = wh.lot_stock_id if wh else env.ref("stock.stock_location_stock",
+                                              raise_if_not_found=False)
+    Quant = env["stock.quant"]
+    done = 0
+    for idx, p in enumerate(products):
+        # Only storable goods can hold stock.
+        if "is_storable" in p._fields and not p.is_storable:
+            continue
+        if p.type != "consu":
+            continue
+        target = STOCK_QTY_BASE + idx * 10
+        try:
+            q = Quant.with_context(inventory_mode=True).create({
+                "product_id": p.id, "location_id": loc.id,
+                "inventory_quantity": target,        # absolute → idempotent
+            })
+            q.action_apply_inventory()
+            done += 1
+        except Exception as e:
+            print(f"   (stock for {p.default_code} skipped: {e})")
+    print(f"✓ stock on hand set on +{done} products")
+else:
+    print("– inventory: skipped (stock app not installed)")
+
+# ── HR: departments + employees ─────────────────────────────────────────────
+if has("hr.employee"):
+    Emp = env["hr.employee"]
+    roles = ["Sales Representative", "Accountant", "Warehouse Operator",
+             "Project Manager", "HR Officer", "Buyer", "Support Agent"]
+    Dept = env["hr.department"] if has("hr.department") else None
+    dept_cache = {}
+    if Dept is not None:
+        for d in ["Sales", "Finance", "Warehouse", "Operations"]:
+            rec = Dept.search([("name", "=", d)], limit=1) or Dept.create({"name": d})
+            dept_cache[d] = rec
+    dept_for = ["Sales", "Finance", "Warehouse", "Operations"]
+    made = 0
+    for i in range(1, N_EMP + 1):
+        name = f"Demo Employee {i:02d}"
+        if Emp.search([("name", "=", name)], limit=1):
+            continue
+        vals = {"name": name, "job_title": roles[i % len(roles)],
+                "work_email": f"employee{i:02d}@example.com"}
+        if dept_cache:
+            vals["department_id"] = dept_cache[dept_for[i % len(dept_for)]].id
+        Emp.create(vals)
+        made += 1
+    print(f"✓ employees: +{made} (target {N_EMP})"
+          + (f", {len(dept_cache)} departments" if dept_cache else ""))
+else:
+    print("– hr: skipped (hr app not installed)")
 
 env.cr.commit()
 print("✓ seed committed.")

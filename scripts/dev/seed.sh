@@ -16,4 +16,5 @@ docker compose run --rm --no-deps -T \
   -e SEED_CUSTOMERS="${SEED_CUSTOMERS:-}" -e SEED_VENDORS="${SEED_VENDORS:-}" \
   -e SEED_PRODUCTS="${SEED_PRODUCTS:-}"   -e SEED_SALES="${SEED_SALES:-}" \
   -e SEED_PURCHASES="${SEED_PURCHASES:-}" -e SEED_LEADS="${SEED_LEADS:-}" \
+  -e SEED_EMPLOYEES="${SEED_EMPLOYEES:-}" -e SEED_STOCK="${SEED_STOCK:-}" \
   web odoo shell -d "$DB" --no-http < scripts/dev/seed.py

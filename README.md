@@ -77,6 +77,8 @@ make company name=globex modules=base,crm,sale_management,stock   # custom app s
 ```bash
 make ps                 # status
 make logs               # tail Odoo logs
+make seed db=acme       # load demo data (customers, products, SO/PO, invoices,
+                        #   CRM, stock on-hand, employees). reset=1 to re-create.
 make backup db=acme     # dump one company (DB + filestore)
 make shell db=acme      # Odoo python shell
 make psql db=acme       # SQL console
