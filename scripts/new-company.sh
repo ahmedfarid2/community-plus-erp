@@ -61,6 +61,16 @@ YAML
 fi
 
 # ── Multi-database mode (default) ──────────────────────────────────────────
+# Pass "all" to install every Community app after creating the company.
+if [ "${2:-}" = "all" ]; then
+  echo "Creating company database '$NAME' (base), then installing ALL Community apps..."
+  docker compose run --rm web \
+    odoo -d "$NAME" -i "$DEFAULT_MODULES" --stop-after-init --without-demo=all
+  ./scripts/dev/install-all-apps.sh "$NAME"
+  echo "✓ company '$NAME' created with all apps. Open http://localhost:${ODOO_PORT:-8069}"
+  exit 0
+fi
+
 MODULES="${2:-$DEFAULT_MODULES}"
 echo "Creating company database '$NAME' with modules: $MODULES"
 echo "(first run installs many apps — this can take a few minutes)"

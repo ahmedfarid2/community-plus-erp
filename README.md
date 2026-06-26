@@ -67,6 +67,13 @@ Open **http://localhost:8069** (admin / database manager) — master password =
 ```bash
 make company name=acme                       # full standard suite
 make company name=globex modules=base,crm,sale_management,stock   # custom app set
+make company name=newco modules=all          # EVERY Community app installed
+```
+Add every Community app to an existing company (POS, eCommerce, Events, Marketing,
+Recruitment, Fleet, Maintenance, Surveys, eLearning, Time Off, Expenses...). It skips
+Odoo's Enterprise-only upsells automatically:
+```bash
+make all-apps db=acme
 ```
 - Subdomain: **https://acme.odoo.local**
 - Direct/admin: **http://localhost:8069** → pick database `acme`
