@@ -8,6 +8,7 @@
     "depends": ["mail"],
     "data": [
         "security/ir.model.access.csv",
+        "data/cron.xml",
         "views/document_views.xml",
     ],
     "installable": True,

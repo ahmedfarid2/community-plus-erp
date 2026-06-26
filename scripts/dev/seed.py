@@ -255,8 +255,14 @@ if has("documents.lite.document"):
         nm = f"SEED Doc {i:02d}.pdf"
         if Doc.search([("name", "=", nm)], limit=1):
             continue
-        Doc.create({"name": nm, "folder_id": folder.id,
-                    "document": _b64.b64encode(b"%PDF-1.4 seed")})
+        dvals = {"name": nm, "folder_id": folder.id,
+                 "document": _b64.b64encode(b"%PDF-1.4 seed")}
+        # If the expiry feature exists, demo all three states (expired/soon/valid).
+        if "expiry_date" in Doc._fields:
+            import datetime as _dt
+            offset = {1: -10, 2: 15, 3: 180}.get(i, 90)
+            dvals["expiry_date"] = _dt.date.today() + _dt.timedelta(days=offset)
+        Doc.create(dvals)
         made += 1
     print(f"✓ documents: +{made}")
 else:
