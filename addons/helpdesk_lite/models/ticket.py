@@ -1,4 +1,4 @@
-from odoo import fields, models
+from odoo import api, fields, models
 
 
 class HelpdeskTeam(models.Model):
@@ -59,3 +59,40 @@ class HelpdeskTicket(models.Model):
 
     def action_reopen(self):
         self.write({"state": "new"})
+
+    def action_assign_to_me(self):
+        self.write({"user_id": self.env.user.id})
+
+    # ── Assignment behaviour ────────────────────────────────────────────────
+    DONE_STATES = ("solved", "cancelled")
+
+    def _schedule_assignee_activity(self):
+        self.ensure_one()
+        # Replace any existing to-do so the activity always points at the
+        # current assignee.
+        self.activity_unlink(["mail.mail_activity_data_todo"])
+        if self.user_id and self.state not in self.DONE_STATES:
+            self.activity_schedule(
+                "mail.mail_activity_data_todo",
+                user_id=self.user_id.id,
+                summary="Handle ticket: %s" % self.name,
+            )
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        tickets = super().create(vals_list)
+        for ticket in tickets:
+            # Default the assignee to the team lead when none is given.
+            if not ticket.user_id and ticket.team_id.user_id:
+                ticket.user_id = ticket.team_id.user_id
+            ticket._schedule_assignee_activity()
+        return tickets
+
+    def write(self, vals):
+        res = super().write(vals)
+        if "user_id" in vals:
+            for ticket in self:
+                ticket._schedule_assignee_activity()
+        if vals.get("state") in self.DONE_STATES:
+            self.activity_unlink(["mail.mail_activity_data_todo"])
+        return res

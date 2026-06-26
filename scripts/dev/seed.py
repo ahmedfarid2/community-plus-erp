@@ -264,8 +264,12 @@ else:
 
 if has("helpdesk.lite.ticket"):
     Team = env["helpdesk.lite.team"]
+    admin = env.ref("base.user_admin", raise_if_not_found=False)
     team = (Team.search([("name", "=", "Support")], limit=1)
-            or Team.create({"name": "Support"}))
+            or Team.create({"name": "Support",
+                            "user_id": admin.id if admin else False}))
+    if admin and not team.user_id:
+        team.user_id = admin.id  # so seeded tickets auto-assign + raise an activity
     Ticket = env["helpdesk.lite.ticket"]
     made = 0
     for i in range(1, 5):
