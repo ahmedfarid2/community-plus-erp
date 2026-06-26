@@ -5,3 +5,5 @@ access_afr_general_ledger,afr.general.ledger,model_afr_general_ledger,account.gr
 access_afr_general_ledger_line,afr.general.ledger.line,model_afr_general_ledger_line,account.group_account_invoice,1,1,1,1
 access_afr_aged_partner,afr.aged.partner,model_afr_aged_partner,account.group_account_invoice,1,1,1,1
 access_afr_aged_partner_line,afr.aged.partner.line,model_afr_aged_partner_line,account.group_account_invoice,1,1,1,1
+access_afr_tax_report,afr.tax.report,model_afr_tax_report,account.group_account_invoice,1,1,1,1
+access_afr_tax_report_line,afr.tax.report.line,model_afr_tax_report_line,account.group_account_invoice,1,1,1,1

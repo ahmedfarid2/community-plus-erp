@@ -95,8 +95,8 @@
 
     <!-- ============ Menus ============ -->
     <menuitem id="menu_afr_general_ledger" name="General Ledger"
-              parent="menu_afr_root" action="action_afr_general_ledger" sequence="20"/>
+              parent="menu_afr_reporting" action="action_afr_general_ledger" sequence="20"/>
     <menuitem id="menu_afr_aged_partner" name="Aged Receivable / Payable"
-              parent="menu_afr_root" action="action_afr_aged_partner" sequence="30"/>
+              parent="menu_afr_reporting" action="action_afr_aged_partner" sequence="30"/>
 
 </odoo>

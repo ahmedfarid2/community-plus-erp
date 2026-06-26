@@ -56,17 +56,22 @@
         <field name="target">current</field>
     </record>
 
-    <!-- Top-level app so it shows in the Apps launcher (its own icon). -->
+    <!-- Top-level "Accounting" app (own icon in the launcher), with a Reporting
+         submenu that mirrors Odoo's Accounting > Reporting layout. -->
     <menuitem id="menu_afr_root"
-              name="Financial Reports"
+              name="Accounting"
               web_icon="account,static/description/icon.png"
-              sequence="80"/>
+              sequence="40"/>
+    <menuitem id="menu_afr_reporting"
+              name="Reporting"
+              parent="menu_afr_root"
+              sequence="10"/>
     <menuitem id="menu_afr_trial_balance"
               name="Trial Balance / P&amp;L / BS"
-              parent="menu_afr_root"
+              parent="menu_afr_reporting"
               action="action_afr_trial_balance"
               sequence="10"/>
-    <!-- Also keep it under the Invoicing/Accounting › Reporting menu. -->
+    <!-- Also surface it under the standard Invoicing/Accounting › Reporting menu. -->
     <menuitem id="menu_afr_under_account"
               name="Financial Reports (Lite)"
               parent="account.menu_finance_reports"

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_afr_tax_report_form" model="ir.ui.view">
+        <field name="name">afr.tax.report.form</field>
+        <field name="model">afr.tax.report</field>
+        <field name="arch" type="xml">
+            <form string="Tax Report">
+                <header>
+                    <button name="action_compute" type="object"
+                            string="Compute" class="btn-primary"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                        </group>
+                        <group>
+                            <field name="target_move"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <group string="Summary" col="6">
+                        <field name="tax_collected"/>
+                        <field name="tax_paid"/>
+                        <field name="tax_net_due"/>
+                    </group>
+                    <field name="line_ids">
+                        <list string="Taxes" create="false" edit="false">
+                            <field name="tax_id"/>
+                            <field name="type_tax_use"/>
+                            <field name="net_base" sum="Net Base"/>
+                            <field name="tax_amount" sum="Tax"/>
+                            <field name="currency_id" column_invisible="1"/>
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_afr_tax_report" model="ir.actions.act_window">
+        <field name="name">Tax Report</field>
+        <field name="res_model">afr.tax.report</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+    </record>
+
+    <menuitem id="menu_afr_tax_report" name="Tax Report"
+              parent="menu_afr_reporting" action="action_afr_tax_report" sequence="40"/>
+
+</odoo>
