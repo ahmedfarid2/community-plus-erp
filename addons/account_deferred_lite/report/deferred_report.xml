@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_report_deferred_schedule" model="ir.actions.report">
+        <field name="name">Recognition Schedule</field>
+        <field name="model">account.deferred.lite</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">account_deferred_lite.report_deferred_schedule_doc</field>
+        <field name="report_file">account_deferred_lite.report_deferred_schedule_doc</field>
+        <field name="binding_model_id" ref="model_account_deferred_lite"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_deferred_schedule_doc">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Deferred <span t-field="o.deferred_type"/> — Recognition Schedule</h2>
+                        <p>
+                            <strong t-field="o.name"/><br/>
+                            Total: <span t-field="o.total_amount"/> ·
+                            Start: <span t-field="o.start_date"/> ·
+                            Periods: <span t-field="o.number"/> ·
+                            Recognized: <span t-field="o.recognized_amount"/> ·
+                            Residual: <span t-field="o.residual_amount"/>
+                        </p>
+                        <table class="table table-sm o_main_table">
+                            <thead>
+                                <tr>
+                                    <th>#</th><th>Recognition Date</th>
+                                    <th class="text-end">Amount</th>
+                                    <th class="text-end">Cumulative</th>
+                                    <th class="text-end">Residual</th>
+                                    <th>Posted</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="o.line_ids" t-as="l">
+                                    <td><span t-field="l.sequence"/></td>
+                                    <td><span t-field="l.date"/></td>
+                                    <td class="text-end"><span t-field="l.amount"/></td>
+                                    <td class="text-end"><span t-field="l.cumulative"/></td>
+                                    <td class="text-end"><span t-field="l.residual"/></td>
+                                    <td><span t-if="l.posted">✓</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_report_loan_schedule" model="ir.actions.report">
+        <field name="name">Loan Schedule</field>
+        <field name="model">account.loan.lite</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">account_loan_lite.report_loan_schedule_doc</field>
+        <field name="report_file">account_loan_lite.report_loan_schedule_doc</field>
+        <field name="binding_model_id" ref="model_account_loan_lite"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_loan_schedule_doc">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Loan Amortization Schedule</h2>
+                        <p>
+                            <strong t-field="o.name"/><br/>
+                            Principal: <span t-field="o.principal"/> ·
+                            Rate: <span t-field="o.interest_rate"/>% ·
+                            Start: <span t-field="o.start_date"/> ·
+                            Installments: <span t-field="o.term_number"/>
+                        </p>
+                        <table class="table table-sm o_main_table">
+                            <thead>
+                                <tr>
+                                    <th>#</th><th>Due Date</th>
+                                    <th class="text-end">Principal</th>
+                                    <th class="text-end">Interest</th>
+                                    <th class="text-end">Installment</th>
+                                    <th class="text-end">Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="o.line_ids" t-as="l">
+                                    <td><span t-field="l.sequence"/></td>
+                                    <td><span t-field="l.date"/></td>
+                                    <td class="text-end"><span t-field="l.principal_amount"/></td>
+                                    <td class="text-end"><span t-field="l.interest_amount"/></td>
+                                    <td class="text-end"><span t-field="l.payment_amount"/></td>
+                                    <td class="text-end"><span t-field="l.remaining_balance"/></td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th colspan="3" class="text-end">Total Interest</th>
+                                    <th class="text-end"><span t-field="o.total_interest"/></th>
+                                    <th class="text-end"><span t-field="o.total_payment"/></th>
+                                    <th/>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

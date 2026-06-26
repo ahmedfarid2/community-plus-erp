@@ -8,6 +8,7 @@
     "depends": ["account"],
     "data": [
         "security/ir.model.access.csv",
+        "report/deferred_report.xml",
         "views/deferred_views.xml",
     ],
     "installable": True,

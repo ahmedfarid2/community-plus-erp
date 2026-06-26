@@ -30,6 +30,9 @@
                             invisible="state == 'closed'"/>
                     <button name="action_close" type="object" string="Close"
                             invisible="state != 'running'"/>
+                    <button name="%(action_report_loan_schedule)d" type="action"
+                            string="Print Schedule" class="btn-secondary"
+                            invisible="not line_ids"/>
                     <button name="action_set_draft" type="object" string="Reset to Draft"
                             invisible="state == 'draft'"/>
                     <field name="state" widget="statusbar"/>

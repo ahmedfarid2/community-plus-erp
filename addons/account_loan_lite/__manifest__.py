@@ -8,6 +8,7 @@
     "depends": ["account"],
     "data": [
         "security/ir.model.access.csv",
+        "report/loan_report.xml",
         "views/loan_views.xml",
     ],
     "installable": True,
