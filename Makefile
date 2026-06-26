@@ -9,7 +9,7 @@
 
 .DEFAULT_GOAL := help
 .PHONY: help up down restart logs ps https hosts company isolated seed backup restore shell psql wipe \
-        all-apps smoke prod-cert prod-deploy prod-logs prod-down
+        all-apps brand smoke prod-cert prod-deploy prod-logs prod-down
 
 name    ?=
 db      ?=
@@ -50,6 +50,10 @@ isolated: ## Create a fully separate per-company stack:  make isolated name=acme
 all-apps: ## Install every Community app into a company:  make all-apps db=acme
 	@test -n "$(db)" || { echo "Usage: make all-apps db=<name>"; exit 1; }
 	./scripts/dev/install-all-apps.sh $(db)
+
+brand: ## Set company name + country + logo:  make brand db=acme name="Acme Inc." cc=US
+	@test -n "$(db)" -a -n "$(name)" || { echo 'Usage: make brand db=<db> name="<Name>" [cc=US]'; exit 1; }
+	./scripts/dev/brand-company.sh $(db) "$(name)" $(if $(cc),$(cc),US)
 
 seed: ## Seed demo data into a company:  make seed db=acme [reset=1]
 	@test -n "$(db)" || { echo "Usage: make seed db=<name> [reset=1]"; exit 1; }
