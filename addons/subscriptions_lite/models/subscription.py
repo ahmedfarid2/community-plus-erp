@@ -42,6 +42,23 @@ class SubscriptionContract(models.Model):
         tracking=True,
     )
     note = fields.Text()
+    auto_post = fields.Boolean(
+        string="Auto-post Invoices", default=False,
+        help="Post generated invoices automatically instead of leaving them in draft.")
+    recurring_total = fields.Monetary(compute="_compute_mrr", store=False)
+    mrr = fields.Monetary(string="MRR", compute="_compute_mrr", store=False,
+                          help="Monthly Recurring Revenue (period amount normalised to a month).")
+
+    @api.depends("line_ids.quantity", "line_ids.price_unit",
+                 "plan_id.interval_unit", "plan_id.interval_number")
+    def _compute_mrr(self):
+        for contract in self:
+            total = sum(l.quantity * l.price_unit for l in contract.line_ids)
+            contract.recurring_total = total
+            months = contract.plan_id.interval_number or 1
+            if contract.plan_id.interval_unit == "years":
+                months *= 12
+            contract.mrr = (total / months) if months else 0.0
 
     def _compute_invoice_count(self):
         Move = self.env["account.move"]
@@ -123,6 +140,8 @@ class SubscriptionContract(models.Model):
                 "journal_id": journal.id,
                 "invoice_line_ids": invoice_lines,
             })
+            if contract.auto_post:
+                move.action_post()
             contract.next_invoice_date = contract._next_date()
             created |= move
         return {
