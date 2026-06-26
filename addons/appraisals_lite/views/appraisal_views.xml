@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_appraisal_lite_list" model="ir.ui.view">
+        <field name="name">hr.appraisal.lite.list</field>
+        <field name="model">hr.appraisal.lite</field>
+        <field name="arch" type="xml">
+            <list decoration-success="state == 'done'" decoration-muted="state == 'cancel'">
+                <field name="employee_id"/>
+                <field name="manager_id"/>
+                <field name="department_id"/>
+                <field name="appraisal_date"/>
+                <field name="final_rating"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_appraisal_lite_kanban" model="ir.ui.view">
+        <field name="name">hr.appraisal.lite.kanban</field>
+        <field name="model">hr.appraisal.lite</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state">
+                <field name="state"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_card oe_kanban_global_click">
+                            <div class="oe_kanban_details">
+                                <strong><field name="employee_id"/></strong>
+                                <div class="text-muted"><field name="job_id"/></div>
+                                <div><field name="appraisal_date"/></div>
+                                <div><field name="final_rating"/></div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_appraisal_lite_form" model="ir.ui.view">
+        <field name="name">hr.appraisal.lite.form</field>
+        <field name="model">hr.appraisal.lite</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_confirm" type="object" string="Send Appraisal"
+                            class="btn-primary" invisible="state != 'new'"/>
+                    <button name="action_done" type="object" string="Mark Done"
+                            class="btn-primary" invisible="state != 'pending'"/>
+                    <button name="action_cancel" type="object" string="Cancel"
+                            invisible="state in ('done', 'cancel')"/>
+                    <button name="action_reset" type="object" string="Reset to Draft"
+                            invisible="state == 'new'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="employee_id"/>
+                            <field name="manager_id"/>
+                            <field name="job_id"/>
+                            <field name="department_id"/>
+                        </group>
+                        <group>
+                            <field name="appraisal_date"/>
+                            <field name="final_rating"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Employee Feedback">
+                            <field name="employee_feedback"/>
+                        </page>
+                        <page string="Manager Feedback">
+                            <field name="manager_feedback"/>
+                        </page>
+                        <page string="Notes">
+                            <field name="note"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_appraisal_lite" model="ir.actions.act_window">
+        <field name="name">Appraisals</field>
+        <field name="res_model">hr.appraisal.lite</field>
+        <field name="view_mode">kanban,list,form</field>
+    </record>
+
+    <menuitem id="menu_appraisal_lite_root" name="Appraisals"
+              web_icon="hr,static/description/icon.png" sequence="95"/>
+    <menuitem id="menu_appraisal_lite_main" name="Appraisals"
+              parent="menu_appraisal_lite_root" sequence="10"/>
+    <menuitem id="menu_appraisal_lite_all" name="All Appraisals"
+              parent="menu_appraisal_lite_main" action="action_appraisal_lite" sequence="10"/>
+
+</odoo>

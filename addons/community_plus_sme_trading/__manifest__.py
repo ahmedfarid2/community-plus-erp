@@ -25,6 +25,7 @@ Open-source addons may be installed separately after license and version audit.
         "account_financial_reports_lite",
         "account_loan_lite",
         "account_review_lite",
+        "appraisals_lite",
         "business_approvals_lite",
         "crm",
         "documents_lite",
