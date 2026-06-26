@@ -4,3 +4,5 @@ access_subscription_lite_contract,subscription.lite.contract,model_subscription_
 access_subscription_lite_contract_line,subscription.lite.contract.line,model_subscription_lite_contract_line,base.group_user,1,1,1,1
 access_subscription_lite_mrr_log,subscription.lite.mrr.log,model_subscription_lite_mrr_log,base.group_user,1,1,1,1
 access_subscription_lite_close_reason,subscription.lite.close.reason,model_subscription_lite_close_reason,base.group_user,1,1,1,1
+access_subscription_lite_template,subscription.lite.template,model_subscription_lite_template,base.group_user,1,1,1,1
+access_subscription_lite_template_line,subscription.lite.template.line,model_subscription_lite_template_line,base.group_user,1,1,1,1

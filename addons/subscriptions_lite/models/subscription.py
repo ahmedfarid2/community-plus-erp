@@ -48,6 +48,42 @@ class SubscriptionContract(models.Model):
     churned_date = fields.Date(readonly=True, copy=False)
     close_reason_id = fields.Many2one("subscription.lite.close.reason",
                                       string="Close Reason", copy=False)
+    parent_id = fields.Many2one("subscription.lite.contract", string="Upsell of",
+                                copy=False)
+    is_upsell = fields.Boolean(compute="_compute_is_upsell", store=True)
+    template_id = fields.Many2one("subscription.lite.template", string="Template")
+
+    @api.depends("parent_id")
+    def _compute_is_upsell(self):
+        for contract in self:
+            contract.is_upsell = bool(contract.parent_id)
+
+    @api.onchange("template_id")
+    def _onchange_template_id(self):
+        tmpl = self.template_id
+        if not tmpl:
+            return
+        if tmpl.plan_id:
+            self.plan_id = tmpl.plan_id
+        if tmpl.note:
+            self.note = tmpl.note
+        self.line_ids = [(5, 0, 0)] + [
+            (0, 0, {"name": ln.name, "quantity": ln.quantity,
+                    "price_unit": ln.price_unit, "product_id": ln.product_id.id})
+            for ln in tmpl.line_ids]
+
+    def action_create_upsell(self):
+        self.ensure_one()
+        upsell = self.copy({
+            "name": (self.name or "") + " (Upsell)",
+            "parent_id": self.id, "state": "draft",
+            "activated_date": False, "churned_date": False,
+        })
+        return {
+            "type": "ir.actions.act_window",
+            "res_model": "subscription.lite.contract",
+            "res_id": upsell.id, "view_mode": "form", "target": "current",
+        }
     auto_post = fields.Boolean(
         string="Auto-post Invoices", default=False,
         help="Post generated invoices automatically instead of leaving them in draft.")

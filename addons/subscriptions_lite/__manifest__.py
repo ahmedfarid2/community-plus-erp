@@ -12,6 +12,7 @@
         "views/subscription_views.xml",
         "views/mrr_log_views.xml",
         "views/config_views.xml",
+        "views/extra_menus.xml",
     ],
     "installable": True,
     "application": True,
