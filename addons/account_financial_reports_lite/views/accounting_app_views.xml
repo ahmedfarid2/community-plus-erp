@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================= Fixed Assets ================= -->
+    <record id="view_afr_asset_list" model="ir.ui.view">
+        <field name="name">afr.asset.list</field>
+        <field name="model">afr.asset</field>
+        <field name="arch" type="xml">
+            <list string="Assets">
+                <field name="name"/>
+                <field name="acquisition_date"/>
+                <field name="original_value"/>
+                <field name="depreciated_value"/>
+                <field name="remaining_value"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'open'"
+                       decoration-muted="state == 'close'"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_afr_asset_form" model="ir.ui.view">
+        <field name="name">afr.asset.form</field>
+        <field name="model">afr.asset</field>
+        <field name="arch" type="xml">
+            <form string="Asset">
+                <header>
+                    <button name="action_compute_board" type="object"
+                            string="Compute Depreciation" class="btn-primary"
+                            invisible="state == 'close'"/>
+                    <button name="action_close" type="object" string="Close"
+                            invisible="state != 'open'"/>
+                    <button name="action_set_draft" type="object" string="Reset to Draft"
+                            invisible="state == 'draft'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="e.g. Delivery Van"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="original_value"/>
+                            <field name="salvage_value"/>
+                            <field name="acquisition_date"/>
+                        </group>
+                        <group>
+                            <field name="method_number"/>
+                            <field name="method_period"/>
+                            <field name="depreciated_value"/>
+                            <field name="remaining_value"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="asset_account_id"/>
+                        <field name="depreciation_account_id"/>
+                    </group>
+                    <field name="line_ids">
+                        <list string="Depreciation Board" create="false" edit="false">
+                            <field name="sequence"/>
+                            <field name="date"/>
+                            <field name="depreciation_amount"/>
+                            <field name="cumulative_depreciation"/>
+                            <field name="remaining_value"/>
+                            <field name="currency_id" column_invisible="1"/>
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_afr_asset" model="ir.actions.act_window">
+        <field name="name">Assets</field>
+        <field name="res_model">afr.asset</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ================= Budgets ================= -->
+    <record id="view_afr_budget_form" model="ir.ui.view">
+        <field name="name">afr.budget.form</field>
+        <field name="model">afr.budget</field>
+        <field name="arch" type="xml">
+            <form string="Budget">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="e.g. 2026 Marketing Budget"/></h1>
+                    </div>
+                    <group>
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                        <field name="currency_id" invisible="1"/>
+                    </group>
+                    <field name="line_ids">
+                        <list string="Budget Lines" editable="bottom">
+                            <field name="account_id"/>
+                            <field name="planned_amount"/>
+                            <field name="practical_amount"/>
+                            <field name="achievement" widget="percentage"/>
+                            <field name="currency_id" column_invisible="1"/>
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_afr_budget_list" model="ir.ui.view">
+        <field name="name">afr.budget.list</field>
+        <field name="model">afr.budget</field>
+        <field name="arch" type="xml">
+            <list string="Budgets">
+                <field name="name"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_afr_budget" model="ir.actions.act_window">
+        <field name="name">Budgets</field>
+        <field name="res_model">afr.budget</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ================= Partner Ledger ================= -->
+    <record id="view_afr_partner_ledger_form" model="ir.ui.view">
+        <field name="name">afr.partner.ledger.form</field>
+        <field name="model">afr.partner.ledger</field>
+        <field name="arch" type="xml">
+            <form string="Partner Ledger">
+                <header>
+                    <button name="action_compute" type="object"
+                            string="Compute" class="btn-primary"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                        </group>
+                        <group>
+                            <field name="account_filter"/>
+                            <field name="target_move"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <field name="line_ids">
+                        <list string="Partner Ledger" create="false" edit="false">
+                            <field name="partner_id"/>
+                            <field name="date"/>
+                            <field name="move_name"/>
+                            <field name="account_id"/>
+                            <field name="debit" sum="Debit"/>
+                            <field name="credit" sum="Credit"/>
+                            <field name="balance_running"/>
+                            <field name="currency_id" column_invisible="1"/>
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_afr_partner_ledger" model="ir.actions.act_window">
+        <field name="name">Partner Ledger</field>
+        <field name="res_model">afr.partner.ledger</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+    </record>
+
+    <!-- ================= Menus ================= -->
+    <menuitem id="menu_afr_partner_ledger" name="Partner Ledger"
+              parent="menu_afr_reporting" action="action_afr_partner_ledger"
+              sequence="25"/>
+    <menuitem id="menu_afr_assets" name="Assets"
+              parent="menu_afr_root" action="action_afr_asset" sequence="20"/>
+    <menuitem id="menu_afr_budgets" name="Budgets"
+              parent="menu_afr_root" action="action_afr_budget" sequence="30"/>
+
+</odoo>

@@ -7,3 +7,9 @@ access_afr_aged_partner,afr.aged.partner,model_afr_aged_partner,account.group_ac
 access_afr_aged_partner_line,afr.aged.partner.line,model_afr_aged_partner_line,account.group_account_invoice,1,1,1,1
 access_afr_tax_report,afr.tax.report,model_afr_tax_report,account.group_account_invoice,1,1,1,1
 access_afr_tax_report_line,afr.tax.report.line,model_afr_tax_report_line,account.group_account_invoice,1,1,1,1
+access_afr_partner_ledger,afr.partner.ledger,model_afr_partner_ledger,account.group_account_invoice,1,1,1,1
+access_afr_partner_ledger_line,afr.partner.ledger.line,model_afr_partner_ledger_line,account.group_account_invoice,1,1,1,1
+access_afr_asset,afr.asset,model_afr_asset,account.group_account_invoice,1,1,1,1
+access_afr_asset_line,afr.asset.line,model_afr_asset_line,account.group_account_invoice,1,1,1,1
+access_afr_budget,afr.budget,model_afr_budget,account.group_account_invoice,1,1,1,1
+access_afr_budget_line,afr.budget.line,model_afr_budget_line,account.group_account_invoice,1,1,1,1

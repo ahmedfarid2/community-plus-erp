@@ -19,6 +19,7 @@ Interactive view + printable PDF. No Enterprise license required.
         "views/trial_balance_views.xml",
         "views/more_reports_views.xml",
         "views/tax_report_views.xml",
+        "views/accounting_app_views.xml",
     ],
     "installable": True,
     "application": True,
