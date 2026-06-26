@@ -1,7 +1,11 @@
-# Production deployment (cloud, multi-tenant)
+# Production deployment (Community Plus)
 
-Deploy the same Odoo stack to a Linux server with **wildcard HTTPS** and
+Deploy the Community Plus stack to a Linux server with **wildcard HTTPS** and
 **subdomain-per-company** multi-tenancy: `https://<company>.yourdomain.com`.
+
+Default commercial model: one VPS per client for strong isolation. The shared
+multi-database mode is useful for demos/internal environments and can be used in
+production only when the client contract, security model, and backup process are explicit.
 
 ## What's different from local
 
@@ -37,10 +41,9 @@ make prod-cert                                  # certbot DNS-01 -> letsencrypt 
 # 3. Deploy
 make prod-deploy                                # renders prod config, starts the stack
 
-# 4. Create a company (its own DB == its subdomain)
-docker compose -f docker-compose.prod.yml run --rm web \
-  odoo -d acme -i base,crm,sale_management,stock,purchase,account,hr,project,mrp,website \
-  --stop-after-init --without-demo=all
+# 4. Create a client (its own DB == its subdomain)
+ODOO_COMPOSE_FILE=docker-compose.prod.yml ODOO_ENV_FILE=.env.production \
+  make client-init name=acme country=EG company="Acme Trading LLC"
 ```
 
 Now `https://acme.yourdomain.com` serves **only** the `acme` company. Add more
@@ -49,12 +52,12 @@ companies by repeating step 4 with a new name → new subdomain.
 ## Operations
 
 - **Logs / status:** `make prod-logs` · `docker compose -f docker-compose.prod.yml ps`
-- **Backups:** the `scripts/backup.sh` approach works — point it at the prod compose,
-  or run `pg_dump` against `odoo-prod-db`. Schedule nightly via cron.
+- **Backups:** schedule `make prod-backup-all` nightly. It uses the production compose file
+  and writes PostgreSQL dumps plus filestore archives under `backups/`.
 - **Cert renewal:** automatic (the `certbot` service runs `certbot renew` every 12h;
   nginx reloads every 6h). No action needed.
 - **Updates:** `docker compose -f docker-compose.prod.yml pull && make prod-deploy`,
-  then run Odoo module updates per database: `... odoo -d <db> -u all --stop-after-init`.
+  then run `ODOO_COMPOSE_FILE=docker-compose.prod.yml ODOO_ENV_FILE=.env.production make client-upgrade db=<db>` per database on staging first, then production.
 
 ## Security checklist
 
@@ -63,6 +66,7 @@ companies by repeating step 4 with a new name → new subdomain.
 - [ ] Firewall: only 80/443 open to the world; 8069/5432 not exposed (they aren't published).
 - [ ] `secrets/cloudflare.ini` is `chmod 600` and gitignored.
 - [ ] Off-site backups scheduled and test-restored.
+- [ ] Feature claims match `docs/FEATURE_MATRIX.md`; no unlicensed Enterprise code ships.
 
 ## Other DNS providers
 

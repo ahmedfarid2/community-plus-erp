@@ -15,7 +15,16 @@ export BRAND_COUNTRY="${3:-US}"
 export BRAND_CITY="${4:-}"
 export BRAND_EMAIL="${5:-}"
 
-docker compose run --rm --no-deps -T \
+ODOO_COMPOSE_FILE="${ODOO_COMPOSE_FILE:-docker-compose.yml}"
+compose() {
+  if [ -n "${ODOO_ENV_FILE:-}" ]; then
+    docker compose -f "$ODOO_COMPOSE_FILE" --env-file "$ODOO_ENV_FILE" "$@"
+  else
+    docker compose -f "$ODOO_COMPOSE_FILE" "$@"
+  fi
+}
+
+compose run --rm --no-deps -T \
   -e BRAND_NAME -e BRAND_COUNTRY -e BRAND_CITY -e BRAND_EMAIL \
   web odoo shell -d "$DB" --no-http <<'PY'
 import base64, hashlib, io, os

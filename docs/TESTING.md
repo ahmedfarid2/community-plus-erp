@@ -6,7 +6,7 @@ How to log in and verify a company end-to-end on your Mac.
 
 ```bash
 make up                 # start Odoo + db + nginx
-make company name=acme  # create the company (skip if it already exists)
+make client-init name=acme country=EG company="Acme Trading LLC"
 make seed db=acme       # load demo data (customers, products, sales, stock, HR...)
 ```
 
@@ -36,6 +36,7 @@ Proves login works and the core data is present, without clicking:
 ```bash
 make smoke db=acme      # logs in via API and checks customers/sales/invoices/...
 make smoke db=globex
+CLIENT_HEALTH_DEEP=1 make client-health db=acme
 ```
 Expected: `PASS — '<db>' is healthy and populated.`
 

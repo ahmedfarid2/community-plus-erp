@@ -9,11 +9,14 @@
 
 .DEFAULT_GOAL := help
 .PHONY: help up down restart logs ps https hosts company isolated seed backup restore shell psql wipe \
-        all-apps setup-accounting brand smoke prod-cert prod-deploy prod-logs prod-down
+        all-apps setup-accounting brand smoke client-init client-health client-upgrade client-export \
+        prod-cert prod-deploy prod-logs prod-down prod-backup-all
 
 name    ?=
 db      ?=
 modules ?=
+pack    ?= sme_trading
+country ?= EG
 
 help: ## List available targets
 	@grep -hE '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
@@ -66,6 +69,22 @@ seed: ## Seed demo data into a company:  make seed db=acme [reset=1]
 smoke: ## Smoke-test login + data on a company:  make smoke db=acme
 	@./scripts/dev/smoke-test.sh $(if $(db),$(db),acme)
 
+client-init: ## Create a sellable Community Plus client: make client-init name=acme [pack=sme_trading country=EG]
+	@test -n "$(name)" || { echo "Usage: make client-init name=<db> [pack=sme_trading country=EG]"; exit 1; }
+	./scripts/client-init.sh $(name) $(pack) $(country) "$(if $(company),$(company),$(name))"
+
+client-health: ## Check a Community Plus client: make client-health db=acme
+	@test -n "$(db)" || { echo "Usage: make client-health db=<name>"; exit 1; }
+	./scripts/client-health.sh $(db)
+
+client-upgrade: ## Upgrade Community Plus modules in a client DB: make client-upgrade db=acme
+	@test -n "$(db)" || { echo "Usage: make client-upgrade db=<name>"; exit 1; }
+	./scripts/client-upgrade.sh $(db)
+
+client-export: ## Export one client DB + filestore + metadata: make client-export db=acme
+	@test -n "$(db)" || { echo "Usage: make client-export db=<name>"; exit 1; }
+	./scripts/client-export.sh $(db)
+
 backup: ## Back up one company:  make backup db=acme
 	@test -n "$(db)" || { echo "Usage: make backup db=<name>"; exit 1; }
 	./scripts/backup.sh $(db)
@@ -97,3 +116,6 @@ prod-logs: ## Tail production Odoo logs
 
 prod-down: ## Stop the production stack (keeps data)
 	docker compose -f docker-compose.prod.yml down
+
+prod-backup-all: ## Back up every production client DB
+	./scripts/prod/backup-all.sh

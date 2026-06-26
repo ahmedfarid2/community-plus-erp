@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_account_deferred_lite_list" model="ir.ui.view">
+        <field name="name">account.deferred.lite.list</field>
+        <field name="model">account.deferred.lite</field>
+        <field name="arch" type="xml">
+            <list string="Deferred Revenue / Expense">
+                <field name="name"/>
+                <field name="deferred_type"/>
+                <field name="start_date"/>
+                <field name="total_amount"/>
+                <field name="recognized_amount"/>
+                <field name="residual_amount"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'running'"
+                       decoration-muted="state == 'closed'"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_account_deferred_lite_form" model="ir.ui.view">
+        <field name="name">account.deferred.lite.form</field>
+        <field name="model">account.deferred.lite</field>
+        <field name="arch" type="xml">
+            <form string="Deferred Revenue / Expense">
+                <header>
+                    <button name="action_compute_board" type="object"
+                            string="Compute Schedule" class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_recognize" type="object"
+                            string="Recognize Due" class="btn-primary"
+                            invisible="state != 'running'"/>
+                    <button name="action_close" type="object" string="Close"
+                            invisible="state != 'running'"/>
+                    <button name="action_set_draft" type="object" string="Reset to Draft"
+                            invisible="state == 'draft'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="e.g. Annual Subscription 2026"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="deferred_type"/>
+                            <field name="total_amount"/>
+                            <field name="start_date"/>
+                        </group>
+                        <group>
+                            <field name="number"/>
+                            <field name="period_months"/>
+                            <field name="recognized_amount"/>
+                            <field name="residual_amount"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="recognition_account_id"/>
+                        <field name="deferred_account_id"/>
+                        <field name="journal_id"/>
+                    </group>
+                    <field name="line_ids">
+                        <list string="Recognition Schedule" create="false" edit="false"
+                              decoration-success="posted">
+                            <field name="sequence"/>
+                            <field name="date"/>
+                            <field name="amount"/>
+                            <field name="cumulative"/>
+                            <field name="residual"/>
+                            <field name="posted"/>
+                            <field name="move_id"/>
+                            <field name="currency_id" column_invisible="1"/>
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_account_deferred_lite" model="ir.actions.act_window">
+        <field name="name">Deferred Revenue / Expense</field>
+        <field name="res_model">account.deferred.lite</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_account_deferred_lite" name="Deferred Rev/Exp"
+              parent="account.menu_finance" action="action_account_deferred_lite"
+              sequence="26"/>
+
+</odoo>

@@ -27,5 +27,5 @@ fi
 echo "Starting production stack..."
 docker compose -f docker-compose.prod.yml --env-file .env.production up -d
 echo "✓ deployed. Create companies with:"
-echo "    docker compose -f docker-compose.prod.yml run --rm web odoo -d <company> -i base,crm,sale_management,stock,purchase,account,hr,project,mrp,website --stop-after-init --without-demo=all"
+echo "    ODOO_COMPOSE_FILE=docker-compose.prod.yml ODOO_ENV_FILE=.env.production make client-init name=<company> country=EG"
 echo "  Then browse https://<company>.${DOMAIN}"

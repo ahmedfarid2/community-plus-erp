@@ -2,7 +2,7 @@
 ; Master password — rendered from MASTER_PASSWORD in .env.production.
 admin_passwd = __MASTER_PASSWORD__
 
-addons_path = /mnt/extra-addons
+addons_path = /mnt/extra-addons,/mnt/extra-addons/odoomates
 
 db_host = db
 db_port = 5432

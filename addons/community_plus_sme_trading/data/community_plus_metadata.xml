@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="param_community_plus_edition" model="ir.config_parameter">
+        <field name="key">community_plus.edition</field>
+        <field name="value">Community Plus</field>
+    </record>
+    <record id="param_community_plus_pack" model="ir.config_parameter">
+        <field name="key">community_plus.pack</field>
+        <field name="value">sme_trading</field>
+    </record>
+    <record id="param_community_plus_feature_policy" model="ir.config_parameter">
+        <field name="key">community_plus.feature_policy</field>
+        <field name="value">Native Community, open-source addons, and custom clean-room modules only. No unlicensed Enterprise code.</field>
+    </record>
+</odoo>

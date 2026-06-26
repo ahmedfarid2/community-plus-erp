@@ -1,10 +1,14 @@
-# Odoo Community — multi-company local stack
+# Odoo Community Plus ERP — multi-company stack
 
-Run **Odoo 19 Community** (free, open-source, unlimited users) on your Mac with Docker.
+Run a legal **Odoo 19 Community Plus ERP** stack with Docker. The product is Odoo
+Community, audited open-source addons, and custom clean-room modules. It is not unpaid
+Odoo Enterprise, and it must not be sold as official Enterprise unless the client buys
+valid Odoo Enterprise licensing.
+
 Every company gets its **own isolated database** — separate data, separate logins, its own
-installed apps — reachable at **`https://<company>.odoo.local`**. All standard modules are
-available: CRM, Sales, Invoicing, Inventory, Purchase, Accounting, HR, Project,
-Manufacturing, Website, and more.
+installed apps — reachable at **`https://<company>.odoo.local`**. The first sellable pack is
+for SME trading companies: CRM, Sales, Invoicing/Accounting, Inventory, Purchase, HR
+basics, Project, Manufacturing basics, Website/eCommerce, POS, Expenses, and Loans Lite.
 
 ## Tooling — why it's built this way
 
@@ -62,10 +66,27 @@ sudo sh -c 'echo "127.0.0.1 odoo.local acme.odoo.local globex.odoo.local" >> /et
 Open **http://localhost:8069** (admin / database manager) — master password =
 `MASTER_PASSWORD` from `.env`.
 
-### Create a company
+### Create a sellable Community Plus client
 
 ```bash
-make company name=acme                       # full standard suite
+make client-init name=acme country=EG company="Acme Trading LLC"
+make client-health db=acme
+make client-export db=acme
+make client-upgrade db=acme
+```
+
+This installs `community_plus_sme_trading`, brands the main company, and checks the
+database. Deep seeded smoke tests are still available with:
+
+```bash
+make seed db=acme
+CLIENT_HEALTH_DEEP=1 make client-health db=acme
+```
+
+### Create a local/demo company
+
+```bash
+make company name=acme                       # Community Plus SME trading pack
 make company name=globex modules=base,crm,sale_management,stock   # custom app set
 make company name=newco modules=all          # EVERY Community app installed
 ```
@@ -101,15 +122,13 @@ each subdomain's database list returns just its own company.
 
 ## Accounting note (Community vs Enterprise)
 
-Community includes **Invoicing** (full double-entry: chart of accounts, journals, journal
-entries, taxes, invoices, payments, bank reconciliation). The Enterprise **Accounting** app
-adds polished financial reports. To get those for free, this repo ships a custom module
-**`account_financial_reports_lite`** (in `addons/`) that adds **Trial Balance, Profit & Loss,
-Balance Sheet, General Ledger and Aged Receivable/Payable** (interactive + PDF) under
-*Accounting → Reporting → Financial Reports (Lite)*. It's installed by default for new
-companies. (Don't click the **"Upgrade"** button on the Accounting app card — that's Odoo's
-Enterprise upsell; these reports replace the paid ones for free.) Everything else (CRM, Sales,
-Inventory, Purchase, HR, Project, MRP, Website) is fully featured in Community.
+Community includes **Invoicing/Accounting** foundations: chart of accounts, journals,
+journal entries, taxes, invoices, payments, and bank reconciliation. Enterprise adds
+proprietary polish and additional apps. This repo avoids unlicensed Enterprise code.
+
+The disabled `account_financial_reports_lite` module is kept as reference work. For client
+delivery, use maintained open-source reporting modules after a license/version audit, or
+build clean custom reports. See [docs/FEATURE_MATRIX.md](docs/FEATURE_MATRIX.md).
 
 ## Path to the cloud
 
