@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ma_lite_campaign,marketing.lite.campaign,model_marketing_lite_campaign,base.group_user,1,1,1,1
+access_ma_lite_activity,marketing.lite.activity,model_marketing_lite_activity,base.group_user,1,1,1,1
+access_ma_lite_participant,marketing.lite.participant,model_marketing_lite_participant,base.group_user,1,1,1,1

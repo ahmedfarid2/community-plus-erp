@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_quality_lite_point,quality.lite.point,model_quality_lite_point,base.group_user,1,1,1,1
+access_quality_lite_check,quality.lite.check,model_quality_lite_check,base.group_user,1,1,1,1
