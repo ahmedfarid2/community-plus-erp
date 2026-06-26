@@ -28,7 +28,10 @@
                 <header>
                     <button name="action_compute_board" type="object"
                             string="Compute Depreciation" class="btn-primary"
-                            invisible="state == 'close'"/>
+                            invisible="state != 'draft'"/>
+                    <button name="action_post_depreciation" type="object"
+                            string="Post Due Depreciation" class="btn-primary"
+                            invisible="state != 'open'"/>
                     <button name="action_close" type="object" string="Close"
                             invisible="state != 'open'"/>
                     <button name="action_set_draft" type="object" string="Reset to Draft"
@@ -54,16 +57,25 @@
                         </group>
                     </group>
                     <group>
-                        <field name="asset_account_id"/>
-                        <field name="depreciation_account_id"/>
+                        <group>
+                            <field name="asset_account_id"/>
+                            <field name="depreciation_account_id"/>
+                        </group>
+                        <group>
+                            <field name="journal_id"/>
+                            <field name="posted_count" string="Entries posted"/>
+                        </group>
                     </group>
                     <field name="line_ids">
-                        <list string="Depreciation Board" create="false" edit="false">
+                        <list string="Depreciation Board" create="false" edit="false"
+                              decoration-success="posted">
                             <field name="sequence"/>
                             <field name="date"/>
                             <field name="depreciation_amount"/>
                             <field name="cumulative_depreciation"/>
                             <field name="remaining_value"/>
+                            <field name="posted"/>
+                            <field name="move_id"/>
                             <field name="currency_id" column_invisible="1"/>
                         </list>
                     </field>

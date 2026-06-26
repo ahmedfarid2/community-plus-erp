@@ -1,6 +1,7 @@
 from dateutil.relativedelta import relativedelta
 
 from odoo import api, fields, models
+from odoo.exceptions import UserError
 
 
 class Asset(models.Model):
@@ -21,25 +22,44 @@ class Asset(models.Model):
         string="Period Length")
     asset_account_id = fields.Many2one(
         "account.account", string="Fixed Asset Account",
+        default=lambda s: s._default_account("asset_fixed"),
         domain=[("account_type", "=", "asset_fixed")])
     depreciation_account_id = fields.Many2one(
         "account.account", string="Depreciation Expense Account",
+        default=lambda s: s._default_account("expense"),
         domain=[("account_type", "like", "expense")])
+    journal_id = fields.Many2one(
+        "account.journal", string="Depreciation Journal",
+        default=lambda s: s._default_journal(),
+        domain=[("type", "=", "general")])
     company_id = fields.Many2one("res.company", default=lambda s: s.env.company)
     currency_id = fields.Many2one(related="company_id.currency_id")
     line_ids = fields.One2many("afr.asset.line", "asset_id", string="Depreciation Board")
     depreciated_value = fields.Monetary(compute="_compute_amounts", store=False)
     remaining_value = fields.Monetary(compute="_compute_amounts", store=False)
+    posted_count = fields.Integer(compute="_compute_amounts", store=False)
 
-    @api.depends("line_ids.depreciation_amount", "original_value")
+    def _default_account(self, like):
+        op = "=" if like == "asset_fixed" else "like"
+        return self.env["account.account"].search([("account_type", op, like)], limit=1)
+
+    def _default_journal(self):
+        return self.env["account.journal"].search(
+            [("type", "=", "general"), ("company_id", "=", self.env.company.id)], limit=1)
+
+    @api.depends("line_ids.depreciation_amount", "line_ids.move_id", "original_value")
     def _compute_amounts(self):
         for a in self:
             a.depreciated_value = sum(a.line_ids.mapped("depreciation_amount"))
             a.remaining_value = a.original_value - a.depreciated_value
+            a.posted_count = len(a.line_ids.filtered("move_id"))
 
     def action_compute_board(self):
         for a in self:
-            a.line_ids.unlink()
+            a.line_ids.filtered(lambda l: not l.move_id).unlink()
+            if a.line_ids:
+                raise UserError("Some depreciation lines are already posted; "
+                                "reset to draft is blocked once entries exist.")
             n = a.method_number or 1
             depreciable = a.original_value - a.salvage_value
             per = round(depreciable / n, 2)
@@ -47,7 +67,6 @@ class Asset(models.Model):
             vals = []
             for i in range(1, n + 1):
                 d = a.acquisition_date + relativedelta(months=int(a.method_period) * i)
-                # Last period absorbs the rounding remainder.
                 amount = per if i < n else round(depreciable - per * (n - 1), 2)
                 cumulative += amount
                 vals.append({
@@ -60,7 +79,42 @@ class Asset(models.Model):
             a.state = "open"
         return True
 
+    def action_post_depreciation(self):
+        """Create + post a journal entry for every due, not-yet-posted line."""
+        today = fields.Date.context_today(self)
+        Move = self.env["account.move"]
+        for a in self:
+            if not a.depreciation_account_id or not a.asset_account_id:
+                raise UserError("Set the Fixed Asset Account and the Depreciation "
+                                "Expense Account on the asset first.")
+            journal = a.journal_id or a._default_journal()
+            if not journal:
+                raise UserError("No Miscellaneous (general) journal found.")
+            for line in a.line_ids:
+                if line.move_id or (line.date and line.date > today):
+                    continue
+                ref = "Depreciation %s #%s" % (a.name, line.sequence)
+                move = Move.create({
+                    "move_type": "entry",
+                    "journal_id": journal.id,
+                    "date": line.date,
+                    "ref": ref,
+                    "line_ids": [
+                        (0, 0, {"name": ref,
+                                "account_id": a.depreciation_account_id.id,
+                                "debit": line.depreciation_amount, "credit": 0.0}),
+                        (0, 0, {"name": ref,
+                                "account_id": a.asset_account_id.id,
+                                "debit": 0.0, "credit": line.depreciation_amount}),
+                    ],
+                })
+                move.action_post()
+                line.move_id = move.id
+        return True
+
     def action_set_draft(self):
+        if self.mapped("line_ids").filtered("move_id"):
+            raise UserError("Cannot reset: posted depreciation entries exist.")
         self.write({"state": "draft"})
         self.mapped("line_ids").unlink()
 
@@ -80,3 +134,10 @@ class AssetLine(models.Model):
     depreciation_amount = fields.Monetary()
     cumulative_depreciation = fields.Monetary()
     remaining_value = fields.Monetary()
+    move_id = fields.Many2one("account.move", string="Journal Entry", readonly=True)
+    posted = fields.Boolean(compute="_compute_posted", store=False)
+
+    @api.depends("move_id", "move_id.state")
+    def _compute_posted(self):
+        for line in self:
+            line.posted = bool(line.move_id) and line.move_id.state == "posted"
