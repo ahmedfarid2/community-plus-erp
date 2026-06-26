@@ -9,7 +9,7 @@
 
 .DEFAULT_GOAL := help
 .PHONY: help up down restart logs ps https hosts company isolated seed backup restore shell psql wipe \
-        all-apps brand smoke prod-cert prod-deploy prod-logs prod-down
+        all-apps setup-accounting brand smoke prod-cert prod-deploy prod-logs prod-down
 
 name    ?=
 db      ?=
@@ -46,6 +46,10 @@ company: ## Create a company DB:  make company name=acme [modules=...]
 isolated: ## Create a fully separate per-company stack:  make isolated name=acme
 	@test -n "$(name)" || { echo "Usage: make isolated name=<db>"; exit 1; }
 	./scripts/new-company.sh $(name) --isolated
+
+setup-accounting: ## Wire fiscal year + asset accounts:  make setup-accounting db=acme
+	@test -n "$(db)" || { echo "Usage: make setup-accounting db=<name>"; exit 1; }
+	./scripts/dev/setup-accounting.sh $(db)
 
 all-apps: ## Install every Community app into a company:  make all-apps db=acme
 	@test -n "$(db)" || { echo "Usage: make all-apps db=<name>"; exit 1; }
