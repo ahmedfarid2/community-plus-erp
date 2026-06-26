@@ -1,0 +1,88 @@
+# Production stack: nginx (wildcard TLS) + certbot (DNS-01 renew) + odoo + postgres.
+# Only the reverse proxy is published; db and web stay on the internal network.
+# Configure via .env.production (see .env.production.example) and deploy with
+# scripts/prod/deploy.sh.  Multi-tenant: https://<company>.<DOMAIN>.
+
+services:
+  reverse_proxy:
+    image: nginx:stable-alpine
+    container_name: odoo-prod-reverse-proxy
+    depends_on:
+      - web
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./.docker/production/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - letsencrypt:/etc/letsencrypt:ro
+      - certbot-www:/var/www/certbot
+    # Reload every 6h so renewed certs are picked up without downtime.
+    command: >
+      /bin/sh -c "while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g 'daemon off;'"
+    networks:
+      - odoo
+    restart: always
+
+  certbot:
+    image: certbot/dns-cloudflare
+    container_name: odoo-prod-certbot
+    volumes:
+      - letsencrypt:/etc/letsencrypt
+      - certbot-www:/var/www/certbot
+      - ./secrets:/run/secrets:ro
+    # Attempt renewal twice a day; no-op until a cert is near expiry.
+    entrypoint: >
+      /bin/sh -c "trap exit TERM; while :; do certbot renew --quiet; sleep 12h & wait $${!}; done"
+    networks:
+      - odoo
+    restart: unless-stopped
+
+  db:
+    image: postgres:${PG_TAG:-16}
+    container_name: odoo-prod-db
+    environment:
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set in .env.production}
+      POSTGRES_DB: postgres
+    volumes:
+      - odoo-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD', 'pg_isready', '-U', 'odoo']
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    networks:
+      - odoo
+    restart: always
+
+  web:
+    image: odoo:${ODOO_TAG:-19.0}
+    container_name: odoo-prod-web
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      HOST: db
+      USER: odoo
+      PASSWORD: ${POSTGRES_PASSWORD:?set in .env.production}
+    volumes:
+      - odoo-web-data:/var/lib/odoo
+      - ./config:/etc/odoo
+      - ./addons:/mnt/extra-addons
+    networks:
+      - odoo
+    restart: always
+
+networks:
+  odoo:
+    driver: bridge
+
+volumes:
+  odoo-db-data:
+    driver: local
+  odoo-web-data:
+    driver: local
+  letsencrypt:
+    driver: local
+  certbot-www:
+    driver: local

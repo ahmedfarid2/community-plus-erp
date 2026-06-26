@@ -8,7 +8,8 @@
 #   make logs
 
 .DEFAULT_GOAL := help
-.PHONY: help up down restart logs ps https hosts company isolated seed backup restore shell psql wipe
+.PHONY: help up down restart logs ps https hosts company isolated seed backup restore shell psql wipe \
+        prod-cert prod-deploy prod-logs prod-down
 
 name    ?=
 db      ?=
@@ -68,3 +69,16 @@ psql: ## Open psql on a company DB:  make psql db=acme
 
 wipe: ## DANGER: stop and delete ALL data volumes
 	./scripts/stop.sh --wipe
+
+# ── Production (run on the server) ─────────────────────────────────────────
+prod-cert: ## Issue the wildcard Let's Encrypt cert (run once)
+	./scripts/prod/issue-cert.sh
+
+prod-deploy: ## Render prod config + start the production stack
+	./scripts/prod/deploy.sh
+
+prod-logs: ## Tail production Odoo logs
+	docker compose -f docker-compose.prod.yml logs -f web
+
+prod-down: ## Stop the production stack (keeps data)
+	docker compose -f docker-compose.prod.yml down

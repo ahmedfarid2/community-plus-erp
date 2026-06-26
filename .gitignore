@@ -1,8 +1,12 @@
 # Secrets / local env
 .env
+.env.production
+secrets/*
+!secrets/*.example
 
-# Generated config (rendered from odoo.conf.template by scripts/start.sh)
+# Generated config (rendered from *.template by start.sh / prod deploy.sh)
 config/odoo.conf
+.docker/production/nginx/default.conf
 
 # Backups
 backups/
