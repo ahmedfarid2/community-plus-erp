@@ -21,3 +21,6 @@ companies/
 # Python bytecode
 __pycache__/
 *.pyc
+
+# Third-party open-source addons (fetched by scripts/dev/fetch-thirdparty.sh)
+addons/odoomates/
