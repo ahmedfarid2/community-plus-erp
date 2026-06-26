@@ -9,8 +9,8 @@
 
 .DEFAULT_GOAL := help
 .PHONY: help up down restart logs ps https hosts company isolated seed backup restore shell psql wipe \
-        all-apps setup-accounting brand smoke client-init client-health client-upgrade client-export \
-        prod-cert prod-deploy prod-logs prod-down prod-backup-all
+        pack-test all-apps setup-accounting brand smoke client-init client-health client-upgrade client-export \
+        pack-test prod-cert prod-deploy prod-logs prod-down prod-backup-all
 
 name    ?=
 db      ?=
@@ -84,6 +84,9 @@ client-upgrade: ## Upgrade Community Plus modules in a client DB: make client-up
 client-export: ## Export one client DB + filestore + metadata: make client-export db=acme
 	@test -n "$(db)" || { echo "Usage: make client-export db=<name>"; exit 1; }
 	./scripts/client-export.sh $(db)
+
+pack-test: ## Fresh-DB install test for Community Plus pack
+	./scripts/dev/pack-test.sh
 
 backup: ## Back up one company:  make backup db=acme
 	@test -n "$(db)" || { echo "Usage: make backup db=<name>"; exit 1; }
