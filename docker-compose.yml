@@ -1,0 +1,45 @@
+# Odoo Community + PostgreSQL — single instance, multi-database.
+# Each company = one Odoo database (isolated data, own users, unlimited users each).
+# Versions / ports / passwords come from .env (see .env.example).
+
+services:
+  db:
+    image: postgres:${PG_TAG:-16}
+    container_name: odoo-db
+    environment:
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-odoo}
+      # Odoo manages its own per-company databases; this is just the maintenance DB.
+      POSTGRES_DB: postgres
+    volumes:
+      - odoo-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "odoo"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+
+  web:
+    image: odoo:${ODOO_TAG:-19.0}
+    container_name: odoo-web
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "${ODOO_PORT:-8069}:8069"        # main web UI
+      - "${ODOO_CHAT_PORT:-8072}:8072"   # longpolling / live chat / discuss
+    environment:
+      # Consumed by the Odoo image entrypoint for the DB connection.
+      HOST: db
+      USER: odoo
+      PASSWORD: ${POSTGRES_PASSWORD:-odoo}
+    volumes:
+      - odoo-web-data:/var/lib/odoo      # filestore (attachments, per-DB)
+      - ./config:/etc/odoo               # odoo.conf (rendered by start.sh)
+      - ./addons:/mnt/extra-addons       # your custom modules
+    restart: unless-stopped
+
+volumes:
+  odoo-db-data:
+  odoo-web-data:

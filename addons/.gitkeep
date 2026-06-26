@@ -1,0 +1,2 @@
+# Drop custom Odoo modules here. They are mounted at /mnt/extra-addons inside
+# the container and appear in Apps after "Update Apps List" (developer mode).

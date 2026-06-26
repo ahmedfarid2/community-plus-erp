@@ -1,0 +1,20 @@
+[options]
+; Master password — guards the database manager (create / drop / backup DBs).
+; This value is injected from MASTER_PASSWORD in .env by scripts/start.sh.
+admin_passwd = __MASTER_PASSWORD__
+
+; Where custom modules are mounted (see docker-compose.yml).
+addons_path = /mnt/extra-addons
+
+; Database connection. db_password is intentionally NOT set here so the Odoo
+; image entrypoint supplies it from the PASSWORD env var (kept in one place: .env).
+db_host = db
+db_port = 5432
+db_user = odoo
+
+; Show the database selector so each company picks its own DB at login.
+list_db = True
+
+; Reasonable local timeouts (raise for big imports).
+limit_time_cpu = 600
+limit_time_real = 1200
