@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_helpdesk_lite_team,helpdesk.lite.team,model_helpdesk_lite_team,base.group_user,1,1,1,1
+access_helpdesk_lite_ticket,helpdesk.lite.ticket,model_helpdesk_lite_ticket,base.group_user,1,1,1,1

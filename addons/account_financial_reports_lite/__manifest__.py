@@ -22,8 +22,7 @@ Interactive view + printable PDF. No Enterprise license required.
         "views/accounting_app_views.xml",
         "views/dashboard_views.xml",
     ],
-    # Retired: superseded by the Odoo Mates om_account_accountant suite. Kept for
-    # reference. Set installable=True to bring it back.
-    "installable": False,
+    # Clean-room Community Plus accounting reports. No Enterprise code dependency.
+    "installable": True,
     "application": False,
 }

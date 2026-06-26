@@ -9,20 +9,25 @@ offer. This module is a clean-room pack: it does not contain or depend on
 unlicensed Odoo Enterprise code.
 
 Feature source labels:
-- Native Community: CRM, Sales, Purchase, Inventory, Accounting/Invoicing, HR,
-  Project, Manufacturing, Website/eCommerce, Point of Sale, Expenses.
-- Custom clean-room modules: Loans Lite, Deferred Revenue/Expense Lite, Review Reports Lite.
-- Open-source addon: optional third-party addons audited and installed outside
-  this pack when available for the target Odoo version.
+Native Community includes CRM, Sales, Purchase, Inventory, Accounting/Invoicing,
+HR, Project, Manufacturing, Website/eCommerce, Point of Sale, and Expenses.
+Custom clean-room modules include Financial Reports Lite, Loans Lite, Deferred
+Revenue/Expense Lite, Review Reports Lite, Approvals Lite, Helpdesk Lite,
+Documents Lite, and Subscriptions Lite.
+Open-source addons may be installed separately after license and version audit.
 """,
     "author": "Farid",
     "license": "LGPL-3",
     "depends": [
         "account",
         "account_deferred_lite",
+        "account_financial_reports_lite",
         "account_loan_lite",
         "account_review_lite",
+        "business_approvals_lite",
         "crm",
+        "documents_lite",
+        "helpdesk_lite",
         "hr",
         "hr_expense",
         "mrp",
@@ -31,6 +36,7 @@ Feature source labels:
         "purchase",
         "sale_management",
         "stock",
+        "subscriptions_lite",
         "website_sale",
     ],
     "data": [

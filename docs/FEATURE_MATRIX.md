@@ -18,10 +18,10 @@ Odoo Enterprise unless the client buys a valid Enterprise subscription.
 | Manufacturing | Native Community | BoMs, manufacturing orders |
 | Website/eCommerce | Native Community | Website, shop, online orders |
 | Point of Sale | Native Community | POS sessions and accounting handoff |
-| Approvals | Custom clean-room module | Planned |
-| Documents-lite | Custom clean-room module | Planned |
-| Helpdesk-lite | Custom clean-room module | Planned |
-| Subscriptions-lite | Custom clean-room module | Planned |
+| Approvals | Custom clean-room module | Implemented lite workflow |
+| Documents-lite | Custom clean-room module | Implemented lite filing |
+| Helpdesk-lite | Custom clean-room module | Implemented lite ticketing |
+| Subscriptions-lite | Custom clean-room module | Implemented recurring invoices |
 | Advanced financial reports | Open-source addon or custom clean-room module | Planned after Odoo 19 compatibility audit |
 
 ## License rule

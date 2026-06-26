@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_business_approval_category_list" model="ir.ui.view">
+        <field name="name">business.approval.category.list</field>
+        <field name="model">business.approval.category</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="default_approver_id"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_business_approval_category_form" model="ir.ui.view">
+        <field name="name">business.approval.category.form</field>
+        <field name="model">business.approval.category</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="default_approver_id"/>
+                        <field name="sequence"/>
+                        <field name="active"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_business_approval_request_list" model="ir.ui.view">
+        <field name="name">business.approval.request.list</field>
+        <field name="model">business.approval.request</field>
+        <field name="arch" type="xml">
+            <list decoration-success="state == 'approved'" decoration-danger="state == 'refused'">
+                <field name="name"/>
+                <field name="category_id"/>
+                <field name="requester_id"/>
+                <field name="approver_id"/>
+                <field name="amount"/>
+                <field name="date_needed"/>
+                <field name="state" widget="badge"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_business_approval_request_form" model="ir.ui.view">
+        <field name="name">business.approval.request.form</field>
+        <field name="model">business.approval.request</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_submit" type="object" string="Submit" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_approve" type="object" string="Approve" class="btn-primary" invisible="state != 'submitted'"/>
+                    <button name="action_refuse" type="object" string="Refuse" invisible="state != 'submitted'"/>
+                    <button name="action_cancel" type="object" string="Cancel" invisible="state in ('approved', 'refused', 'cancelled')"/>
+                    <button name="action_reset" type="object" string="Reset" invisible="state == 'draft'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="category_id"/>
+                            <field name="requester_id"/>
+                            <field name="approver_id"/>
+                            <field name="date_needed"/>
+                        </group>
+                        <group>
+                            <field name="amount"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="reference"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <field name="description"/>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_business_approval_request" model="ir.actions.act_window">
+        <field name="name">Approvals</field>
+        <field name="res_model">business.approval.request</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_business_approval_category" model="ir.actions.act_window">
+        <field name="name">Approval Categories</field>
+        <field name="res_model">business.approval.category</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_business_approvals_root" name="Approvals" sequence="45"/>
+    <menuitem id="menu_business_approval_request" name="Requests" parent="menu_business_approvals_root" action="action_business_approval_request" sequence="10"/>
+    <menuitem id="menu_business_approval_category" name="Categories" parent="menu_business_approvals_root" action="action_business_approval_category" sequence="20"/>
+</odoo>

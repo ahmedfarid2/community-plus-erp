@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_helpdesk_lite_ticket_list" model="ir.ui.view">
+        <field name="name">helpdesk.lite.ticket.list</field>
+        <field name="model">helpdesk.lite.ticket</field>
+        <field name="arch" type="xml">
+            <list decoration-success="state == 'solved'" decoration-danger="priority == '3'">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="team_id"/>
+                <field name="user_id"/>
+                <field name="priority" widget="priority"/>
+                <field name="deadline"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_helpdesk_lite_ticket_form" model="ir.ui.view">
+        <field name="name">helpdesk.lite.ticket.form</field>
+        <field name="model">helpdesk.lite.ticket</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_start" type="object" string="Start" class="btn-primary" invisible="state != 'new'"/>
+                    <button name="action_waiting" type="object" string="Waiting" invisible="state not in ('new', 'in_progress')"/>
+                    <button name="action_solve" type="object" string="Solve" class="btn-primary" invisible="state in ('solved', 'cancelled')"/>
+                    <button name="action_cancel" type="object" string="Cancel" invisible="state in ('solved', 'cancelled')"/>
+                    <button name="action_reopen" type="object" string="Reopen" invisible="state not in ('solved', 'cancelled')"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="email_from"/>
+                            <field name="team_id"/>
+                            <field name="user_id"/>
+                        </group>
+                        <group>
+                            <field name="priority" widget="priority"/>
+                            <field name="deadline"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Issue">
+                            <field name="description"/>
+                        </page>
+                        <page string="Resolution">
+                            <field name="resolution"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_helpdesk_lite_team_list" model="ir.ui.view">
+        <field name="name">helpdesk.lite.team.list</field>
+        <field name="model">helpdesk.lite.team</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="user_id"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_helpdesk_lite_team_form" model="ir.ui.view">
+        <field name="name">helpdesk.lite.team.form</field>
+        <field name="model">helpdesk.lite.team</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="user_id"/>
+                        <field name="member_ids" widget="many2many_tags"/>
+                        <field name="active"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_helpdesk_lite_ticket" model="ir.actions.act_window">
+        <field name="name">Tickets</field>
+        <field name="res_model">helpdesk.lite.ticket</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_helpdesk_lite_team" model="ir.actions.act_window">
+        <field name="name">Teams</field>
+        <field name="res_model">helpdesk.lite.team</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_helpdesk_lite_root" name="Helpdesk" sequence="46"/>
+    <menuitem id="menu_helpdesk_lite_ticket" name="Tickets" parent="menu_helpdesk_lite_root" action="action_helpdesk_lite_ticket" sequence="10"/>
+    <menuitem id="menu_helpdesk_lite_team" name="Teams" parent="menu_helpdesk_lite_root" action="action_helpdesk_lite_team" sequence="20"/>
+</odoo>

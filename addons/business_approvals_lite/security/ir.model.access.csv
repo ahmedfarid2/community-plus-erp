@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_business_approval_category,business.approval.category,model_business_approval_category,base.group_user,1,1,1,1
+access_business_approval_request,business.approval.request,model_business_approval_request,base.group_user,1,1,1,1
