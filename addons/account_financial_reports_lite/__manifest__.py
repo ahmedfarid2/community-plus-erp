@@ -22,6 +22,8 @@ Interactive view + printable PDF. No Enterprise license required.
         "views/accounting_app_views.xml",
         "views/dashboard_views.xml",
     ],
-    "installable": True,
-    "application": True,
+    # Retired: superseded by the Odoo Mates om_account_accountant suite. Kept for
+    # reference. Set installable=True to bring it back.
+    "installable": False,
+    "application": False,
 }
