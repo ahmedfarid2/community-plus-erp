@@ -42,11 +42,13 @@ class SubscriptionContract(models.Model):
         tracking=True,
     )
     note = fields.Text()
+    user_id = fields.Many2one("res.users", string="Salesperson",
+                              default=lambda self: self.env.user, tracking=True)
     auto_post = fields.Boolean(
         string="Auto-post Invoices", default=False,
         help="Post generated invoices automatically instead of leaving them in draft.")
-    recurring_total = fields.Monetary(compute="_compute_mrr", store=False)
-    mrr = fields.Monetary(string="MRR", compute="_compute_mrr", store=False,
+    recurring_total = fields.Monetary(compute="_compute_mrr", store=True)
+    mrr = fields.Monetary(string="MRR", compute="_compute_mrr", store=True,
                           help="Monthly Recurring Revenue (period amount normalised to a month).")
 
     @api.depends("line_ids.quantity", "line_ids.price_unit",
