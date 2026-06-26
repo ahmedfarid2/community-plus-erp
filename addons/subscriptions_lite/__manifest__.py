@@ -10,6 +10,7 @@
         "security/ir.model.access.csv",
         "data/cron.xml",
         "views/subscription_views.xml",
+        "views/mrr_log_views.xml",
     ],
     "installable": True,
     "application": True,

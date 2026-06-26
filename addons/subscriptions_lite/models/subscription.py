@@ -44,6 +44,8 @@ class SubscriptionContract(models.Model):
     note = fields.Text()
     user_id = fields.Many2one("res.users", string="Salesperson",
                               default=lambda self: self.env.user, tracking=True)
+    activated_date = fields.Date(readonly=True, copy=False)
+    churned_date = fields.Date(readonly=True, copy=False)
     auto_post = fields.Boolean(
         string="Auto-post Invoices", default=False,
         help="Post generated invoices automatically instead of leaving them in draft.")
@@ -77,16 +79,23 @@ class SubscriptionContract(models.Model):
         return self.next_invoice_date + relativedelta(**kwargs)
 
     def action_activate(self):
+        today = fields.Date.context_today(self)
         for contract in self:
             if not contract.line_ids:
                 raise UserError("Add at least one invoice line before activating.")
-        self.write({"state": "active"})
+            contract.state = "active"
+            if not contract.activated_date:
+                contract.activated_date = today
+            contract.churned_date = False  # reactivation clears churn
 
     def action_pause(self):
         self.write({"state": "paused"})
 
     def action_close(self):
-        self.write({"state": "closed"})
+        today = fields.Date.context_today(self)
+        for contract in self:
+            contract.state = "closed"
+            contract.churned_date = today
 
     def action_reset(self):
         self.write({"state": "draft"})

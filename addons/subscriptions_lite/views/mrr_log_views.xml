@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_mrr_log_graph" model="ir.ui.view">
+        <field name="name">subscription.lite.mrr.log.graph</field>
+        <field name="model">subscription.lite.mrr.log</field>
+        <field name="arch" type="xml">
+            <graph string="MRR Evolution" type="line">
+                <field name="date" interval="month"/>
+                <field name="total_mrr" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_mrr_log_list" model="ir.ui.view">
+        <field name="name">subscription.lite.mrr.log.list</field>
+        <field name="model">subscription.lite.mrr.log</field>
+        <field name="arch" type="xml">
+            <list string="MRR History">
+                <field name="date"/>
+                <field name="total_mrr"/>
+                <field name="active_count"/>
+                <field name="new_mrr"/>
+                <field name="churned_mrr"/>
+                <field name="net_new_mrr"/>
+                <field name="growth_pct" widget="percentage"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_mrr_log_pivot" model="ir.ui.view">
+        <field name="name">subscription.lite.mrr.log.pivot</field>
+        <field name="model">subscription.lite.mrr.log</field>
+        <field name="arch" type="xml">
+            <pivot string="MRR History">
+                <field name="date" interval="month" type="row"/>
+                <field name="total_mrr" type="measure"/>
+                <field name="net_new_mrr" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="action_mrr_log" model="ir.actions.act_window">
+        <field name="name">MRR Evolution</field>
+        <field name="res_model">subscription.lite.mrr.log</field>
+        <field name="view_mode">graph,list,pivot</field>
+    </record>
+
+    <record id="action_snapshot_mrr_now" model="ir.actions.server">
+        <field name="name">Snapshot MRR now</field>
+        <field name="model_id" ref="model_subscription_lite_mrr_log"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_snapshot_mrr()</field>
+    </record>
+
+    <menuitem id="menu_subscription_lite_reporting" name="Reporting"
+              parent="menu_subscription_lite_root" sequence="30"/>
+    <menuitem id="menu_mrr_log" name="MRR Evolution"
+              parent="menu_subscription_lite_reporting" action="action_mrr_log"
+              sequence="10"/>
+
+</odoo>

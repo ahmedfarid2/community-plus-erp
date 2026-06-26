@@ -310,5 +310,26 @@ if has("subscription.lite.contract") and seed_customers:
 else:
     print("– subscriptions: skipped (app not installed)")
 
+# MRR history (demo growth curve for the MRR Evolution chart)
+if has("subscription.lite.mrr.log"):
+    Log = env["subscription.lite.mrr.log"]
+    mcompany = env.ref("base.main_company")
+    if not Log.search([("company_id", "=", mcompany.id)], limit=1):
+        import datetime as _dt2
+        base = _dt2.date.today().replace(day=1)
+        amounts = [500, 800, 1200, 2000, 2800, 3500]
+        for k, amt in enumerate(amounts):
+            d = base - _dt2.timedelta(days=30 * (len(amounts) - 1 - k))
+            prev = amounts[k - 1] if k else 0
+            Log.create({
+                "date": d, "company_id": mcompany.id, "total_mrr": amt,
+                "active_count": k + 2, "new_mrr": max(amt - prev, 0),
+                "churned_mrr": 0.0, "net_new_mrr": amt - prev,
+                "growth_pct": ((amt - prev) / prev * 100.0) if prev else 0.0,
+            })
+        print(f"✓ mrr history: +{len(amounts)} months (curve)")
+    else:
+        print("• mrr history: exists")
+
 env.cr.commit()
 print("✓ seed committed.")
