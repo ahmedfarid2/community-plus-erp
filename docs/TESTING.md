@@ -16,10 +16,10 @@ Each company is its own database with its own users. The CLI-created admin accou
 
 | Field | Value |
 |---|---|
-| URL | **http://localhost:8069** |
+| URL | **http://localhost:8069** (or **https://acme.odoo.local** once the alias is wired) |
 | Database | `acme` (pick it in the selector) |
-| Login | `admin` |
-| Password | `admin` — **change on first login** |
+| Login (email) | `SMOKE_LOGIN` in `.env` |
+| Password | `SMOKE_PASSWORD` in `.env` — **change on first login** |
 | Master password (DB manager) | `MASTER_PASSWORD` in `.env` |
 
 > Over HTTPS subdomains (`https://acme.odoo.local`) instead: run `make https` once, then

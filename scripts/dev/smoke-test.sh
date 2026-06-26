@@ -7,9 +7,11 @@
 set -eu   # no pipefail: a `grep` no-match in a pipe must yield 0, not abort
 cd "$(dirname "$0")/../.."
 
-DB="${1:-acme}"; LOGIN="${2:-admin}"; PASS="${3:-admin}"
+[ -f .env ] && { set -a; . ./.env; set +a; }
+DB="${1:-acme}"
+LOGIN="${2:-${SMOKE_LOGIN:-admin}}"
+PASS="${3:-${SMOKE_PASSWORD:-admin}}"
 BASE="http://localhost:${ODOO_PORT:-8069}"
-[ -f .env ] && { set -a; . ./.env; set +a; BASE="http://localhost:${ODOO_PORT:-8069}"; }
 CJ="$(mktemp)"; trap 'rm -f "$CJ"' EXIT
 fail=0
 
