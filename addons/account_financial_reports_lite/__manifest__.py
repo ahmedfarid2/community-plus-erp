@@ -20,5 +20,5 @@ Interactive view + printable PDF. No Enterprise license required.
         "views/more_reports_views.xml",
     ],
     "installable": True,
-    "application": False,
+    "application": True,
 }

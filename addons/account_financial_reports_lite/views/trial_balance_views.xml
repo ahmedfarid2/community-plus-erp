@@ -56,14 +56,21 @@
         <field name="target">current</field>
     </record>
 
+    <!-- Top-level app so it shows in the Apps launcher (its own icon). -->
     <menuitem id="menu_afr_root"
-              name="Financial Reports (Lite)"
-              parent="account.menu_finance_reports"
-              sequence="99"/>
+              name="Financial Reports"
+              web_icon="account,static/description/icon.png"
+              sequence="80"/>
     <menuitem id="menu_afr_trial_balance"
               name="Trial Balance / P&amp;L / BS"
               parent="menu_afr_root"
               action="action_afr_trial_balance"
               sequence="10"/>
+    <!-- Also keep it under the Invoicing/Accounting › Reporting menu. -->
+    <menuitem id="menu_afr_under_account"
+              name="Financial Reports (Lite)"
+              parent="account.menu_finance_reports"
+              action="action_afr_trial_balance"
+              sequence="99"/>
 
 </odoo>
