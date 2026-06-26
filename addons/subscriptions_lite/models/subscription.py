@@ -85,7 +85,9 @@ class SubscriptionContract(models.Model):
             "res_id": upsell.id, "view_mode": "form", "target": "current",
         }
     auto_post = fields.Boolean(
-        string="Auto-post Invoices", default=False,
+        string="Auto-post Invoices",
+        default=lambda self: self.env["ir.config_parameter"].sudo().get_param(
+            "subscriptions_lite.auto_post_default") in ("True", "true", "1"),
         help="Post generated invoices automatically instead of leaving them in draft.")
     recurring_total = fields.Monetary(compute="_compute_mrr", store=True)
     mrr = fields.Monetary(string="MRR", compute="_compute_mrr", store=True,

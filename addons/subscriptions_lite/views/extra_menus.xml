@@ -9,7 +9,7 @@
         <field name="domain">[('state','=','draft')]</field>
     </record>
     <menuitem id="menu_subscription_quotations" name="Quotations"
-              parent="menu_subscription_lite_root"
+              parent="menu_subscription_lite_sub"
               action="action_subscription_quotations" sequence="12"/>
 
     <!-- ===== Upsells ===== -->
@@ -20,7 +20,7 @@
         <field name="domain">[('is_upsell','=',True)]</field>
     </record>
     <menuitem id="menu_subscription_upsells" name="Upsells"
-              parent="menu_subscription_lite_root"
+              parent="menu_subscription_lite_sub"
               action="action_subscription_upsells" sequence="18"/>
 
     <!-- ===== Retention (cohort pivot by activation month) ===== -->
@@ -94,7 +94,7 @@
 
     <!-- ===== Products submenu (native actions) ===== -->
     <menuitem id="menu_subscription_products_root" name="Products"
-              parent="menu_subscription_lite_root" sequence="40"/>
+              parent="menu_subscription_lite_root" sequence="20"/>
     <menuitem id="menu_subscription_products" name="Products"
               parent="menu_subscription_products_root"
               action="product.product_template_action" sequence="10"/>

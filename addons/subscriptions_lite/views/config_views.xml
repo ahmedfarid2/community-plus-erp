@@ -33,7 +33,7 @@
     </record>
 
     <menuitem id="menu_subscription_to_renew" name="To Renew"
-              parent="menu_subscription_lite_root"
+              parent="menu_subscription_lite_sub"
               action="action_subscription_to_renew" sequence="15"/>
 
     <!-- ===== Customers (subscriptions grouped by customer) ===== -->
@@ -64,7 +64,7 @@
     </record>
 
     <menuitem id="menu_subscription_customers" name="Customers"
-              parent="menu_subscription_lite_root"
+              parent="menu_subscription_lite_sub"
               action="action_subscription_customers" sequence="20"/>
 
 </odoo>

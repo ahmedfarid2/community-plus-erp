@@ -13,6 +13,7 @@
         "views/mrr_log_views.xml",
         "views/config_views.xml",
         "views/extra_menus.xml",
+        "views/settings_views.xml",
     ],
     "installable": True,
     "application": True,

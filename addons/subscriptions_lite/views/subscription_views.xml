@@ -168,8 +168,9 @@
     </record>
 
     <menuitem id="menu_subscription_lite_root" name="Subscriptions" sequence="48"/>
-    <menuitem id="menu_subscription_lite_contract" name="Subscriptions" parent="menu_subscription_lite_root" action="action_subscription_lite_contract" sequence="10"/>
-    <!-- Configuration submenu (Recurring Plans live here, like Enterprise). -->
+    <!-- Top-bar dropdowns mirror Enterprise: Subscriptions / Products / Reporting / Configuration -->
+    <menuitem id="menu_subscription_lite_sub" name="Subscriptions" parent="menu_subscription_lite_root" sequence="10"/>
+    <menuitem id="menu_subscription_lite_contract" name="Subscriptions" parent="menu_subscription_lite_sub" action="action_subscription_lite_contract" sequence="10"/>
     <menuitem id="menu_subscription_lite_config" name="Configuration" parent="menu_subscription_lite_root" sequence="90"/>
     <menuitem id="menu_subscription_lite_plan" name="Recurring Plans" parent="menu_subscription_lite_config" action="action_subscription_lite_plan" sequence="10"/>
 </odoo>
