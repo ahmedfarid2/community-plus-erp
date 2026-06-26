@@ -19,7 +19,7 @@ NAME="${1:-}"
 # shellcheck disable=SC1091
 set -a; . ./.env; set +a
 
-DEFAULT_MODULES="base,crm,sale_management,stock,purchase,account,hr,project,mrp,website"
+DEFAULT_MODULES="base,crm,sale_management,stock,purchase,account,hr,project,mrp,website,account_financial_reports_lite"
 
 # ── Isolated full-stack mode ───────────────────────────────────────────────
 if [ "${2:-}" = "--isolated" ]; then

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_report_afr_trial_balance" model="ir.actions.report">
+        <field name="name">Trial Balance</field>
+        <field name="model">afr.trial.balance</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">account_financial_reports_lite.report_trial_balance_doc</field>
+        <field name="report_file">account_financial_reports_lite.report_trial_balance_doc</field>
+    </record>
+
+    <template id="report_trial_balance_doc">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Trial Balance</h2>
+                        <p>
+                            <strong>Company:</strong> <span t-field="o.company_id.name"/><br/>
+                            <strong>Period:</strong>
+                            <span t-field="o.date_from"/> – <span t-field="o.date_to"/>
+                            (<span t-field="o.target_move"/>)
+                        </p>
+                        <table class="table table-sm o_main_table">
+                            <thead>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Account</th>
+                                    <th class="text-end">Debit</th>
+                                    <th class="text-end">Credit</th>
+                                    <th class="text-end">Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="o.line_ids" t-as="l">
+                                    <td><span t-field="l.code"/></td>
+                                    <td><span t-field="l.account_id.name"/></td>
+                                    <td class="text-end"><span t-field="l.debit"/></td>
+                                    <td class="text-end"><span t-field="l.credit"/></td>
+                                    <td class="text-end"><span t-field="l.balance"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <h3 class="mt-4">Summary</h3>
+                        <table class="table table-sm">
+                            <tr><td>Total Income</td>
+                                <td class="text-end"><span t-field="o.total_income"/></td></tr>
+                            <tr><td>Total Expense</td>
+                                <td class="text-end"><span t-field="o.total_expense"/></td></tr>
+                            <tr><td><strong>Net Profit</strong></td>
+                                <td class="text-end"><strong><span t-field="o.net_profit"/></strong></td></tr>
+                            <tr><td>Total Assets</td>
+                                <td class="text-end"><span t-field="o.total_assets"/></td></tr>
+                            <tr><td>Total Liabilities</td>
+                                <td class="text-end"><span t-field="o.total_liabilities"/></td></tr>
+                            <tr><td>Total Equity</td>
+                                <td class="text-end"><span t-field="o.total_equity"/></td></tr>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

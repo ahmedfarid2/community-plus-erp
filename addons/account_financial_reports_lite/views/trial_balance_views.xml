@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_afr_trial_balance_form" model="ir.ui.view">
+        <field name="name">afr.trial.balance.form</field>
+        <field name="model">afr.trial.balance</field>
+        <field name="arch" type="xml">
+            <form string="Financial Reports">
+                <header>
+                    <button name="action_compute" type="object"
+                            string="Compute" class="btn-primary"/>
+                    <button name="%(action_report_afr_trial_balance)d" type="action"
+                            string="Print PDF" class="btn-secondary"
+                            invisible="not line_ids"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                        </group>
+                        <group>
+                            <field name="target_move"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <group string="Summary" col="6">
+                        <field name="total_income"/>
+                        <field name="total_expense"/>
+                        <field name="net_profit"/>
+                        <field name="total_assets"/>
+                        <field name="total_liabilities"/>
+                        <field name="total_equity"/>
+                    </group>
+                    <field name="line_ids">
+                        <list string="Trial Balance" create="false" edit="false">
+                            <field name="code"/>
+                            <field name="account_id"/>
+                            <field name="account_type"/>
+                            <field name="debit" sum="Debit"/>
+                            <field name="credit" sum="Credit"/>
+                            <field name="balance" sum="Balance"/>
+                            <field name="currency_id" column_invisible="1"/>
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_afr_trial_balance" model="ir.actions.act_window">
+        <field name="name">Financial Reports</field>
+        <field name="res_model">afr.trial.balance</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+    </record>
+
+    <menuitem id="menu_afr_root"
+              name="Financial Reports (Lite)"
+              parent="account.menu_finance_reports"
+              sequence="99"/>
+    <menuitem id="menu_afr_trial_balance"
+              name="Trial Balance / P&amp;L / BS"
+              parent="menu_afr_root"
+              action="action_afr_trial_balance"
+              sequence="10"/>
+
+</odoo>

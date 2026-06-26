@@ -94,11 +94,13 @@ each subdomain's database list returns just its own company.
 
 ## Accounting note (Community vs Enterprise)
 
-Community includes **Invoicing**. Full statutory **Accounting** reports (P&L, balance
-sheet, tax) are an Enterprise (paid) feature; the free **OCA** modules
-(`account-financial-tools`, `account-financial-reporting`) cover most of it — drop them in
-`addons/`. Everything else (CRM, Sales, Inventory, Purchase, HR, Project, MRP, Website) is
-fully featured in Community.
+Community includes **Invoicing** (full double-entry: chart of accounts, journals, journal
+entries, taxes, invoices, payments, bank reconciliation). The Enterprise **Accounting** app
+adds polished financial reports. To get those for free, this repo ships a custom module
+**`account_financial_reports_lite`** (in `addons/`) that adds **Trial Balance, Profit & Loss
+and Balance Sheet** (interactive + PDF) under *Accounting → Reporting → Financial Reports
+(Lite)*. It's installed by default for new companies. Everything else (CRM, Sales,
+Inventory, Purchase, HR, Project, MRP, Website) is fully featured in Community.
 
 ## Path to the cloud
 
