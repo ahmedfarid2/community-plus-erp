@@ -2,108 +2,111 @@
 
 Run **Odoo 19 Community** (free, open-source, unlimited users) on your Mac with Docker.
 Every company gets its **own isolated database** — separate data, separate logins, its own
-installed apps. All standard modules are available: CRM, Sales, Invoicing, Inventory,
-Purchase, Accounting, HR, Project, Manufacturing, Website, and more.
+installed apps — reachable at **`https://<company>.odoo.local`**. All standard modules are
+available: CRM, Sales, Invoicing, Inventory, Purchase, Accounting, HR, Project,
+Manufacturing, Website, and more.
+
+## Tooling — why it's built this way
+
+- **Docker Compose** orchestrates everything (same as your other backends). There is no
+  nx/pnpm here — those are JavaScript tools; Odoo is Python.
+- **`make`** is the task runner / "manager" — `make up`, `make company name=acme`. Run
+  `make help` to see all targets.
+- **nginx reverse proxy + mkcert HTTPS + `*.odoo.local`** follows the project house style
+  (`.docker/dev/nginx/default.conf` + `certs/`, local domain via `/etc/hosts`).
 
 ## Architecture
 
-- **Default — multi-database (recommended to start):** one Odoo container + one PostgreSQL
-  container. Each company is a separate Odoo database. You pick the company's database at
-  login. Lowest resource use, one command to add a company.
-- **Optional — isolated stack per company:** `scripts/new-company.sh <name> --isolated`
-  spins up a completely separate Odoo + PostgreSQL on its own port and volumes. Use this
-  for hard isolation, or as the stepping stone to giving a client their own cloud server.
+- **One Odoo + one PostgreSQL, multi-database.** Each company is a separate Odoo database.
+- **nginx reverse proxy** terminates HTTPS and routes `https://<company>.odoo.local` to Odoo.
+- **Subdomain → company database** (opt-in): set `dbfilter = ^%d$` in
+  `config/odoo.conf.template` so each subdomain serves only its own company (no selector).
+  Off by default — the database selector works everywhere until you turn it on.
+- **Isolated stack per company** (optional): `make isolated name=acme` runs a completely
+  separate Odoo + PostgreSQL on its own port/volumes — the bridge to per-client cloud hosting.
 
 ```
-docker-compose.yml      Odoo + PostgreSQL (multi-database)
-config/odoo.conf.template   base config; rendered to config/odoo.conf on start
-addons/                 your custom modules (mounted into the container)
-scripts/start.sh        render config + start + wait until reachable
-scripts/stop.sh         stop (add --wipe to delete all data)
-scripts/new-company.sh  add a company (DB by default, or --isolated stack)
-scripts/backup.sh       dump one company (DB + filestore)
-scripts/restore.sh      restore one company from a backup
-.env                    versions, ports, passwords (gitignored)
+docker-compose.yml             reverse_proxy (nginx) + db (postgres) + web (odoo)
+.docker/dev/nginx/default.conf nginx config (web + websocket upstreams, HTTPS)
+.docker/dev/nginx/certs/       mkcert certs (gitignored)
+config/odoo.conf.template      base config; rendered to config/odoo.conf on start
+addons/                        your custom modules (mounted into the container)
+Makefile                       task runner — `make help`
+scripts/start.sh|stop.sh       lifecycle
+scripts/new-company.sh         add a company (DB by default, or --isolated stack)
+scripts/backup.sh|restore.sh   per-company backup / restore
+scripts/dev/setup-https.sh     generate local HTTPS certs (mkcert)
+.env                           versions, ports, passwords (gitignored)
 ```
 
 ## Prerequisites
 
-- **Docker Desktop** for Mac (running). Check: `docker compose version`.
+- **Docker Desktop** (running): `docker compose version`
+- **mkcert** for local HTTPS: `brew install mkcert nss`
 
 ## Quick start
 
 ```bash
 cd /Users/farid/Documents/odoo
-cp .env.example .env        # then edit MASTER_PASSWORD / POSTGRES_PASSWORD
-./scripts/start.sh          # pulls images, starts, waits until ready
+cp .env.example .env            # then edit MASTER_PASSWORD / POSTGRES_PASSWORD
+make https                      # one-time: trust local CA + issue *.odoo.local cert
+make up                         # start (renders config, waits until reachable)
 ```
 
-Open **http://localhost:8069**. The database manager appears (master password =
-`MASTER_PASSWORD` from `.env`).
-
-### Create your first company
-
-Two ways:
-
-- **Web UI:** on the database-selector page click **Create database**, enter the master
-  password, a database name (the company), an admin email + password, pick a country, and
-  create. Then go to **Apps** and install what you need.
-- **Command line (pre-installs the full suite):**
-  ```bash
-  ./scripts/new-company.sh acme
-  # → database "acme", login: admin / admin  (change it immediately)
-  ```
-  Custom app list: `./scripts/new-company.sh acme base,crm,sale_management,stock,account`
-
-### Add another company
+Add the local domains to `/etc/hosts` (once, sudo):
 
 ```bash
-./scripts/new-company.sh globex
+sudo sh -c 'echo "127.0.0.1 odoo.local acme.odoo.local globex.odoo.local" >> /etc/hosts'
 ```
-`acme` and `globex` are fully separate — different users, products, and data. At login you
-choose which company database to enter.
 
-### Back up / move a company
+Open **http://localhost:8069** (admin / database manager) — master password =
+`MASTER_PASSWORD` from `.env`.
+
+### Create a company
 
 ```bash
-./scripts/backup.sh acme
-# → backups/acme-<timestamp>.dump  and  ...filestore.tar.gz
-./scripts/restore.sh acme_copy backups/acme-<ts>.dump backups/acme-<ts>.filestore.tar.gz
+make company name=acme                       # full standard suite
+make company name=globex modules=base,crm,sale_management,stock   # custom app set
 ```
+- Subdomain: **https://acme.odoo.local**
+- Direct/admin: **http://localhost:8069** → pick database `acme`
+- Login: `admin` / `admin` — **change it on first login**
 
-### Stop / start
+### Daily commands
 
 ```bash
-./scripts/stop.sh           # stop, keep all data
-./scripts/start.sh          # start again
-./scripts/stop.sh --wipe    # DANGER: delete every company's data
+make ps                 # status
+make logs               # tail Odoo logs
+make backup db=acme     # dump one company (DB + filestore)
+make shell db=acme      # Odoo python shell
+make psql db=acme       # SQL console
+make down               # stop (keeps data)
+make wipe               # DANGER: delete ALL company data
 ```
+
+### Turn on subdomain-per-company (true multi-tenant)
+
+Uncomment `dbfilter = ^%d$` in `config/odoo.conf.template`, then `make restart`. Now
+`https://acme.odoo.local` serves **only** the `acme` database (no selector). Verified:
+each subdomain's database list returns just its own company.
 
 ## Accounting note (Community vs Enterprise)
 
-Community includes **Invoicing** (customer/vendor bills, payments). Full double-entry
-**Accounting** reports (P&L, balance sheet, tax returns) are an Enterprise (paid) feature.
-The community/OCA accounting modules cover most of this for free — install OCA
-`account-financial-tools` / `account-financial-reporting` into `addons/` when you need the
-full reports. Everything else (CRM, Sales, Inventory, Purchase, HR, Project, MRP, Website)
-is fully featured in Community.
+Community includes **Invoicing**. Full statutory **Accounting** reports (P&L, balance
+sheet, tax) are an Enterprise (paid) feature; the free **OCA** modules
+(`account-financial-tools`, `account-financial-reporting`) cover most of it — drop them in
+`addons/`. Everything else (CRM, Sales, Inventory, Purchase, HR, Project, MRP, Website) is
+fully featured in Community.
 
-## Custom modules
+## Path to the cloud
 
-Put a module folder in `addons/`, then in Odoo enable developer mode →
-**Apps → Update Apps List** → install it. No infra change needed — `addons/` is already
-mounted at `/mnt/extra-addons`.
-
-## Path to the cloud (later)
-
-The same `docker-compose.yml` runs on any Linux VPS (DigitalOcean, Hetzner, AWS…). For
-production add a reverse proxy (Caddy or Nginx) terminating HTTPS in front of port 8069,
-set strong passwords, set `proxy_mode = True` in `odoo.conf`, and schedule `backup.sh`.
+The same compose runs on a Linux VPS: keep the nginx `reverse_proxy`, swap mkcert certs for
+Let's Encrypt (or Caddy), point a real domain's wildcard `*.yourdomain.com` at the server,
+set strong passwords, and schedule `make backup`. `proxy_mode = True` is already set.
 
 ## Troubleshooting
 
-- **Logs:** `docker compose logs -f web`
-- **Containers:** `docker compose ps`
-- **Port 8069 in use:** change `ODOO_PORT` in `.env`, then `./scripts/start.sh`.
-- **Forgot master password:** it's `MASTER_PASSWORD` in `.env`; re-run `./scripts/start.sh`
-  to re-render `config/odoo.conf`.
+- **Port 80/443 in use:** set `HTTP_PORT`/`HTTPS_PORT` in `.env` (e.g. 8080/8443), `make restart`.
+- **Cert warning in browser:** re-run `make https`, restart the browser.
+- **Subdomain not resolving:** confirm the `/etc/hosts` line (`make hosts` prints it).
+- **Logs:** `make logs` · **Status:** `make ps`

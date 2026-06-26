@@ -67,5 +67,7 @@ echo "(first run installs many apps — this can take a few minutes)"
 docker compose run --rm web \
   odoo -d "$NAME" -i "$MODULES" --stop-after-init --without-demo=all
 echo "✓ company '$NAME' created."
-echo "  Open http://localhost:${ODOO_PORT:-8069}  →  select database '$NAME'"
+echo "  Direct:    http://localhost:${ODOO_PORT:-8069}  →  select database '$NAME'"
+echo "  Subdomain: https://${NAME}.odoo.local  (run 'make https' once, then add to /etc/hosts:)"
+echo "             sudo sh -c 'echo \"127.0.0.1 ${NAME}.odoo.local\" >> /etc/hosts'"
 echo "  Login: admin / admin   (change the password immediately)"

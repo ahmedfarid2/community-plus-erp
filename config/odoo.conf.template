@@ -15,6 +15,16 @@ db_user = odoo
 ; Show the database selector so each company picks its own DB at login.
 list_db = True
 
+; Behind the nginx reverse proxy — trust X-Forwarded-* headers.
+proxy_mode = True
+
+; --- Multi-tenant by subdomain (opt-in) ---------------------------------
+; Uncomment to map each company subdomain to its own database, so
+; https://acme.odoo.local serves ONLY the "acme" database (no selector).
+; Direct http://localhost:8069 keeps the full database manager for admin.
+; %d = first subdomain of the request host.
+; dbfilter = ^%d$
+
 ; Reasonable local timeouts (raise for big imports).
 limit_time_cpu = 600
 limit_time_real = 1200

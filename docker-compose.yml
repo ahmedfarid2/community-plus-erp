@@ -1,23 +1,42 @@
-# Odoo Community + PostgreSQL — single instance, multi-database.
+# Odoo Community + PostgreSQL + nginx reverse proxy — single instance, multi-database.
 # Each company = one Odoo database (isolated data, own users, unlimited users each).
-# Versions / ports / passwords come from .env (see .env.example).
+# Reached at https://<company>.odoo.local via the reverse proxy, or http://localhost:8069
+# directly (database manager / admin). Versions/ports/passwords come from .env.
 
 services:
+  reverse_proxy:
+    image: nginx:stable-alpine
+    container_name: odoo-reverse-proxy
+    depends_on:
+      - web
+    ports:
+      - '${HTTP_PORT:-80}:80'
+      - '${HTTPS_PORT:-443}:443'
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    volumes:
+      - ./.docker/dev/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./.docker/dev/nginx/certs:/etc/nginx/certs:ro
+    networks:
+      - odoo
+    restart: unless-stopped
+
   db:
     image: postgres:${PG_TAG:-16}
     container_name: odoo-db
     environment:
       POSTGRES_USER: odoo
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-odoo}
-      # Odoo manages its own per-company databases; this is just the maintenance DB.
       POSTGRES_DB: postgres
     volumes:
       - odoo-db-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "odoo"]
+      test: ['CMD', 'pg_isready', '-U', 'odoo']
       interval: 5s
       timeout: 5s
       retries: 12
+    networks:
+      - odoo
     restart: unless-stopped
 
   web:
@@ -27,10 +46,9 @@ services:
       db:
         condition: service_healthy
     ports:
-      - "${ODOO_PORT:-8069}:8069"        # main web UI
-      - "${ODOO_CHAT_PORT:-8072}:8072"   # longpolling / live chat / discuss
+      - '${ODOO_PORT:-8069}:8069'        # direct access: database manager / admin
+      - '${ODOO_CHAT_PORT:-8072}:8072'   # longpolling / websocket (dev convenience)
     environment:
-      # Consumed by the Odoo image entrypoint for the DB connection.
       HOST: db
       USER: odoo
       PASSWORD: ${POSTGRES_PASSWORD:-odoo}
@@ -38,8 +56,16 @@ services:
       - odoo-web-data:/var/lib/odoo      # filestore (attachments, per-DB)
       - ./config:/etc/odoo               # odoo.conf (rendered by start.sh)
       - ./addons:/mnt/extra-addons       # your custom modules
+    networks:
+      - odoo
     restart: unless-stopped
+
+networks:
+  odoo:
+    driver: bridge
 
 volumes:
   odoo-db-data:
+    driver: local
   odoo-web-data:
+    driver: local
