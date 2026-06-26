@@ -8,7 +8,7 @@
 #   make logs
 
 .DEFAULT_GOAL := help
-.PHONY: help up down restart logs ps https hosts company isolated backup restore shell psql wipe
+.PHONY: help up down restart logs ps https hosts company isolated seed backup restore shell psql wipe
 
 name    ?=
 db      ?=
@@ -45,6 +45,10 @@ company: ## Create a company DB:  make company name=acme [modules=...]
 isolated: ## Create a fully separate per-company stack:  make isolated name=acme
 	@test -n "$(name)" || { echo "Usage: make isolated name=<db>"; exit 1; }
 	./scripts/new-company.sh $(name) --isolated
+
+seed: ## Seed demo data into a company:  make seed db=acme [reset=1]
+	@test -n "$(db)" || { echo "Usage: make seed db=<name> [reset=1]"; exit 1; }
+	./scripts/dev/seed.sh $(db) $(if $(reset),--reset,)
 
 backup: ## Back up one company:  make backup db=acme
 	@test -n "$(db)" || { echo "Usage: make backup db=<name>"; exit 1; }
