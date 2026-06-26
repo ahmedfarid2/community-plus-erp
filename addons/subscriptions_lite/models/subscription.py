@@ -72,6 +72,24 @@ class SubscriptionContract(models.Model):
     def action_reset(self):
         self.write({"state": "draft"})
 
+    @api.model
+    def _cron_generate_due_invoices(self):
+        """Scheduled: invoice every active contract whose next date is due."""
+        today = fields.Date.context_today(self)
+        due = self.search([("state", "=", "active"),
+                           ("next_invoice_date", "<=", today),
+                           ("line_ids", "!=", False)])
+        count = 0
+        for contract in due:
+            try:
+                # Savepoint isolates a failure to this contract only.
+                with self.env.cr.savepoint():
+                    contract.action_create_invoice()
+                count += 1
+            except Exception:  # noqa: BLE001 - skip one bad contract, keep going
+                continue
+        return count
+
     def action_create_invoice(self):
         Move = self.env["account.move"]
         created = self.env["account.move"]
@@ -80,6 +98,11 @@ class SubscriptionContract(models.Model):
                 raise UserError("Only active subscriptions can create invoices.")
             if not contract.line_ids:
                 raise UserError("Add invoice lines first.")
+            journal = contract.journal_id or self.env["account.journal"].search(
+                [("type", "=", "sale"), ("company_id", "=", contract.company_id.id)],
+                limit=1)
+            if not journal:
+                raise UserError("No Sales journal found for %s." % contract.company_id.name)
             invoice_lines = []
             for line in contract.line_ids:
                 vals = {
@@ -97,7 +120,7 @@ class SubscriptionContract(models.Model):
                 "partner_id": contract.partner_id.id,
                 "invoice_date": contract.next_invoice_date,
                 "invoice_origin": contract.name,
-                "journal_id": contract.journal_id.id or False,
+                "journal_id": journal.id,
                 "invoice_line_ids": invoice_lines,
             })
             contract.next_invoice_date = contract._next_date()

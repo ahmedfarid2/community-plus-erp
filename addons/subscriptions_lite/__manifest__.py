@@ -8,6 +8,7 @@
     "depends": ["account", "mail", "product"],
     "data": [
         "security/ir.model.access.csv",
+        "data/cron.xml",
         "views/subscription_views.xml",
     ],
     "installable": True,
