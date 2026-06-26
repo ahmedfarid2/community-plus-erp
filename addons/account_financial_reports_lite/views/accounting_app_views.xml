@@ -184,6 +184,11 @@
     </record>
 
     <!-- ================= Menus ================= -->
+    <!-- Landing page: the Community journal dashboard (Sales / Bank / Cash cards). -->
+    <menuitem id="menu_afr_dashboard" name="Dashboard"
+              parent="menu_afr_root"
+              action="account.open_account_journal_dashboard_kanban"
+              sequence="1"/>
     <menuitem id="menu_afr_partner_ledger" name="Partner Ledger"
               parent="menu_afr_reporting" action="action_afr_partner_ledger"
               sequence="25"/>
