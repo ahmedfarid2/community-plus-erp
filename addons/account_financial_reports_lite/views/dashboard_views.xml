@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_afr_dashboard_form" model="ir.ui.view">
+        <field name="name">afr.dashboard.form</field>
+        <field name="model">afr.dashboard</field>
+        <field name="arch" type="xml">
+            <form string="Accounting Overview" create="false" edit="false">
+                <header>
+                    <button name="action_refresh" type="object" string="Refresh"
+                            class="btn-secondary"/>
+                </header>
+                <sheet>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="company_id" invisible="1"/>
+
+                    <div class="row g-3">
+                        <div class="col-lg-3 col-md-6">
+                            <div class="card h-100"><div class="card-body text-center">
+                                <div class="text-muted">Cash &amp; Bank</div>
+                                <h2 class="text-info mb-0"><field name="cash_balance"/></h2>
+                            </div></div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="card h-100"><div class="card-body text-center">
+                                <div class="text-muted">Receivable</div>
+                                <h2 class="text-success mb-0"><field name="receivable"/></h2>
+                            </div></div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="card h-100"><div class="card-body text-center">
+                                <div class="text-muted">Payable</div>
+                                <h2 class="text-danger mb-0"><field name="payable"/></h2>
+                            </div></div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="card h-100"><div class="card-body text-center">
+                                <div class="text-muted">Net Profit (YTD)</div>
+                                <h2 class="text-primary mb-0"><field name="net_profit_ytd"/></h2>
+                            </div></div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mt-1">
+                        <div class="col-lg-3 col-md-6">
+                            <div class="card h-100"><div class="card-body text-center">
+                                <div class="text-muted">Revenue (YTD)</div>
+                                <h3 class="mb-0"><field name="revenue_ytd"/></h3>
+                            </div></div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="card h-100"><div class="card-body text-center">
+                                <div class="text-muted">Expenses (YTD)</div>
+                                <h3 class="mb-0"><field name="expense_ytd"/></h3>
+                            </div></div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="card h-100"><div class="card-body text-center">
+                                <div class="text-muted">Unpaid Invoices</div>
+                                <h3 class="mb-0"><field name="unpaid_invoice_amount"/></h3>
+                                <small class="text-muted">
+                                    <field name="unpaid_invoice_count"/> open ·
+                                    <field name="overdue_amount"/> overdue
+                                </small>
+                            </div></div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="card h-100"><div class="card-body text-center">
+                                <div class="text-muted">Bills to Pay</div>
+                                <h3 class="mb-0"><field name="bill_to_pay_amount"/></h3>
+                                <small class="text-muted">
+                                    <field name="bill_to_pay_count"/> open
+                                </small>
+                            </div></div>
+                        </div>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_afr_dashboard" model="ir.actions.act_window">
+        <field name="name">Overview</field>
+        <field name="res_model">afr.dashboard</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+    </record>
+
+    <menuitem id="menu_afr_overview" name="Overview"
+              parent="menu_afr_root" action="action_afr_dashboard" sequence="2"/>
+
+</odoo>

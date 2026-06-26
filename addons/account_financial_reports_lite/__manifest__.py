@@ -20,6 +20,7 @@ Interactive view + printable PDF. No Enterprise license required.
         "views/more_reports_views.xml",
         "views/tax_report_views.xml",
         "views/accounting_app_views.xml",
+        "views/dashboard_views.xml",
     ],
     "installable": True,
     "application": True,

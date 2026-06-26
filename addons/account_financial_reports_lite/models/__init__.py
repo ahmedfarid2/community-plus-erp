@@ -5,3 +5,4 @@ from . import tax_report
 from . import partner_ledger
 from . import asset
 from . import budget
+from . import dashboard

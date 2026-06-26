@@ -13,3 +13,4 @@ access_afr_asset,afr.asset,model_afr_asset,account.group_account_invoice,1,1,1,1
 access_afr_asset_line,afr.asset.line,model_afr_asset_line,account.group_account_invoice,1,1,1,1
 access_afr_budget,afr.budget,model_afr_budget,account.group_account_invoice,1,1,1,1
 access_afr_budget_line,afr.budget.line,model_afr_budget_line,account.group_account_invoice,1,1,1,1
+access_afr_dashboard,afr.dashboard,model_afr_dashboard,account.group_account_invoice,1,1,1,1
