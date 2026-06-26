@@ -11,7 +11,7 @@ unlicensed Odoo Enterprise code.
 Feature source labels:
 - Native Community: CRM, Sales, Purchase, Inventory, Accounting/Invoicing, HR,
   Project, Manufacturing, Website/eCommerce, Point of Sale, Expenses.
-- Custom clean-room modules: Loans Lite, Deferred Revenue/Expense Lite.
+- Custom clean-room modules: Loans Lite, Deferred Revenue/Expense Lite, Review Reports Lite.
 - Open-source addon: optional third-party addons audited and installed outside
   this pack when available for the target Odoo version.
 """,
@@ -21,6 +21,7 @@ Feature source labels:
         "account",
         "account_deferred_lite",
         "account_loan_lite",
+        "account_review_lite",
         "crm",
         "hr",
         "hr_expense",

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Sales: confirmed orders ready to invoice -->
+    <record id="action_review_invoices_to_issue" model="ir.actions.act_window">
+        <field name="name">Invoices To Be Issued</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state','=','sale'),('invoice_status','=','to invoice')]</field>
+        <field name="context">{'search_default_sales': 1}</field>
+    </record>
+
+    <!-- Sales: invoiced but goods not fully delivered -->
+    <record id="action_review_invoiced_not_delivered" model="ir.actions.act_window">
+        <field name="name">Invoiced Not Delivered</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('invoice_status','=','invoiced'),('review_fully_delivered','=',False),('state','=','sale')]</field>
+    </record>
+
+    <!-- Purchases: confirmed orders ready to bill -->
+    <record id="action_review_bills_to_receive" model="ir.actions.act_window">
+        <field name="name">Bills To Receive</field>
+        <field name="res_model">purchase.order</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state','in',('purchase','done')),('invoice_status','=','to invoice')]</field>
+    </record>
+
+    <!-- Purchases: billed but goods not fully received -->
+    <record id="action_review_billed_not_received" model="ir.actions.act_window">
+        <field name="name">Billed Not Received</field>
+        <field name="res_model">purchase.order</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('invoice_status','=','invoiced'),('review_fully_received','=',False),('state','in',('purchase','done'))]</field>
+    </record>
+
+    <!-- Menus: a "Review" section in the Accounting app -->
+    <menuitem id="menu_review_root" name="Review (Lite)"
+              parent="account.menu_finance" sequence="24"/>
+    <menuitem id="menu_review_invoices_to_issue" name="Invoices To Be Issued"
+              parent="menu_review_root" action="action_review_invoices_to_issue" sequence="10"/>
+    <menuitem id="menu_review_invoiced_not_delivered" name="Invoiced Not Delivered"
+              parent="menu_review_root" action="action_review_invoiced_not_delivered" sequence="20"/>
+    <menuitem id="menu_review_bills_to_receive" name="Bills To Receive"
+              parent="menu_review_root" action="action_review_bills_to_receive" sequence="30"/>
+    <menuitem id="menu_review_billed_not_received" name="Billed Not Received"
+              parent="menu_review_root" action="action_review_billed_not_received" sequence="40"/>
+
+</odoo>
