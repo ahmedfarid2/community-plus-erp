@@ -69,6 +69,10 @@ seed: ## Seed demo data into a company:  make seed db=acme [reset=1]
 smoke: ## Smoke-test login + data on a company:  make smoke db=acme
 	@./scripts/dev/smoke-test.sh $(if $(db),$(db),acme)
 
+onboard: ## One-command client onboarding: make onboard db=acme cc=EG company="Acme LLC" [seed=1] [allapps=1]
+	@test -n "$(db)" -a -n "$(company)" || { echo "Usage: make onboard db=<db> cc=<CC> company=\"<Name>\" [seed=1] [allapps=1]"; exit 1; }
+	./scripts/onboard-client.sh $(db) $(if $(cc),$(cc),US) "$(company)" $(if $(seed),--seed,) $(if $(allapps),--all-apps,)
+
 client-init: ## Create a sellable Community Plus client: make client-init name=acme [pack=sme_trading country=EG]
 	@test -n "$(name)" || { echo "Usage: make client-init name=<db> [pack=sme_trading country=EG]"; exit 1; }
 	./scripts/client-init.sh $(name) $(pack) $(country) "$(if $(company),$(company),$(name))"
