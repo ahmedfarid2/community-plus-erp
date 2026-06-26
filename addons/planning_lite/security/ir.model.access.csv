@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_planning_lite_slot_user,planning.lite.slot.user,model_planning_lite_slot,base.group_user,1,0,0,0
+access_planning_lite_slot_hr,planning.lite.slot.hr,model_planning_lite_slot,hr.group_hr_user,1,1,1,1
