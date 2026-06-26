@@ -225,5 +225,80 @@ if has("hr.employee"):
 else:
     print("– hr: skipped (hr app not installed)")
 
+# ── Community Plus apps: Approvals / Documents / Helpdesk / Subscriptions ────
+import base64 as _b64
+seed_customers = Partner.search([("ref", "like", "SEED-C-%")])
+
+if has("business.approval.request"):
+    Cat = env["business.approval.category"]
+    cat = (Cat.search([("name", "=", "Purchase Approval")], limit=1)
+           or Cat.create({"name": "Purchase Approval"}))
+    Req = env["business.approval.request"]
+    made = 0
+    for i in range(1, 4):
+        nm = f"SEED Approval {i:02d}"
+        if Req.search([("name", "=", nm)], limit=1):
+            continue
+        Req.create({"name": nm, "category_id": cat.id})
+        made += 1
+    print(f"✓ approvals: +{made}")
+else:
+    print("– approvals: skipped (app not installed)")
+
+if has("documents.lite.document"):
+    Folder = env["documents.lite.folder"]
+    folder = (Folder.search([("name", "=", "Contracts")], limit=1)
+              or Folder.create({"name": "Contracts"}))
+    Doc = env["documents.lite.document"]
+    made = 0
+    for i in range(1, 4):
+        nm = f"SEED Doc {i:02d}.pdf"
+        if Doc.search([("name", "=", nm)], limit=1):
+            continue
+        Doc.create({"name": nm, "folder_id": folder.id,
+                    "document": _b64.b64encode(b"%PDF-1.4 seed")})
+        made += 1
+    print(f"✓ documents: +{made}")
+else:
+    print("– documents: skipped (app not installed)")
+
+if has("helpdesk.lite.ticket"):
+    Team = env["helpdesk.lite.team"]
+    team = (Team.search([("name", "=", "Support")], limit=1)
+            or Team.create({"name": "Support"}))
+    Ticket = env["helpdesk.lite.ticket"]
+    made = 0
+    for i in range(1, 5):
+        nm = f"SEED Ticket {i:02d}"
+        if Ticket.search([("name", "=", nm)], limit=1):
+            continue
+        tv = {"name": nm}
+        if "team_id" in Ticket._fields:
+            tv["team_id"] = team.id
+        if "partner_id" in Ticket._fields and seed_customers:
+            tv["partner_id"] = seed_customers[i % len(seed_customers)].id
+        Ticket.create(tv)
+        made += 1
+    print(f"✓ helpdesk tickets: +{made}")
+else:
+    print("– helpdesk: skipped (app not installed)")
+
+if has("subscription.lite.contract") and seed_customers:
+    Plan = env["subscription.lite.plan"]
+    plan = (Plan.search([("name", "=", "Monthly")], limit=1)
+            or Plan.create({"name": "Monthly", "interval_number": 1}))
+    Sub = env["subscription.lite.contract"]
+    made = 0
+    for i in range(1, 4):
+        nm = f"SEED-SUB-{i:03d}"
+        if Sub.search([("name", "=", nm)], limit=1):
+            continue
+        Sub.create({"name": nm, "plan_id": plan.id,
+                    "partner_id": seed_customers[i % len(seed_customers)].id})
+        made += 1
+    print(f"✓ subscriptions: +{made}")
+else:
+    print("– subscriptions: skipped (app not installed)")
+
 env.cr.commit()
 print("✓ seed committed.")
