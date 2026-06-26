@@ -17,6 +17,7 @@ Interactive view + printable PDF. No Enterprise license required.
         "security/ir.model.access.csv",
         "report/financial_report.xml",
         "views/trial_balance_views.xml",
+        "views/more_reports_views.xml",
     ],
     "installable": True,
     "application": False,

@@ -97,9 +97,11 @@ each subdomain's database list returns just its own company.
 Community includes **Invoicing** (full double-entry: chart of accounts, journals, journal
 entries, taxes, invoices, payments, bank reconciliation). The Enterprise **Accounting** app
 adds polished financial reports. To get those for free, this repo ships a custom module
-**`account_financial_reports_lite`** (in `addons/`) that adds **Trial Balance, Profit & Loss
-and Balance Sheet** (interactive + PDF) under *Accounting → Reporting → Financial Reports
-(Lite)*. It's installed by default for new companies. Everything else (CRM, Sales,
+**`account_financial_reports_lite`** (in `addons/`) that adds **Trial Balance, Profit & Loss,
+Balance Sheet, General Ledger and Aged Receivable/Payable** (interactive + PDF) under
+*Accounting → Reporting → Financial Reports (Lite)*. It's installed by default for new
+companies. (Don't click the **"Upgrade"** button on the Accounting app card — that's Odoo's
+Enterprise upsell; these reports replace the paid ones for free.) Everything else (CRM, Sales,
 Inventory, Purchase, HR, Project, MRP, Website) is fully featured in Community.
 
 ## Path to the cloud

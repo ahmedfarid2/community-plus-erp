@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============ General Ledger ============ -->
+    <record id="view_afr_general_ledger_form" model="ir.ui.view">
+        <field name="name">afr.general.ledger.form</field>
+        <field name="model">afr.general.ledger</field>
+        <field name="arch" type="xml">
+            <form string="General Ledger">
+                <header>
+                    <button name="action_compute" type="object"
+                            string="Compute" class="btn-primary"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                        </group>
+                        <group>
+                            <field name="target_move"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <field name="line_ids">
+                        <list string="General Ledger" create="false" edit="false"
+                              default_order="account_id, date">
+                            <field name="account_id"/>
+                            <field name="date"/>
+                            <field name="move_name"/>
+                            <field name="label"/>
+                            <field name="partner_id" optional="show"/>
+                            <field name="debit" sum="Debit"/>
+                            <field name="credit" sum="Credit"/>
+                            <field name="balance_running"/>
+                            <field name="currency_id" column_invisible="1"/>
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_afr_general_ledger" model="ir.actions.act_window">
+        <field name="name">General Ledger</field>
+        <field name="res_model">afr.general.ledger</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+    </record>
+
+    <!-- ============ Aged Receivable / Payable ============ -->
+    <record id="view_afr_aged_partner_form" model="ir.ui.view">
+        <field name="name">afr.aged.partner.form</field>
+        <field name="model">afr.aged.partner</field>
+        <field name="arch" type="xml">
+            <form string="Aged Partner Balance">
+                <header>
+                    <button name="action_compute" type="object"
+                            string="Compute" class="btn-primary"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="account_type"/>
+                            <field name="as_of_date"/>
+                        </group>
+                        <group>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <field name="line_ids">
+                        <list string="Aged Balance" create="false" edit="false">
+                            <field name="partner_id"/>
+                            <field name="not_due" sum="Not Due"/>
+                            <field name="b_1_30" sum="1-30"/>
+                            <field name="b_31_60" sum="31-60"/>
+                            <field name="b_61_90" sum="61-90"/>
+                            <field name="b_91_120" sum="91-120"/>
+                            <field name="b_over_120" sum="120+"/>
+                            <field name="total" sum="Total"/>
+                            <field name="currency_id" column_invisible="1"/>
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_afr_aged_partner" model="ir.actions.act_window">
+        <field name="name">Aged Receivable / Payable</field>
+        <field name="res_model">afr.aged.partner</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+    </record>
+
+    <!-- ============ Menus ============ -->
+    <menuitem id="menu_afr_general_ledger" name="General Ledger"
+              parent="menu_afr_root" action="action_afr_general_ledger" sequence="20"/>
+    <menuitem id="menu_afr_aged_partner" name="Aged Receivable / Payable"
+              parent="menu_afr_root" action="action_afr_aged_partner" sequence="30"/>
+
+</odoo>

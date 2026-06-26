@@ -1,3 +1,7 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_afr_trial_balance,afr.trial.balance,model_afr_trial_balance,account.group_account_invoice,1,1,1,1
 access_afr_trial_balance_line,afr.trial.balance.line,model_afr_trial_balance_line,account.group_account_invoice,1,1,1,1
+access_afr_general_ledger,afr.general.ledger,model_afr_general_ledger,account.group_account_invoice,1,1,1,1
+access_afr_general_ledger_line,afr.general.ledger.line,model_afr_general_ledger_line,account.group_account_invoice,1,1,1,1
+access_afr_aged_partner,afr.aged.partner,model_afr_aged_partner,account.group_account_invoice,1,1,1,1
+access_afr_aged_partner_line,afr.aged.partner.line,model_afr_aged_partner_line,account.group_account_invoice,1,1,1,1
