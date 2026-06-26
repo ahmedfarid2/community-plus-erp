@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_account_loan_lite_list" model="ir.ui.view">
+        <field name="name">account.loan.lite.list</field>
+        <field name="model">account.loan.lite</field>
+        <field name="arch" type="xml">
+            <list string="Loans">
+                <field name="name"/>
+                <field name="start_date"/>
+                <field name="principal"/>
+                <field name="interest_rate"/>
+                <field name="total_interest"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'running'"
+                       decoration-muted="state == 'closed'"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_account_loan_lite_form" model="ir.ui.view">
+        <field name="name">account.loan.lite.form</field>
+        <field name="model">account.loan.lite</field>
+        <field name="arch" type="xml">
+            <form string="Loan">
+                <header>
+                    <button name="action_compute_schedule" type="object"
+                            string="Compute Schedule" class="btn-primary"
+                            invisible="state == 'closed'"/>
+                    <button name="action_close" type="object" string="Close"
+                            invisible="state != 'running'"/>
+                    <button name="action_set_draft" type="object" string="Reset to Draft"
+                            invisible="state == 'draft'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="e.g. Bank Term Loan"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="principal"/>
+                            <field name="interest_rate"/>
+                            <field name="start_date"/>
+                        </group>
+                        <group>
+                            <field name="term_number"/>
+                            <field name="term_period"/>
+                            <field name="total_interest"/>
+                            <field name="total_payment"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <field name="line_ids">
+                        <list string="Amortization Schedule" create="false" edit="false">
+                            <field name="sequence"/>
+                            <field name="date"/>
+                            <field name="principal_amount"/>
+                            <field name="interest_amount"/>
+                            <field name="payment_amount"/>
+                            <field name="remaining_balance"/>
+                            <field name="currency_id" column_invisible="1"/>
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_account_loan_lite" model="ir.actions.act_window">
+        <field name="name">Loans</field>
+        <field name="res_model">account.loan.lite</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_account_loan_lite" name="Loans"
+              parent="account.menu_finance" action="action_account_loan_lite"
+              sequence="25"/>
+
+</odoo>
