@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_fsm_lite_order,fsm.lite.order,model_fsm_lite_order,base.group_user,1,1,1,1
