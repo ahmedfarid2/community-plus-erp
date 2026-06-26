@@ -42,9 +42,36 @@
     </record>
 
     <record id="action_mrr_log" model="ir.actions.act_window">
-        <field name="name">MRR Evolution</field>
+        <field name="name">MRR Timeline</field>
         <field name="res_model">subscription.lite.mrr.log</field>
         <field name="view_mode">graph,list,pivot</field>
+    </record>
+
+    <!-- MRR Breakdown: new vs churned vs net, per month -->
+    <record id="view_mrr_log_breakdown_graph" model="ir.ui.view">
+        <field name="name">subscription.lite.mrr.log.breakdown</field>
+        <field name="model">subscription.lite.mrr.log</field>
+        <field name="arch" type="xml">
+            <graph string="MRR Breakdown" type="bar" stacked="0">
+                <field name="date" interval="month"/>
+                <field name="new_mrr" type="measure"/>
+                <field name="churned_mrr" type="measure"/>
+                <field name="net_new_mrr" type="measure"/>
+            </graph>
+        </field>
+    </record>
+    <record id="action_mrr_breakdown" model="ir.actions.act_window">
+        <field name="name">MRR Breakdown</field>
+        <field name="res_model">subscription.lite.mrr.log</field>
+        <field name="view_mode">graph,pivot,list</field>
+        <field name="view_id" ref="view_mrr_log_breakdown_graph"/>
+    </record>
+
+    <!-- Subscriptions analysis: contracts by status/plan -->
+    <record id="action_subscription_analysis" model="ir.actions.act_window">
+        <field name="name">Subscriptions</field>
+        <field name="res_model">subscription.lite.contract</field>
+        <field name="view_mode">graph,pivot,list</field>
     </record>
 
     <record id="action_snapshot_mrr_now" model="ir.actions.server">
@@ -56,8 +83,14 @@
 
     <menuitem id="menu_subscription_lite_reporting" name="Reporting"
               parent="menu_subscription_lite_root" sequence="30"/>
-    <menuitem id="menu_mrr_log" name="MRR Evolution"
+    <menuitem id="menu_subscription_analysis" name="Subscriptions"
+              parent="menu_subscription_lite_reporting" action="action_subscription_analysis"
+              sequence="5"/>
+    <menuitem id="menu_mrr_breakdown" name="MRR Breakdown"
+              parent="menu_subscription_lite_reporting" action="action_mrr_breakdown"
+              sequence="15"/>
+    <menuitem id="menu_mrr_log" name="MRR Timeline"
               parent="menu_subscription_lite_reporting" action="action_mrr_log"
-              sequence="10"/>
+              sequence="20"/>
 
 </odoo>

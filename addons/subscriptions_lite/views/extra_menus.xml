@@ -44,7 +44,7 @@
     </record>
     <menuitem id="menu_subscription_retention" name="Retention"
               parent="menu_subscription_lite_reporting"
-              action="action_subscription_retention" sequence="20"/>
+              action="action_subscription_retention" sequence="10"/>
 
     <!-- ===== Quotation Templates ===== -->
     <record id="view_subscription_template_list" model="ir.ui.view">
