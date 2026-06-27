@@ -47,13 +47,5 @@ class ProcurementPerformanceReview(models.Model):
         Profile = self.env["procurement.vendor.profile"]
         for vendor in self.mapped("vendor_id"):
             profile = Profile.search([("partner_id", "=", vendor.id)], limit=1)
-            if not profile:
-                continue
-            reviews = self.search([("vendor_id", "=", vendor.id)])
-            if reviews:
-                profile.write({
-                    "quality_score": sum(reviews.mapped("quality_rating")) / len(reviews),
-                    "delivery_score": sum(reviews.mapped("delivery_rating")) / len(reviews),
-                    "price_score": sum(reviews.mapped("price_rating")) / len(reviews),
-                    "service_score": sum(reviews.mapped("service_rating")) / len(reviews),
-                })
+            if profile:
+                profile._recompute_stats()

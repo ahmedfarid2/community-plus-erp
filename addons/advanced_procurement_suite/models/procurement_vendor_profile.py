@@ -36,16 +36,13 @@ class ProcurementVendorProfile(models.Model):
     currency_id = fields.Many2one(
         "res.currency", default=lambda s: s.env.company.currency_id)
 
-    average_delivery_delay_days = fields.Float(compute="_compute_performance",
-                                               store=True)
-    on_time_delivery_rate = fields.Float(compute="_compute_performance",
-                                         store=True, string="On-time %")
-    total_orders_count = fields.Integer(compute="_compute_performance",
-                                        store=True)
+    # Performance aggregates — recomputed from reviews by _recompute_stats()
+    # (reviews link to res.partner, not the profile, so we search by partner).
+    average_delivery_delay_days = fields.Float(readonly=True)
+    on_time_delivery_rate = fields.Float(string="On-time %", readonly=True)
+    total_orders_count = fields.Integer(readonly=True)
     total_spend = fields.Monetary(compute="_compute_spend", store=True,
                                   currency_field="currency_id")
-    review_ids = fields.One2many("procurement.performance.review", "vendor_id",
-                                 string="Reviews")
     active = fields.Boolean(default=True)
     notes = fields.Text()
 
@@ -64,20 +61,33 @@ class ProcurementVendorProfile(models.Model):
             v.total_score = round((v.quality_score + v.delivery_score
                                    + v.price_score + v.service_score) / 4.0, 1)
 
-    @api.depends("review_ids.delivery_rating")
-    def _compute_performance(self):
+    def _reviews(self):
+        self.ensure_one()
+        return self.env["procurement.performance.review"].search(
+            [("vendor_id", "=", self.partner_id.id)])
+
+    def _recompute_stats(self):
+        """Refresh scores and delivery performance from the vendor's reviews.
+        Called when a performance review is created or written."""
         for v in self:
-            reviews = v.review_ids
-            v.total_orders_count = len(reviews)
-            if reviews:
-                delays = reviews.mapped("delivery_delay_days")
-                v.average_delivery_delay_days = sum(delays) / len(delays)
-                on_time = len(reviews.filtered(
-                    lambda r: (r.delivery_delay_days or 0) <= 0))
-                v.on_time_delivery_rate = on_time / len(reviews) * 100.0
+            reviews = v._reviews()
+            n = len(reviews)
+            vals = {"total_orders_count": n}
+            if n:
+                vals.update(
+                    quality_score=sum(reviews.mapped("quality_rating")) / n,
+                    delivery_score=sum(reviews.mapped("delivery_rating")) / n,
+                    price_score=sum(reviews.mapped("price_rating")) / n,
+                    service_score=sum(reviews.mapped("service_rating")) / n,
+                    average_delivery_delay_days=sum(
+                        reviews.mapped("delivery_delay_days")) / n,
+                    on_time_delivery_rate=len(reviews.filtered(
+                        lambda r: (r.delivery_delay_days or 0) <= 0)) / n * 100.0,
+                )
             else:
-                v.average_delivery_delay_days = 0.0
-                v.on_time_delivery_rate = 0.0
+                vals.update(average_delivery_delay_days=0.0,
+                            on_time_delivery_rate=0.0)
+            v.write(vals)
 
     @api.depends("partner_id")
     def _compute_spend(self):
@@ -96,7 +106,8 @@ class ProcurementVendorProfile(models.Model):
                 [("vendor_id", "=", v.partner_id.id)])
             v.contract_count = self.env["procurement.vendor.contract"].search_count(
                 [("vendor_id", "=", v.partner_id.id)])
-            v.review_count = len(v.review_ids)
+            v.review_count = self.env["procurement.performance.review"]\
+                .search_count([("vendor_id", "=", v.partner_id.id)])
 
     def action_view_quotes(self):
         self.ensure_one()
