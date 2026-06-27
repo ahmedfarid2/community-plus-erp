@@ -69,6 +69,10 @@ plan = [
      "condition": "domain_based",
      "domain": "[('margin_percent', '<', 15)]",
      "step": "Sales Director"},
+    {"name": "High-value Subscription Cancellation (MRR >= 500)",
+     "model": "subscription.subscription", "condition": "domain_based",
+     "domain": "[('mrr_amount', '>=', 500)]",
+     "step": "Retention Manager"},
 ]
 
 for spec in plan:
