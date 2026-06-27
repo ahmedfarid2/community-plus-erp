@@ -28,10 +28,12 @@ class HelpdeskBoard(models.TransientModel):
             b.solved = T.search_count(cdom + [("state", "=", "solved")])
 
     def _open(self, extra, name):
+        # Drill-downs open as a filtered list (the natural view for a KPI
+        # click-through); kanban stays available from the Tickets menu.
         return {"type": "ir.actions.act_window", "name": name,
                 "res_model": "helpdesk.lite.ticket",
                 "domain": [("company_id", "=", self.company_id.id)] + extra,
-                "view_mode": "kanban,list,form", "target": "current"}
+                "view_mode": "list,form", "target": "current"}
 
     def action_open(self):
         return self._open(self.OPEN, "Open Tickets")
