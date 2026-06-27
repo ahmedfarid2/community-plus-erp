@@ -35,6 +35,7 @@ Open-source addons may be installed separately after license and version audit.
         "planning_lite",
         "business_approvals_lite",
         "crm",
+        "dashboards_lite",
         "appointment_lite",
         "documents_lite",
         "field_service_lite",

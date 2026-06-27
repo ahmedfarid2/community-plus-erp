@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_dashboards_lite_board_form" model="ir.ui.view">
+        <field name="name">dashboards.lite.board.form</field>
+        <field name="model">dashboards.lite.board</field>
+        <field name="arch" type="xml">
+            <form string="Company Dashboard" create="false" edit="false">
+                <header>
+                    <button name="action_refresh" type="object" string="Refresh"
+                            class="btn-secondary"/>
+                </header>
+                <sheet>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="company_id" invisible="1"/>
+
+                    <h3 class="mt-2">Finance</h3>
+                    <div class="row g-3">
+                        <div class="col-lg-3 col-md-6"><div class="card h-100"><div class="card-body text-center">
+                            <div class="text-muted">Cash &amp; Bank</div>
+                            <h2 class="text-info mb-0"><field name="cash"/></h2></div></div></div>
+                        <div class="col-lg-3 col-md-6"><div class="card h-100"><div class="card-body text-center">
+                            <div class="text-muted">Receivable</div>
+                            <h2 class="text-success mb-0"><field name="receivable"/></h2></div></div></div>
+                        <div class="col-lg-3 col-md-6"><div class="card h-100"><div class="card-body text-center">
+                            <div class="text-muted">Payable</div>
+                            <h2 class="text-danger mb-0"><field name="payable"/></h2></div></div></div>
+                        <div class="col-lg-3 col-md-6"><div class="card h-100"><div class="card-body text-center">
+                            <div class="text-muted">Net Profit (YTD)</div>
+                            <h2 class="text-primary mb-0"><field name="net_profit_ytd"/></h2></div></div></div>
+                    </div>
+
+                    <h3 class="mt-4">Sales</h3>
+                    <div class="row g-3">
+                        <div class="col-lg-3 col-md-6"><div class="card h-100"><div class="card-body text-center">
+                            <div class="text-muted">Unpaid Invoices</div>
+                            <h3 class="mb-0"><field name="unpaid_invoices"/></h3></div></div></div>
+                        <div class="col-lg-3 col-md-6"><div class="card h-100"><div class="card-body text-center">
+                            <div class="text-muted">MRR</div>
+                            <h3 class="mb-0"><field name="mrr"/></h3></div></div></div>
+                        <div class="col-lg-3 col-md-6"><div class="card h-100"><div class="card-body text-center">
+                            <div class="text-muted">Open Quotations</div>
+                            <h3 class="mb-0"><field name="open_quotations"/></h3></div></div></div>
+                        <div class="col-lg-3 col-md-6"><div class="card h-100"><div class="card-body text-center">
+                            <div class="text-muted">Employees</div>
+                            <h3 class="mb-0"><field name="employees"/></h3></div></div></div>
+                    </div>
+
+                    <h3 class="mt-4">Operations</h3>
+                    <div class="row g-3">
+                        <div class="col-lg-3 col-md-6"><div class="card h-100"><div class="card-body text-center">
+                            <div class="text-muted">Open Tickets</div>
+                            <h3 class="mb-0"><field name="open_tickets"/></h3></div></div></div>
+                        <div class="col-lg-3 col-md-6"><div class="card h-100"><div class="card-body text-center">
+                            <div class="text-muted">Pending Approvals</div>
+                            <h3 class="mb-0"><field name="pending_approvals"/></h3></div></div></div>
+                        <div class="col-lg-3 col-md-6"><div class="card h-100"><div class="card-body text-center">
+                            <div class="text-muted">Expiring Documents</div>
+                            <h3 class="mb-0"><field name="expiring_docs"/></h3></div></div></div>
+                        <div class="col-lg-3 col-md-6"><div class="card h-100"><div class="card-body text-center">
+                            <div class="text-muted">Today's Room Bookings</div>
+                            <h3 class="mb-0"><field name="todays_bookings"/></h3></div></div></div>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_dashboards_lite_board" model="ir.actions.act_window">
+        <field name="name">Dashboard</field>
+        <field name="res_model">dashboards.lite.board</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+    </record>
+
+    <menuitem id="menu_dashboards_lite_root" name="Dashboards"
+              web_icon="account,static/description/icon.png" sequence="1"/>
+    <menuitem id="menu_dashboards_lite_board" name="Company Dashboard"
+              parent="menu_dashboards_lite_root" action="action_dashboards_lite_board"
+              sequence="10"/>
+
+</odoo>
