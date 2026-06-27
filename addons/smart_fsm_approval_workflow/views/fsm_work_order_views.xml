@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_wo_form_approval" model="ir.ui.view">
+        <field name="name">fsm.work.order.form.approval</field>
+        <field name="model">fsm.work.order</field>
+        <field name="inherit_id" ref="smart_field_service_suite.view_wo_form"/>
+        <field name="arch" type="xml">
+            <button name="action_review" position="after">
+                <button name="action_view_approval" type="object"
+                        string="View Approval" invisible="not approval_request_id"/>
+            </button>
+            <field name="sla_status" position="after">
+                <field name="approval_request_id" invisible="1"/>
+                <field name="approval_state" widget="badge"
+                       invisible="approval_state == 'none'"
+                       decoration-info="approval_state == 'pending'"
+                       decoration-success="approval_state == 'approved'"
+                       decoration-danger="approval_state == 'rejected'"
+                       decoration-warning="approval_state == 'to_request'"/>
+            </field>
+        </field>
+    </record>
+</odoo>

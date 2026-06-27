@@ -73,6 +73,9 @@ plan = [
      "model": "subscription.subscription", "condition": "domain_based",
      "domain": "[('mrr_amount', '>=', 500)]",
      "step": "Retention Manager"},
+    {"name": "Expensive Work Order (cost >= 500)", "model": "fsm.work.order",
+     "condition": "domain_based", "domain": "[('cost_total', '>=', 500)]",
+     "step": "Operations Manager"},
 ]
 
 for spec in plan:
