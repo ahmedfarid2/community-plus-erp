@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_reco_form_approval" model="ir.ui.view">
+        <field name="name">inventory.reorder.recommendation.form.approval</field>
+        <field name="model">inventory.reorder.recommendation</field>
+        <field name="inherit_id" ref="advanced_inventory_optimization.view_reco_form"/>
+        <field name="arch" type="xml">
+            <button name="action_reject" position="before">
+                <button name="action_view_sa_approval" type="object"
+                        string="View Approval" invisible="not sa_approval_request_id"/>
+            </button>
+            <field name="rejection_reason" position="before">
+                <field name="sa_approval_request_id" invisible="1"/>
+                <field name="sa_approval_state" widget="badge"
+                       invisible="sa_approval_state == 'none'"
+                       decoration-info="sa_approval_state == 'pending'"
+                       decoration-success="sa_approval_state == 'approved'"
+                       decoration-danger="sa_approval_state == 'rejected'"
+                       decoration-warning="sa_approval_state == 'to_request'"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_dead_form_approval" model="ir.ui.view">
+        <field name="name">inventory.dead.stock.review.form.approval</field>
+        <field name="model">inventory.dead.stock.review</field>
+        <field name="inherit_id" ref="advanced_inventory_optimization.view_dead_form"/>
+        <field name="arch" type="xml">
+            <button name="action_done" position="before">
+                <button name="action_view_sa_approval" type="object"
+                        string="View Approval" invisible="not sa_approval_request_id"/>
+            </button>
+            <field name="recommended_action" position="after">
+                <field name="sa_approval_request_id" invisible="1"/>
+                <field name="sa_approval_state" widget="badge"
+                       invisible="sa_approval_state == 'none'"
+                       decoration-info="sa_approval_state == 'pending'"
+                       decoration-success="sa_approval_state == 'approved'"
+                       decoration-danger="sa_approval_state == 'rejected'"
+                       decoration-warning="sa_approval_state == 'to_request'"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>

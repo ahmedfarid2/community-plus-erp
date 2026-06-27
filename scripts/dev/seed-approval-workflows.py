@@ -80,6 +80,14 @@ plan = [
      "model": "procurement.award", "condition": "domain_based",
      "domain": "[('total_awarded_amount', '>=', 5000)]",
      "step": "Procurement Director"},
+    {"name": "High-value Reorder (>= 1000)",
+     "model": "inventory.reorder.recommendation", "condition": "domain_based",
+     "domain": "[('estimated_total_cost', '>=', 1000)]",
+     "step": "Inventory Director"},
+    {"name": "Dead Stock Disposal (>= 500)",
+     "model": "inventory.dead.stock.review", "condition": "domain_based",
+     "domain": "[('recommended_action', '=', 'dispose'), ('stock_value', '>=', 500)]",
+     "step": "Inventory Manager"},
 ]
 
 for spec in plan:
