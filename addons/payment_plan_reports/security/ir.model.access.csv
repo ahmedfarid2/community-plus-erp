@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_payment_plan_aging_user,payment.plan.aging.user,model_payment_plan_aging,payment_plan_core.group_payment_plan_user,1,0,0,0
+access_payment_plan_aging_manager,payment.plan.aging.manager,model_payment_plan_aging,payment_plan_core.group_payment_plan_manager,1,0,0,0

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Extend the plan form: invoice smart button + actions + line column -->
+    <record id="view_payment_plan_form_account" model="ir.ui.view">
+        <field name="name">payment.plan.form.account</field>
+        <field name="model">payment.plan</field>
+        <field name="inherit_id" ref="payment_plan_core.view_payment_plan_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_invoices" type="object"
+                        class="oe_stat_button" icon="fa-file-text-o"
+                        invisible="invoice_count == 0">
+                    <field name="invoice_count" widget="statinfo" string="Invoices"/>
+                </button>
+            </xpath>
+
+            <xpath expr="//header" position="inside">
+                <button name="action_create_invoices" type="object"
+                        string="Create Invoices" class="btn-secondary"
+                        invisible="state not in ('active', 'draft')"/>
+                <button name="action_sync_paid_from_invoices" type="object"
+                        string="Sync Paid from Invoices"
+                        invisible="invoice_count == 0"/>
+            </xpath>
+
+            <!-- Add invoice columns to the embedded lines list -->
+            <xpath expr="//field[@name='line_ids']/list/field[@name='status']"
+                   position="before">
+                <field name="invoice_id" optional="show"/>
+                <field name="invoice_payment_state" optional="hide"
+                       widget="badge"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Extend the standalone line form -->
+    <record id="view_payment_plan_line_form_account" model="ir.ui.view">
+        <field name="name">payment.plan.line.form.account</field>
+        <field name="model">payment.plan.line</field>
+        <field name="inherit_id"
+               ref="payment_plan_core.view_payment_plan_line_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='remaining_amount']" position="after">
+                <field name="invoice_id"/>
+                <field name="invoice_payment_state" widget="badge"
+                       invisible="not invoice_id"/>
+            </xpath>
+            <xpath expr="//header" position="inside">
+                <button name="action_sync_paid_from_invoice" type="object"
+                        string="Sync from Invoice" invisible="not invoice_id"/>
+                <button name="action_open_invoice" type="object"
+                        string="Open Invoice" invisible="not invoice_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Add an invoice column to the standalone line list -->
+    <record id="view_payment_plan_line_list_account" model="ir.ui.view">
+        <field name="name">payment.plan.line.list.account</field>
+        <field name="model">payment.plan.line</field>
+        <field name="inherit_id"
+               ref="payment_plan_core.view_payment_plan_line_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='status']" position="before">
+                <field name="invoice_id" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

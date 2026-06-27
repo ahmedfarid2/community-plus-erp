@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_payment_plan_aging_pivot" model="ir.ui.view">
+        <field name="name">payment.plan.aging.pivot</field>
+        <field name="model">payment.plan.aging</field>
+        <field name="arch" type="xml">
+            <pivot string="Aging">
+                <field name="partner_id" type="row"/>
+                <field name="current_amount" type="measure"/>
+                <field name="b_1_30" type="measure"/>
+                <field name="b_31_60" type="measure"/>
+                <field name="b_61_90" type="measure"/>
+                <field name="b_90_plus" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_payment_plan_aging_graph" model="ir.ui.view">
+        <field name="name">payment.plan.aging.graph</field>
+        <field name="model">payment.plan.aging</field>
+        <field name="arch" type="xml">
+            <graph string="Aging" type="bar">
+                <field name="bucket"/>
+                <field name="remaining_amount" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_payment_plan_aging_list" model="ir.ui.view">
+        <field name="name">payment.plan.aging.list</field>
+        <field name="model">payment.plan.aging</field>
+        <field name="arch" type="xml">
+            <list string="Aging" create="false"
+                  decoration-danger="days_overdue &gt; 90"
+                  decoration-warning="days_overdue &gt; 30 and days_overdue &lt;= 90">
+                <field name="partner_id"/>
+                <field name="plan_id"/>
+                <field name="due_date"/>
+                <field name="days_overdue"/>
+                <field name="bucket"/>
+                <field name="remaining_amount" sum="Remaining"/>
+                <field name="responsible_user_id" optional="hide"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_payment_plan_aging_search" model="ir.ui.view">
+        <field name="name">payment.plan.aging.search</field>
+        <field name="model">payment.plan.aging</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="partner_id"/>
+                <field name="plan_id"/>
+                <field name="responsible_user_id"/>
+                <filter name="overdue" string="Overdue"
+                        domain="[('days_overdue','&gt;',0)]"/>
+                <filter name="my" string="My Plans"
+                        domain="[('responsible_user_id','=',uid)]"/>
+                <separator/>
+                <filter name="group_partner" string="Customer"
+                        context="{'group_by':'partner_id'}"/>
+                <filter name="group_bucket" string="Aging Bucket"
+                        context="{'group_by':'bucket'}"/>
+                <filter name="group_responsible" string="Responsible"
+                        context="{'group_by':'responsible_user_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_payment_plan_aging" model="ir.actions.act_window">
+        <field name="name">Aging Analysis</field>
+        <field name="res_model">payment.plan.aging</field>
+        <field name="view_mode">pivot,graph,list</field>
+        <field name="search_view_id" ref="view_payment_plan_aging_search"/>
+    </record>
+
+    <menuitem id="menu_payment_plan_reporting" name="Reporting"
+              parent="payment_plan_core.menu_payment_plan_root" sequence="50"/>
+
+    <menuitem id="menu_payment_plan_aging" name="Aging Analysis"
+              parent="menu_payment_plan_reporting"
+              action="action_payment_plan_aging" sequence="10"/>
+
+</odoo>

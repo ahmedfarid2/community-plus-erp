@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="cron_sync_paid_from_invoices" model="ir.cron">
+        <field name="name">Payment Plans: sync paid amounts from invoices</field>
+        <field name="model_id" ref="payment_plan_core.model_payment_plan_line"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_sync_paid_from_invoices()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active" eval="True"/>
+    </record>
+</odoo>
