@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_rfq_list" model="ir.ui.view">
+        <field name="name">procurement.rfq.event.list</field><field name="model">procurement.rfq.event</field>
+        <field name="arch" type="xml">
+            <list decoration-info="state == 'open'" decoration-success="state == 'awarded'" decoration-muted="state == 'cancelled'">
+                <field name="name"/><field name="responsible_user_id"/><field name="deadline_date"/>
+                <field name="quote_count" string="Quotes"/><field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_rfq_form" model="ir.ui.view">
+        <field name="name">procurement.rfq.event.form</field><field name="model">procurement.rfq.event</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_open" type="object" string="Open RFQ" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_invite_vendors" type="object" string="Invite Vendors" invisible="state not in ('draft','open')"/>
+                    <button name="action_close" type="object" string="Close RFQ" invisible="state != 'open'"/>
+                    <button name="action_start_evaluation" type="object" string="Start Evaluation" invisible="state != 'closed'"/>
+                    <button name="action_generate_comparison" type="object" string="Comparison" invisible="state in ('draft','cancelled')"/>
+                    <button name="action_create_award" type="object" string="Create Award" class="btn-primary" invisible="state not in ('evaluation','closed')"/>
+                    <button name="action_cancel" type="object" string="Cancel" invisible="state in ('awarded','cancelled')"/>
+                    <button name="action_reset_to_draft" type="object" string="Reset to Draft" invisible="state in ('draft','awarded')"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,open,evaluation,awarded"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_quotes" type="object" class="oe_stat_button" icon="fa-file-text-o"><field name="quote_count" widget="statinfo" string="Quotes"/></button>
+                        <button name="action_view_awards" type="object" class="oe_stat_button" icon="fa-trophy"><field name="award_count" widget="statinfo" string="Awards"/></button>
+                        <button name="action_view_audit" type="object" class="oe_stat_button" icon="fa-history">Audit</button>
+                    </div>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <group><group>
+                        <field name="request_id"/><field name="responsible_user_id"/><field name="evaluation_method"/>
+                        <field name="best_quote_id"/>
+                    </group><group>
+                        <field name="start_date"/><field name="deadline_date"/><field name="currency_id" groups="base.group_multi_currency"/>
+                        <field name="invited_vendor_ids" widget="many2many_tags"/>
+                    </group></group>
+                    <notebook>
+                        <page string="Lines">
+                            <field name="line_ids">
+                                <list editable="bottom"><field name="product_id"/><field name="description"/><field name="quantity"/>
+                                    <field name="uom_id"/><field name="target_price"/><field name="required_delivery_date"/>
+                                    <field name="currency_id" column_invisible="1"/></list>
+                            </field>
+                        </page>
+                        <page string="Quotes (Comparison)">
+                            <field name="vendor_quote_ids">
+                                <list decoration-success="is_recommended">
+                                    <field name="vendor_id"/><field name="total_amount"/><field name="delivery_date"/>
+                                    <field name="price_score"/><field name="delivery_score"/><field name="quality_score"/>
+                                    <field name="risk_score"/><field name="total_score"/><field name="is_recommended"/>
+                                    <field name="state" widget="badge"/><field name="currency_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet><chatter/>
+            </form>
+        </field>
+    </record>
+    <record id="view_rfq_search" model="ir.ui.view">
+        <field name="name">procurement.rfq.event.search</field><field name="model">procurement.rfq.event</field>
+        <field name="arch" type="xml">
+            <search><field name="name"/><field name="responsible_user_id"/>
+                <filter name="open" string="Open" domain="[('state','=','open')]"/>
+                <filter name="deadline_today" string="Deadline Today" domain="[('deadline_date','=', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter name="deadline_week" string="Deadline This Week" domain="[('deadline_date','&gt;=', context_today().strftime('%Y-%m-%d')), ('deadline_date','&lt;=', (context_today()+relativedelta(days=7)).strftime('%Y-%m-%d'))]"/>
+                <filter name="group_state" string="Status" context="{'group_by':'state'}"/>
+            </search>
+        </field>
+    </record>
+    <record id="action_rfq" model="ir.actions.act_window">
+        <field name="name">RFQ Events</field><field name="res_model">procurement.rfq.event</field><field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_rfq_search"/>
+    </record>
+</odoo>

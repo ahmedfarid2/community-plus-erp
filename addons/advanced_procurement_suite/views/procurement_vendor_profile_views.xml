@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_profile_list" model="ir.ui.view">
+        <field name="name">procurement.vendor.profile.list</field><field name="model">procurement.vendor.profile</field>
+        <field name="arch" type="xml">
+            <list decoration-success="preferred_vendor" decoration-danger="risk_level in ('high','blocked')">
+                <field name="partner_id"/><field name="risk_level" widget="badge"/><field name="total_score"/>
+                <field name="on_time_delivery_rate"/><field name="total_orders_count"/><field name="total_spend"/>
+                <field name="preferred_vendor" widget="boolean_toggle"/><field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_profile_kanban" model="ir.ui.view">
+        <field name="name">procurement.vendor.profile.kanban</field><field name="model">procurement.vendor.profile</field>
+        <field name="arch" type="xml">
+            <kanban><templates><t t-name="card">
+                <div class="oe_kanban_details">
+                    <strong><field name="partner_id"/></strong>
+                    <div>Score: <field name="total_score"/> · On-time <field name="on_time_delivery_rate"/>%</div>
+                    <div><field name="risk_level" widget="label_selection"
+                          options="{'classes': {'low':'success','medium':'warning','high':'danger','blocked':'secondary'}}"/></div>
+                </div>
+            </t></templates></kanban>
+        </field>
+    </record>
+    <record id="view_profile_form" model="ir.ui.view">
+        <field name="name">procurement.vendor.profile.form</field><field name="model">procurement.vendor.profile</field>
+        <field name="arch" type="xml">
+            <form><sheet>
+                <div class="oe_button_box" name="button_box">
+                    <button name="action_view_quotes" type="object" class="oe_stat_button" icon="fa-file-text-o"><field name="quote_count" widget="statinfo" string="Quotes"/></button>
+                    <button name="action_view_awards" type="object" class="oe_stat_button" icon="fa-trophy"><field name="award_count" widget="statinfo" string="Awards"/></button>
+                    <button name="action_view_contracts" type="object" class="oe_stat_button" icon="fa-file"><field name="contract_count" widget="statinfo" string="Contracts"/></button>
+                    <button name="action_view_reviews" type="object" class="oe_stat_button" icon="fa-star"><field name="review_count" widget="statinfo" string="Reviews"/></button>
+                </div>
+                <div class="oe_title"><h1><field name="partner_id"/></h1></div>
+                <group><group>
+                    <field name="vendor_category_ids" widget="many2many_tags"/><field name="preferred_vendor"/>
+                    <field name="risk_level"/><field name="payment_terms"/><field name="active"/>
+                </group><group>
+                    <field name="quality_score"/><field name="delivery_score"/><field name="price_score"/>
+                    <field name="service_score"/><field name="total_score"/>
+                </group></group>
+                <group string="Performance"><group>
+                    <field name="on_time_delivery_rate"/><field name="average_delivery_delay_days"/>
+                </group><group>
+                    <field name="total_orders_count"/><field name="total_spend"/><field name="currency_id" invisible="1"/>
+                </group></group>
+            </sheet><chatter/></form>
+        </field>
+    </record>
+    <record id="view_profile_search" model="ir.ui.view">
+        <field name="name">procurement.vendor.profile.search</field><field name="model">procurement.vendor.profile</field>
+        <field name="arch" type="xml">
+            <search><field name="partner_id"/>
+                <filter name="preferred" string="Preferred" domain="[('preferred_vendor','=',True)]"/>
+                <filter name="high_risk" string="High-Risk" domain="[('risk_level','in',('high','blocked'))]"/>
+                <filter name="group_risk" string="Risk Level" context="{'group_by':'risk_level'}"/>
+            </search>
+        </field>
+    </record>
+    <record id="action_profile" model="ir.actions.act_window">
+        <field name="name">Vendor Profiles</field><field name="res_model">procurement.vendor.profile</field><field name="view_mode">kanban,list,form</field>
+        <field name="search_view_id" ref="view_profile_search"/>
+    </record>
+</odoo>

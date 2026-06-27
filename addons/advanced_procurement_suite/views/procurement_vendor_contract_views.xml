@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_contract_list" model="ir.ui.view">
+        <field name="name">procurement.vendor.contract.list</field><field name="model">procurement.vendor.contract</field>
+        <field name="arch" type="xml">
+            <list decoration-warning="state == 'expiring_soon'" decoration-muted="state in ('expired','cancelled')">
+                <field name="name"/><field name="vendor_id"/><field name="contract_type"/><field name="start_date"/>
+                <field name="end_date"/><field name="renewal_date"/><field name="contract_value"/><field name="state" widget="badge"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_contract_form" model="ir.ui.view">
+        <field name="name">procurement.vendor.contract.form</field><field name="model">procurement.vendor.contract</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_activate" type="object" string="Activate" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_renew" type="object" string="Renew" invisible="state not in ('active','expiring_soon','expired')"/>
+                    <button name="action_expire" type="object" string="Expire" invisible="state in ('expired','cancelled','draft')"/>
+                    <button name="action_cancel" type="object" string="Cancel" invisible="state == 'cancelled'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_vendor" type="object" class="oe_stat_button" icon="fa-user"><div class="o_stat_info"><span class="o_stat_text">Vendor</span></div></button>
+                    </div>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <group><group>
+                        <field name="vendor_id"/><field name="contract_type"/><field name="responsible_user_id"/>
+                        <field name="contract_value"/><field name="currency_id" invisible="1"/><field name="payment_terms"/>
+                    </group><group>
+                        <field name="start_date"/><field name="end_date"/><field name="renewal_date"/>
+                        <field name="auto_renew"/>
+                    </group></group>
+                    <group string="SLA Terms"><field name="sla_terms" nolabel="1"/></group>
+                </sheet><chatter/>
+            </form>
+        </field>
+    </record>
+    <record id="view_contract_search" model="ir.ui.view">
+        <field name="name">procurement.vendor.contract.search</field><field name="model">procurement.vendor.contract</field>
+        <field name="arch" type="xml">
+            <search><field name="name"/><field name="vendor_id"/>
+                <filter name="expiring" string="Expiring Soon" domain="[('state','=','expiring_soon')]"/>
+                <filter name="expired" string="Expired" domain="[('state','=','expired')]"/>
+                <filter name="this_month" string="Ending This Month" domain="[('end_date','&gt;=', (context_today().replace(day=1)).strftime('%Y-%m-%d')), ('end_date','&lt;=', (context_today().replace(day=1)+relativedelta(months=1,days=-1)).strftime('%Y-%m-%d'))]"/>
+                <filter name="group_state" string="Status" context="{'group_by':'state'}"/>
+                <filter name="group_vendor" string="Vendor" context="{'group_by':'vendor_id'}"/>
+            </search>
+        </field>
+    </record>
+    <record id="action_contract" model="ir.actions.act_window">
+        <field name="name">Vendor Contracts</field><field name="res_model">procurement.vendor.contract</field><field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_contract_search"/>
+    </record>
+</odoo>

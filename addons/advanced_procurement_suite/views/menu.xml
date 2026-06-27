@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_proc_root" name="Procurement"
+              web_icon="advanced_procurement_suite,static/description/icon.png"
+              sequence="51"/>
+
+    <menuitem id="menu_proc_sourcing" name="Sourcing" parent="menu_proc_root" sequence="10"/>
+    <menuitem id="menu_proc_requests" name="Purchase Requests" parent="menu_proc_sourcing" action="action_request" sequence="10"/>
+    <menuitem id="menu_proc_rfq" name="RFQ Events" parent="menu_proc_sourcing" action="action_rfq" sequence="20"
+              groups="advanced_procurement_suite.group_proc_buyer"/>
+    <menuitem id="menu_proc_quotes" name="Vendor Quotes" parent="menu_proc_sourcing" action="action_quote" sequence="30"
+              groups="advanced_procurement_suite.group_proc_buyer"/>
+    <menuitem id="menu_proc_awards" name="Awards" parent="menu_proc_sourcing" action="action_award" sequence="40"
+              groups="advanced_procurement_suite.group_proc_buyer"/>
+
+    <menuitem id="menu_proc_vendors" name="Vendors" parent="menu_proc_root" sequence="20"
+              groups="advanced_procurement_suite.group_proc_buyer"/>
+    <menuitem id="menu_proc_profiles" name="Vendor Profiles" parent="menu_proc_vendors" action="action_profile" sequence="10"/>
+    <menuitem id="menu_proc_contracts" name="Vendor Contracts" parent="menu_proc_vendors" action="action_contract" sequence="20"/>
+    <menuitem id="menu_proc_reviews" name="Performance Reviews" parent="menu_proc_vendors" action="action_review" sequence="30"/>
+
+    <menuitem id="menu_proc_config" name="Configuration" parent="menu_proc_root" sequence="90"
+              groups="advanced_procurement_suite.group_proc_admin"/>
+    <menuitem id="menu_proc_criteria" name="Evaluation Criteria" parent="menu_proc_config" action="action_criteria" sequence="10"/>
+    <menuitem id="menu_proc_categories" name="Vendor Categories" parent="menu_proc_config" action="action_category" sequence="20"/>
+    <menuitem id="menu_proc_audit" name="Audit Logs" parent="menu_proc_config" action="action_audit" sequence="30"
+              groups="advanced_procurement_suite.group_proc_manager"/>
+
+</odoo>

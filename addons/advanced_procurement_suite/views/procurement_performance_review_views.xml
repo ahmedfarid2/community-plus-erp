@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_review_list" model="ir.ui.view">
+        <field name="name">procurement.performance.review.list</field><field name="model">procurement.performance.review</field>
+        <field name="arch" type="xml">
+            <list editable="bottom"><field name="review_date"/><field name="vendor_id"/><field name="quality_rating"/>
+                <field name="delivery_rating"/><field name="price_rating"/><field name="service_rating"/>
+                <field name="compliance_rating"/><field name="delivery_delay_days"/><field name="total_rating"/></list>
+        </field>
+    </record>
+    <record id="view_review_graph" model="ir.ui.view">
+        <field name="name">procurement.performance.review.graph</field><field name="model">procurement.performance.review</field>
+        <field name="arch" type="xml">
+            <graph string="Vendor Ratings" type="bar"><field name="vendor_id"/><field name="total_rating" type="measure"/></graph>
+        </field>
+    </record>
+    <record id="action_review" model="ir.actions.act_window">
+        <field name="name">Performance Reviews</field><field name="res_model">procurement.performance.review</field><field name="view_mode">list,graph,form</field>
+    </record>
+</odoo>

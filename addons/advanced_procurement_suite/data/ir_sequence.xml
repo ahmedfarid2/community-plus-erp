@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="seq_request" model="ir.sequence"><field name="name">Purchase Request</field><field name="code">procurement.request</field><field name="prefix">PR/%(year)s/</field><field name="padding">4</field><field name="company_id" eval="False"/></record>
+    <record id="seq_rfq" model="ir.sequence"><field name="name">RFQ Event</field><field name="code">procurement.rfq.event</field><field name="prefix">RFQ/%(year)s/</field><field name="padding">4</field><field name="company_id" eval="False"/></record>
+    <record id="seq_quote" model="ir.sequence"><field name="name">Vendor Quote</field><field name="code">procurement.vendor.quote</field><field name="prefix">VQ/%(year)s/</field><field name="padding">4</field><field name="company_id" eval="False"/></record>
+    <record id="seq_award" model="ir.sequence"><field name="name">Award</field><field name="code">procurement.award</field><field name="prefix">AW/%(year)s/</field><field name="padding">4</field><field name="company_id" eval="False"/></record>
+    <record id="seq_contract" model="ir.sequence"><field name="name">Vendor Contract</field><field name="code">procurement.vendor.contract</field><field name="prefix">VC/%(year)s/</field><field name="padding">4</field><field name="company_id" eval="False"/></record>
+</odoo>
