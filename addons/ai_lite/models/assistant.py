@@ -1,4 +1,25 @@
+import json
+import re
+
 from odoo import api, fields, models
+
+# Whitelisted, safe actions the assistant may perform.
+AI_TOOLS = {
+    "create_contact": {"model": "res.partner",
+                       "fields": ["name", "email", "phone"]},
+    "create_lead": {"model": "crm.lead",
+                    "fields": ["name", "contact_name", "email_from"]},
+    "create_task": {"model": "project.task", "fields": ["name"]},
+    "create_note": {"model": "note.note", "fields": ["name", "memo"]},
+}
+
+AI_SYSTEM = (
+    "You are an assistant embedded in an Odoo ERP. To perform an action, reply with a "
+    "single JSON object on its own line: {\"tool\": \"<name>\", \"args\": {...}}. "
+    "Tools: create_contact(name,email,phone), create_lead(name,contact_name,email_from), "
+    "create_task(name), create_note(name,memo). Only emit JSON when the user clearly "
+    "asks to create something; otherwise answer normally in plain text."
+)
 
 
 class Conversation(models.Model):
@@ -15,6 +36,7 @@ class Conversation(models.Model):
         """Call the configured LLM. Real HTTP call — works with a running Ollama
         (free, local) or an OpenAI/Anthropic key. Returns the assistant text."""
         import requests
+        messages = [{"role": "system", "content": AI_SYSTEM}] + messages
         ICP = self.env["ir.config_parameter"].sudo()
         provider = ICP.get_param("ai_lite.provider", "ollama")
         model = ICP.get_param("ai_lite.model") or (
@@ -57,9 +79,39 @@ class Conversation(models.Model):
         history = [{"role": m.role, "content": m.content} for m in self.line_ids]
         reply = self._llm(history)
         Msg.create({"conversation_id": self.id, "role": "assistant", "content": reply})
+        tool_result = self._execute_tool(reply)
+        if tool_result:
+            Msg.create({"conversation_id": self.id, "role": "system",
+                        "content": tool_result})
         self.prompt = False
         return {"type": "ir.actions.act_window", "res_model": "ai.lite.conversation",
                 "res_id": self.id, "view_mode": "form", "target": "current"}
+
+    def _execute_tool(self, reply):
+        """If the assistant emitted a tool JSON, run the whitelisted action."""
+        if not reply or '"tool"' not in reply:
+            return None
+        # Grab from the first '{' to the last '}' (handles the nested args object).
+        start, end = reply.find("{"), reply.rfind("}")
+        if start < 0 or end <= start:
+            return None
+        try:
+            cmd = json.loads(reply[start:end + 1])
+        except Exception:  # noqa: BLE001
+            return None
+        spec = AI_TOOLS.get(cmd.get("tool"))
+        if not spec or spec["model"] not in self.env:
+            return None
+        vals = {k: v for k, v in (cmd.get("args") or {}).items()
+                if k in spec["fields"]}
+        if not vals:
+            return None
+        try:
+            rec = self.env[spec["model"]].create(vals)
+            return "✅ Created %s — %s (id %s)" % (
+                spec["model"], rec.display_name, rec.id)
+        except Exception as e:  # noqa: BLE001
+            return "⚠ Tool '%s' failed: %s" % (cmd.get("tool"), str(e)[:120])
 
 
 class Message(models.Model):
