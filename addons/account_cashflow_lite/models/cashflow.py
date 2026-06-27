@@ -17,6 +17,35 @@ class CashFlow(models.TransientModel):
     financing = fields.Monetary(compute="_compute_cf")
     net_change = fields.Monetary(compute="_compute_cf")
     closing_balance = fields.Monetary(compute="_compute_cf")
+    # Forward forecast (from open invoices/bills by due date)
+    forecast_in_30 = fields.Monetary(compute="_compute_forecast")
+    forecast_out_30 = fields.Monetary(compute="_compute_forecast")
+    forecast_in_90 = fields.Monetary(compute="_compute_forecast")
+    forecast_out_90 = fields.Monetary(compute="_compute_forecast")
+    projected_closing_90 = fields.Monetary(compute="_compute_forecast")
+
+    @api.depends("company_id", "closing_balance")
+    def _compute_forecast(self):
+        from datetime import timedelta
+        today = fields.Date.context_today(self)
+        Move = self.env["account.move"]
+        for r in self:
+            base = [("company_id", "=", r.company_id.id), ("state", "=", "posted"),
+                    ("payment_state", "in", ("not_paid", "partial"))]
+            inv = Move.search(base + [("move_type", "=", "out_invoice")])
+            bill = Move.search(base + [("move_type", "=", "in_invoice")])
+
+            def due_within(moves, days):
+                limit = today + timedelta(days=days)
+                return sum(m.amount_residual for m in moves
+                           if m.invoice_date_due and m.invoice_date_due <= limit)
+
+            r.forecast_in_30 = due_within(inv, 30)
+            r.forecast_out_30 = due_within(bill, 30)
+            r.forecast_in_90 = due_within(inv, 90)
+            r.forecast_out_90 = due_within(bill, 90)
+            r.projected_closing_90 = (r.closing_balance + r.forecast_in_90
+                                      - r.forecast_out_90)
 
     @api.depends("date_from", "date_to", "company_id")
     def _compute_cf(self):

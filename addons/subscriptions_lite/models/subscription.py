@@ -89,6 +89,9 @@ class SubscriptionContract(models.Model):
         default=lambda self: self.env["ir.config_parameter"].sudo().get_param(
             "subscriptions_lite.auto_post_default") in ("True", "true", "1"),
         help="Post generated invoices automatically instead of leaving them in draft.")
+    auto_send = fields.Boolean(
+        string="Auto-send to Customer", default=False,
+        help="Email the posted invoice to the customer automatically (needs SMTP).")
     recurring_total = fields.Monetary(compute="_compute_mrr", store=True)
     mrr = fields.Monetary(string="MRR", compute="_compute_mrr", store=True,
                           help="Monthly Recurring Revenue (period amount normalised to a month).")
@@ -193,6 +196,8 @@ class SubscriptionContract(models.Model):
             })
             if contract.auto_post:
                 move.action_post()
+                if contract.auto_send:
+                    contract._send_invoice_email(move)
             contract.next_invoice_date = contract._next_date()
             created |= move
         return {
@@ -202,6 +207,21 @@ class SubscriptionContract(models.Model):
             "view_mode": "list,form",
             "domain": [("id", "in", created.ids)],
         }
+
+    def _send_invoice_email(self, move):
+        """Email the posted invoice to the customer (best-effort; needs SMTP)."""
+        self.ensure_one()
+        template = self.env.ref("account.email_template_edi_invoice",
+                                raise_if_not_found=False)
+        try:
+            if template:
+                template.send_mail(move.id, force_send=False)
+            elif move.partner_id:
+                move.message_post(
+                    body="Invoice %s is available." % move.name,
+                    partner_ids=move.partner_id.ids)
+        except Exception:  # noqa: BLE001 - SMTP not configured / transient
+            pass
 
 
 class SubscriptionContractLine(models.Model):

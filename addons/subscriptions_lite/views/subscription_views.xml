@@ -79,6 +79,7 @@
                             <field name="journal_id"/>
                             <field name="user_id"/>
                             <field name="auto_post"/>
+                            <field name="auto_send"/>
                             <field name="close_reason_id" invisible="state != 'closed'"/>
                             <field name="recurring_total"/>
                             <field name="mrr"/>
