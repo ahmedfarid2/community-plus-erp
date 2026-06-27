@@ -76,6 +76,10 @@ plan = [
     {"name": "Expensive Work Order (cost >= 500)", "model": "fsm.work.order",
      "condition": "domain_based", "domain": "[('cost_total', '>=', 500)]",
      "step": "Operations Manager"},
+    {"name": "High-value Procurement Award (>= 5000)",
+     "model": "procurement.award", "condition": "domain_based",
+     "domain": "[('total_awarded_amount', '>=', 5000)]",
+     "step": "Procurement Director"},
 ]
 
 for spec in plan:

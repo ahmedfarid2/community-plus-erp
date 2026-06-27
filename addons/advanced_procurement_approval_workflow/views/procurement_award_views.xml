@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_award_form_approval" model="ir.ui.view">
+        <field name="name">procurement.award.form.approval</field>
+        <field name="model">procurement.award</field>
+        <field name="inherit_id" ref="advanced_procurement_suite.view_award_form"/>
+        <field name="arch" type="xml">
+            <button name="action_view_audit" position="before">
+                <button name="action_view_sa_approval" type="object"
+                        string="View Approval" invisible="not sa_approval_request_id"/>
+            </button>
+            <field name="approval_state" position="after">
+                <field name="sa_approval_request_id" invisible="1"/>
+                <field name="vendor_risk_level" invisible="1"/>
+                <field name="sa_approval_state" widget="badge"
+                       invisible="sa_approval_state == 'none'"
+                       decoration-info="sa_approval_state == 'pending'"
+                       decoration-success="sa_approval_state == 'approved'"
+                       decoration-danger="sa_approval_state == 'rejected'"
+                       decoration-warning="sa_approval_state == 'to_request'"/>
+            </field>
+        </field>
+    </record>
+</odoo>
