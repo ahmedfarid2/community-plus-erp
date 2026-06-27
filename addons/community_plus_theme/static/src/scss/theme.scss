@@ -52,6 +52,27 @@
                &:hover { text-decoration: underline; } }
 }
 
+// ── Best-effort premium polish for the third-party Accounting journal dashboard ──
+// CSS-only; targets standard Odoo accounting-kanban classes. If markup differs it
+// simply doesn't apply (no breakage).
+.o_account_kanban, .o_kanban_dashboard {
+    .o_kanban_record {
+        border-radius: 14px !important;
+        border: 1px solid rgba(20, 25, 40, .05) !important;
+        box-shadow: 0 3px 12px rgba(20, 25, 40, .07) !important;
+        transition: transform .18s ease, box-shadow .18s ease;
+        overflow: hidden;
+        &:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 14px 30px rgba(20, 25, 40, .14) !important;
+        }
+    }
+    .o_kanban_card_header, .o_kanban_header_title {
+        font-weight: 600;
+    }
+    .o_dashboard_star.fa-star { color: #f0a02a; }
+}
+
 .cp-info    { --cp-accent:#17a2b8; --cp-soft:rgba(23,162,184,.12); }
 .cp-success { --cp-accent:#1fae6f; --cp-soft:rgba(31,174,111,.12); }
 .cp-danger  { --cp-accent:#e0566f; --cp-soft:rgba(224,86,111,.12); }
