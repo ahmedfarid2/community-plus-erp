@@ -26,6 +26,7 @@ Open-source addons may be installed separately after license and version audit.
         "account_loan_lite",
         "account_review_lite",
         "appraisals_lite",
+        "barcode_lite",
         "planning_lite",
         "referrals_lite",
         "sale_loyalty",
