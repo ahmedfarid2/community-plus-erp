@@ -40,7 +40,13 @@ services:
     restart: unless-stopped
 
   web:
-    image: odoo:${ODOO_TAG:-19.0}
+    # Stock Odoo + free OCR stack (Tesseract) — see docker/odoo/Dockerfile.
+    build:
+      context: .
+      dockerfile: docker/odoo/Dockerfile
+      args:
+        ODOO_TAG: ${ODOO_TAG:-19.0}
+    image: community-plus-odoo:${ODOO_TAG:-19.0}
     container_name: odoo-web
     depends_on:
       db:

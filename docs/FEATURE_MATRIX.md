@@ -109,13 +109,32 @@ Several **close gaps previously marked Enterprise-only**:
 
 Fetched by `scripts/dev/fetch-thirdparty.sh`; available in `addons_path` for any client.
 
-## What is *still* genuinely Enterprise-only (never shipped, never faked)
+## Previously "Enterprise-only" — now built free
 
-These need a **paid subscription or external service** — no free code reproduces them:
-**live bank-feed auto-sync, AI invoice OCR, barcode scanning hardware widget, Social
-Marketing (social APIs), Amazon connector, full PLM / Shop-Floor MES, the Timesheet grid
-widget.** (Note: bank *statement file import* and *reconciliation* are now covered free by
-OCA above — only the *live auto-sync feed* remains paid.)
+| Feature | How | Module |
+|---|---|---|
+| **Invoice OCR** | Free **Tesseract** OCR → draft vendor bill | 🟣 `ocr_lite` (image adds tesseract) |
+| **Barcode scanning** | USB / keyboard-wedge scanner → product lookup | 🟣 `barcode_lite` |
+| **Bank statement import** | QIF/CAMT file import | 🔵 `account_statement_import_*` |
+| **Bank reconciliation** | Reconcile widget | 🔵 `account_reconcile_oca` |
+| **Bank sync framework** | Online provider framework (Ponto/Qonto) | 🔵 `account_statement_import_online` |
+| **Audit trail** | Who changed what | 🔵 `auditlog` |
+
+OCR accuracy on messy real-world scans is below Enterprise's trained AI, but the full
+scan→extract→bill pipeline works for free.
+
+## What *still* needs an external account (code shipped, but inert without credentials)
+
+The **connector code can be written**, but it cannot function without the client's own
+paid account / API keys — that's a credential gap, not a code gap:
+- **Live bank auto-sync** — needs a bank-aggregator subscription (Ponto/Qonto/Plaid). The
+  OCA framework above is installed; plug in the client's provider.
+- **Social Marketing** — needs the client's Facebook/X/LinkedIn API apps.
+- **Amazon connector** — needs the client's Amazon Seller (SP-API) credentials.
+
+## Genuinely not reproducible
+- **Shop-Floor MES / full PLM** (deep manufacturing execution), **Timesheet grid widget**
+  (Enterprise JS component). Everything else above is covered.
 
 ## Custom clean-room modules (17, all LGPL-3, our code)
 

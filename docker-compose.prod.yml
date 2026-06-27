@@ -56,7 +56,12 @@ services:
     restart: always
 
   web:
-    image: odoo:${ODOO_TAG:-19.0}
+    build:
+      context: .
+      dockerfile: docker/odoo/Dockerfile
+      args:
+        ODOO_TAG: ${ODOO_TAG:-19.0}
+    image: community-plus-odoo:${ODOO_TAG:-19.0}
     container_name: odoo-prod-web
     depends_on:
       db:

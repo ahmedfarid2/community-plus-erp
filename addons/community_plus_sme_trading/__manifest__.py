@@ -42,6 +42,7 @@ Open-source addons may be installed separately after license and version audit.
         "hr",
         "hr_expense",
         "mrp",
+        "ocr_lite",
         "quality_lite",
         "marketing_automation_lite",
         "purchase_requisition",
