@@ -75,6 +75,70 @@ class Dashboard(models.TransientModel):
                  ("start_datetime", ">=", "%s 00:00:00" % today),
                  ("start_datetime", "<=", "%s 23:59:59" % today)])
 
+    def _compute_display_name(self):
+        for rec in self:
+            rec.display_name = "Company Dashboard"
+
     def action_refresh(self):
         return {"type": "ir.actions.act_window", "res_model": "dashboards.lite.board",
                 "view_mode": "form", "target": "current"}
+
+    # ── Drill-down: each KPI opens the underlying records ───────────────────
+    def _open(self, model, domain, name, view="list,form"):
+        self.ensure_one()
+        if model not in self.env:
+            return False
+        return {"type": "ir.actions.act_window", "name": name, "res_model": model,
+                "domain": domain, "view_mode": view, "target": "current"}
+
+    def _cdom(self):
+        return [("company_id", "=", self.company_id.id)]
+
+    def action_receivable(self):
+        return self._open("account.move", [
+            ("move_type", "=", "out_invoice"), ("state", "=", "posted"),
+            ("payment_state", "in", ("not_paid", "partial"))] + self._cdom(),
+            "Receivable — Open Customer Invoices")
+
+    def action_unpaid_invoices(self):
+        return self.action_receivable()
+
+    def action_payable(self):
+        return self._open("account.move", [
+            ("move_type", "=", "in_invoice"), ("state", "=", "posted"),
+            ("payment_state", "in", ("not_paid", "partial"))] + self._cdom(),
+            "Payable — Open Vendor Bills")
+
+    def action_quotations(self):
+        return self._open("sale.order",
+                          [("state", "in", ("draft", "sent"))] + self._cdom(),
+                          "Open Quotations")
+
+    def action_subscriptions(self):
+        return self._open("subscription.lite.contract",
+                          [("state", "=", "active")] + self._cdom(), "Active Subscriptions")
+
+    def action_employees(self):
+        return self._open("hr.employee", self._cdom(), "Employees", "kanban,list,form")
+
+    def action_tickets(self):
+        return self._open("helpdesk.lite.ticket",
+                          [("state", "not in", ("solved", "cancelled"))] + self._cdom(),
+                          "Open Tickets", "kanban,list,form")
+
+    def action_approvals(self):
+        return self._open("business.approval.request",
+                          [("state", "=", "submitted")] + self._cdom(),
+                          "Pending Approvals")
+
+    def action_expiring_docs(self):
+        return self._open("documents.lite.document",
+                          [("expiry_state", "in", ("expiring", "expired"))],
+                          "Expiring Documents")
+
+    def action_bookings(self):
+        today = fields.Date.context_today(self)
+        return self._open("meeting.lite.booking", [
+            ("start_datetime", ">=", "%s 00:00:00" % today),
+            ("start_datetime", "<=", "%s 23:59:59" % today)] + self._cdom(),
+            "Today's Room Bookings", "calendar,list,form")
