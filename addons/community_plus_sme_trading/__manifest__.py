@@ -21,6 +21,7 @@ Open-source addons may be installed separately after license and version audit.
     "depends": [
         "account",
         "community_plus_theme",
+        "web_dark_mode",
         "account_cashflow_lite",
         "account_overview_lite",
         "account_deferred_lite",
