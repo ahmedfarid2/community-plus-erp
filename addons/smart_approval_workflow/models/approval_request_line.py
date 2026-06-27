@@ -1,4 +1,6 @@
-from odoo import fields, models
+import secrets
+
+from odoo import api, fields, models
 
 
 class ApprovalRequestLine(models.Model):
@@ -23,3 +25,20 @@ class ApprovalRequestLine(models.Model):
         related="request_id.state", string="Request Status")
     company_id = fields.Many2one(
         related="request_id.company_id", store=True)
+    access_token = fields.Char(
+        string="Access Token", copy=False, index=True, groups="base.group_user",
+        help="Secret token authenticating the approver's email/portal link.")
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if not vals.get("access_token"):
+                vals["access_token"] = secrets.token_urlsafe(32)
+        return super().create(vals_list)
+
+    def _portal_url(self):
+        self.ensure_one()
+        base = self.env["ir.config_parameter"].sudo().get_param(
+            "web.base.url", "")
+        return "%s/approval/act/%s?token=%s" % (
+            base, self.id, self.access_token or "")

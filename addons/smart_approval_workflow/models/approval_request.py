@@ -34,6 +34,11 @@ class ApprovalRequest(models.Model):
     current_step_id = fields.Many2one(
         "approval.workflow.step", string="Current Step", tracking=True,
         readonly=True)
+    current_step_started = fields.Datetime(
+        string="Step Started", readonly=True, copy=False,
+        help="When the current step became active (used for escalation).")
+    escalation_sent = fields.Boolean(
+        string="Reminder Sent", readonly=True, copy=False)
     state = fields.Selection(
         [("draft", "Draft"),
          ("pending", "Pending"),
@@ -147,17 +152,20 @@ class ApprovalRequest(models.Model):
 
     def _activate_step(self, step):
         self.ensure_one()
-        self.current_step_id = step
+        self.write({"current_step_id": step.id,
+                    "current_step_started": fields.Datetime.now(),
+                    "escalation_sent": False})
         approvers = step._resolve_approvers(self)
         if not approvers:
             self.message_post(
                 body="Step '%s' has no resolvable approver — skipped." % step.name)
             return self._advance_from(step)
-        self.env["approval.request.line"].create([{
+        lines = self.env["approval.request.line"].create([{
             "request_id": self.id, "step_id": step.id,
             "approver_id": user.id, "action": "pending",
         } for user in approvers])
         self._schedule_activities(approvers, step)
+        self._send_approval_emails(lines, step)
 
     def _schedule_activities(self, approvers, step):
         self.ensure_one()
@@ -167,17 +175,45 @@ class ApprovalRequest(models.Model):
                 summary="Approval required: %s" % self.name,
                 note="Step '%s' — please review and approve or reject." % step.name)
 
+    def _send_approval_emails(self, lines, step):
+        """Email each approver a secure link to review the request without
+        logging in (the link opens a portal page with Approve/Reject)."""
+        self.ensure_one()
+        Mail = self.env["mail.mail"].sudo()
+        for line in lines:
+            email = (line.approver_id.email_formatted
+                     or line.approver_id.partner_id.email_formatted)
+            if not email:
+                continue
+            url = line._portal_url()
+            body = (
+                "<p>Hello %s,</p>"
+                "<p>Your approval is requested for <strong>%s</strong> "
+                "(step: %s).</p>"
+                "<p><a href='%s' "
+                "style='background:#875A7B;color:#fff;padding:10px 18px;"
+                "border-radius:4px;text-decoration:none;'>Review &amp; Approve</a></p>"
+                "<p>Or open Odoo &gt; Approvals &gt; My Pending Approvals.</p>"
+            ) % (line.approver_id.name, self.name, step.name, url)
+            Mail.create({
+                "subject": "Approval required: %s" % self.name,
+                "email_to": email,
+                "body_html": body,
+                "auto_delete": True,
+            }).send(raise_exception=False)
+
     def _clear_activities(self):
         self.activity_ids.unlink()
 
-    def _act(self, action, comment=None):
-        """Record an approve/reject action by the current user."""
+    def _act(self, action, comment=None, approver=None):
+        """Record an approve/reject action. `approver` defaults to the current
+        user, or is supplied explicitly by the email/portal link controller."""
         self.ensure_one()
         if self.state != "pending":
             raise UserError(
                 "Only pending requests can be approved or rejected.")
         step = self.current_step_id
-        user = self.env.user
+        user = approver or self.env.user
         is_admin = user.has_group(ADMIN_GROUP)
         if user not in step._resolve_approvers(self) and not is_admin:
             raise UserError(
@@ -297,3 +333,38 @@ class ApprovalRequest(models.Model):
             "workflow_id": workflow.id, "res_id": record.id})
         request.action_submit()
         return request
+
+    # ----------------------------------------------------------- escalation
+    @api.model
+    def _cron_escalate(self):
+        """Daily: nudge approvers (and the escalation user) on steps that have
+        stayed pending beyond their step's escalation window."""
+        from datetime import timedelta
+        now = fields.Datetime.now()
+        pending = self.search([
+            ("state", "=", "pending"),
+            ("escalation_sent", "=", False),
+            ("current_step_id", "!=", False),
+            ("current_step_started", "!=", False),
+        ])
+        for req in pending:
+            days = req.current_step_id.escalation_days or 0
+            if days and now - req.current_step_started >= timedelta(days=days):
+                req._escalate()
+
+    def _escalate(self):
+        self.ensure_one()
+        step = self.current_step_id
+        self.message_post(body=(
+            "⏰ Reminder: still awaiting approval at step '%s' "
+            "(pending over %s day(s))." % (step.name, step.escalation_days)))
+        pending_lines = self.approval_line_ids.filtered(
+            lambda l: l.step_id == step and l.action == "pending")
+        self._send_approval_emails(pending_lines, step)
+        if step.escalation_user_id:
+            self.activity_schedule(
+                TODO_ACTIVITY, user_id=step.escalation_user_id.id,
+                summary="Escalated approval: %s" % self.name,
+                note="Step '%s' has been pending over %s day(s)." % (
+                    step.name, step.escalation_days))
+        self.escalation_sent = True

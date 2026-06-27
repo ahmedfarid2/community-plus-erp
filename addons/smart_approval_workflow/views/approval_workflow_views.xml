@@ -73,6 +73,8 @@
                                            required="approver_type == 'group'"/>
                                     <field name="required_approval_count"/>
                                     <field name="allow_reject" widget="boolean_toggle"/>
+                                    <field name="escalation_days"/>
+                                    <field name="escalation_user_id" optional="hide"/>
                                     <field name="active" widget="boolean_toggle"/>
                                 </list>
                             </field>
@@ -156,6 +158,8 @@
                                    required="approver_type == 'group'"/>
                             <field name="required_approval_count"/>
                             <field name="allow_reject"/>
+                            <field name="escalation_days"/>
+                            <field name="escalation_user_id"/>
                             <field name="active"/>
                         </group>
                     </group>

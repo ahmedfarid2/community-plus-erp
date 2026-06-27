@@ -28,6 +28,13 @@ class ApprovalWorkflowStep(models.Model):
     allow_reject = fields.Boolean(
         string="Allow Reject", default=True,
         help="Whether an approver may reject the request at this step.")
+    escalation_days = fields.Integer(
+        string="Escalate After (days)", default=0,
+        help="If the step stays pending this many days, send a reminder to the "
+             "approvers (and to the escalation user, if set). 0 disables it.")
+    escalation_user_id = fields.Many2one(
+        "res.users", string="Escalate To",
+        help="Optional user notified when the step is overdue.")
     active = fields.Boolean(default=True)
     company_id = fields.Many2one(
         related="workflow_id.company_id", store=True)

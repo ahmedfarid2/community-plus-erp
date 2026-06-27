@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Self-contained HTML pages: no website/portal/web layout dependency,
+         so the module stays at base + mail. -->
+
+    <template id="portal_act" name="Approval — Review">
+        <html>
+            <head>
+                <meta charset="utf-8"/>
+                <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                <title>Approval Request</title>
+            </head>
+            <body style="font-family:system-ui,Arial,sans-serif;background:#f4f4f6;margin:0;padding:40px;">
+                <div style="max-width:560px;margin:0 auto;background:#fff;border-radius:10px;box-shadow:0 2px 12px rgba(0,0,0,.08);padding:28px;">
+                    <h2 style="margin-top:0;color:#875A7B;">Approval Request</h2>
+                    <t t-if="handled">
+                        <p style="background:#eef;padding:12px;border-radius:6px;">
+                            This request is no longer awaiting your action
+                            (current status: <strong t-esc="req.state"/>).
+                        </p>
+                    </t>
+                    <t t-else="">
+                        <t t-if="error">
+                            <p style="background:#fdd;color:#900;padding:12px;border-radius:6px;" t-esc="error"/>
+                        </t>
+                        <table style="width:100%;border-collapse:collapse;margin-bottom:18px;">
+                            <tr><td style="padding:6px 0;color:#666;">Reference</td><td style="text-align:right;"><strong t-esc="req.name"/></td></tr>
+                            <tr><td style="padding:6px 0;color:#666;">Document</td><td style="text-align:right;"><t t-esc="req.res_model"/> #<t t-esc="req.res_id"/></td></tr>
+                            <tr><td style="padding:6px 0;color:#666;">Requester</td><td style="text-align:right;" t-esc="req.requester_id.name"/></tr>
+                            <tr><td style="padding:6px 0;color:#666;">Step</td><td style="text-align:right;" t-esc="req.current_step_id.name"/></tr>
+                            <tr><td style="padding:6px 0;color:#666;">Approver</td><td style="text-align:right;" t-esc="line.approver_id.name"/></tr>
+                        </table>
+                        <form t-attf-action="/approval/act/{{line.id}}" method="post">
+                            <input type="hidden" name="token" t-att-value="line.access_token"/>
+                            <textarea name="comment" rows="3"
+                                      style="width:100%;box-sizing:border-box;padding:10px;border:1px solid #ccc;border-radius:6px;"
+                                      placeholder="Optional for approval, required to reject"/>
+                            <div style="margin-top:16px;">
+                                <button type="submit" name="action" value="approved"
+                                        style="background:#875A7B;color:#fff;border:0;padding:11px 22px;border-radius:6px;cursor:pointer;font-size:15px;">Approve</button>
+                                <button type="submit" name="action" value="rejected"
+                                        style="background:#fff;color:#b32;border:1px solid #b32;padding:11px 22px;border-radius:6px;cursor:pointer;font-size:15px;margin-left:8px;">Reject</button>
+                            </div>
+                        </form>
+                    </t>
+                </div>
+            </body>
+        </html>
+    </template>
+
+    <template id="portal_done" name="Approval — Done">
+        <html>
+            <head><meta charset="utf-8"/><title>Approval</title></head>
+            <body style="font-family:system-ui,Arial,sans-serif;background:#f4f4f6;margin:0;padding:40px;">
+                <div style="max-width:560px;margin:0 auto;background:#fff;border-radius:10px;box-shadow:0 2px 12px rgba(0,0,0,.08);padding:28px;text-align:center;">
+                    <t t-if="result == 'approved'">
+                        <h2 style="color:#1a7f37;">✓ Approved</h2>
+                        <p>Thank you — <strong t-esc="req.name"/> has been recorded as approved.</p>
+                    </t>
+                    <t t-elif="result == 'rejected'">
+                        <h2 style="color:#b32;">Rejected</h2>
+                        <p><strong t-esc="req.name"/> has been rejected and the requester notified.</p>
+                    </t>
+                    <t t-else="">
+                        <h2>Already handled</h2>
+                        <p>This request was already actioned (status: <strong t-esc="req.state"/>).</p>
+                    </t>
+                </div>
+            </body>
+        </html>
+    </template>
+
+    <template id="portal_invalid" name="Approval — Invalid link">
+        <html>
+            <head><meta charset="utf-8"/><title>Invalid link</title></head>
+            <body style="font-family:system-ui,Arial,sans-serif;background:#f4f4f6;margin:0;padding:40px;">
+                <div style="max-width:560px;margin:0 auto;background:#fff;border-radius:10px;box-shadow:0 2px 12px rgba(0,0,0,.08);padding:28px;text-align:center;">
+                    <h2 style="color:#b32;">Invalid or expired link</h2>
+                    <p>This approval link is not valid. Please sign in to Odoo and use
+                       Approvals &gt; My Pending Approvals.</p>
+                </div>
+            </body>
+        </html>
+    </template>
+
+</odoo>
