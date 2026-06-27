@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_purchase_order_form_approval" model="ir.ui.view">
+        <field name="name">purchase.order.form.approval</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_approval_request" type="object"
+                        class="oe_stat_button" icon="fa-check-square-o"
+                        invisible="not approval_request_id">
+                    <div class="o_stat_info">
+                        <span class="o_stat_text">Approval</span>
+                    </div>
+                </button>
+            </xpath>
+
+            <xpath expr="//field[@name='partner_id']" position="before">
+                <field name="approval_request_id" invisible="1"/>
+                <field name="approval_state" widget="badge"
+                       invisible="approval_state == 'none'"
+                       decoration-info="approval_state == 'pending'"
+                       decoration-success="approval_state == 'approved'"
+                       decoration-danger="approval_state == 'rejected'"
+                       decoration-warning="approval_state == 'to_request'"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_purchase_order_list_approval" model="ir.ui.view">
+        <field name="name">purchase.order.list.approval</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_view_tree"/>
+        <field name="arch" type="xml">
+            <field name="state" position="before">
+                <field name="approval_state" widget="badge" optional="show"
+                       decoration-info="approval_state == 'pending'"
+                       decoration-success="approval_state == 'approved'"
+                       decoration-danger="approval_state == 'rejected'"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>
