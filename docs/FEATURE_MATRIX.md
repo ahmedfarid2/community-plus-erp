@@ -125,12 +125,15 @@ scan→extract→bill pipeline works for free.
 
 ## What *still* needs an external account (code shipped, but inert without credentials)
 
-The **connector code can be written**, but it cannot function without the client's own
+The **connector code is shipped**, but it cannot function without the client's own
 paid account / API keys — that's a credential gap, not a code gap:
-- **Live bank auto-sync** — needs a bank-aggregator subscription (Ponto/Qonto/Plaid). The
-  OCA framework above is installed; plug in the client's provider.
-- **Social Marketing** — needs the client's Facebook/X/LinkedIn API apps.
-- **Amazon connector** — needs the client's Amazon Seller (SP-API) credentials.
+- **Live bank auto-sync** — OCA `account_statement_import_online` installed; plug in the
+  client's Ponto/Qonto/Plaid provider.
+- **WhatsApp** — `whatsapp_lite` (Cloud API connector) — add a Meta WhatsApp Business
+  token + Phone Number ID and it sends via the Graph API.
+- **Social Marketing** — `social_lite` — Facebook Page publishing wired to the Graph API;
+  add a Page token. X/LinkedIn are connector points awaiting their tokens.
+- **Amazon connector** — needs the client's Amazon Seller (SP-API) credentials (not scaffolded).
 
 ## Genuinely not reproducible
 - **Shop-Floor MES / full PLM** (deep manufacturing execution), **Timesheet grid widget**
