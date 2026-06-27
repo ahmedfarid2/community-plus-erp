@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_reco_form_purchase" model="ir.ui.view">
+        <field name="name">inventory.reorder.recommendation.form.purchase</field>
+        <field name="model">inventory.reorder.recommendation</field>
+        <field name="inherit_id" ref="advanced_inventory_optimization.view_reco_form"/>
+        <field name="arch" type="xml">
+            <button name="action_reject" position="before">
+                <button name="action_convert_to_po" type="object"
+                        string="Convert to Purchase Order" class="btn-primary"
+                        invisible="state != 'approved' or purchase_order_id"/>
+                <button name="action_view_purchase_order" type="object"
+                        string="View Purchase Order" invisible="not purchase_order_id"/>
+            </button>
+            <field name="rejection_reason" position="before">
+                <field name="purchase_order_id" invisible="1"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="action_convert_recos_to_po" model="ir.actions.server">
+        <field name="name">Convert to Purchase Order(s)</field>
+        <field name="model_id" ref="advanced_inventory_optimization.model_inventory_reorder_recommendation"/>
+        <field name="binding_model_id" ref="advanced_inventory_optimization.model_inventory_reorder_recommendation"/>
+        <field name="state">code</field>
+        <field name="code">action = records.action_convert_to_po()</field>
+    </record>
+</odoo>
