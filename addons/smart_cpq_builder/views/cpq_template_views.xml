@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_cpq_template_list" model="ir.ui.view">
+        <field name="name">cpq.template.list</field>
+        <field name="model">cpq.template</field>
+        <field name="arch" type="xml">
+            <list decoration-muted="state == 'archived'">
+                <field name="name"/>
+                <field name="code" optional="show"/>
+                <field name="category_id" optional="show"/>
+                <field name="base_price"/>
+                <field name="option_count" string="Options"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-success="state == 'active'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_cpq_template_kanban" model="ir.ui.view">
+        <field name="name">cpq.template.kanban</field>
+        <field name="model">cpq.template</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="state"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_details">
+                            <strong><field name="name"/></strong>
+                            <div class="text-muted"><field name="category_id"/></div>
+                            <div class="mt-1">
+                                <span><field name="base_price"/> <field name="currency_id"/></span>
+                                <span class="float-end"><field name="state" widget="label_selection"
+                                      options="{'classes': {'draft': 'default', 'active': 'success', 'archived': 'secondary'}}"/></span>
+                            </div>
+                            <div class="text-muted"><field name="option_count"/> options</div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_cpq_template_form" model="ir.ui.view">
+        <field name="name">cpq.template.form</field>
+        <field name="model">cpq.template</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_activate" type="object" string="Activate"
+                            class="btn-primary" invisible="state == 'active'"/>
+                    <button name="action_archive_template" type="object"
+                            string="Archive" invisible="state == 'archived'"/>
+                    <button name="action_reset_to_draft" type="object"
+                            string="Reset to Draft" invisible="state == 'draft'"/>
+                    <button name="action_duplicate_template" type="object"
+                            string="Duplicate"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,active"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_configurations" type="object"
+                                class="oe_stat_button" icon="fa-cogs">
+                            <field name="configuration_count" widget="statinfo"
+                                   string="Configurations"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="e.g. Aluminum Window"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="category_id"/>
+                            <field name="base_product_id"/>
+                        </group>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="currency_id" groups="base.group_multi_currency"/>
+                            <field name="base_price"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Option Groups" name="groups">
+                            <field name="option_group_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="code"/>
+                                    <field name="selection_type"/>
+                                    <field name="is_required" widget="boolean_toggle"/>
+                                    <field name="min_selection"/>
+                                    <field name="max_selection"/>
+                                </list>
+                            </field>
+                            <p class="text-muted">Open a group to add its options.</p>
+                        </page>
+                        <page string="Pricing Rules" name="pricing">
+                            <field name="pricing_rule_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="condition_type"/>
+                                    <field name="condition_expression"/>
+                                    <field name="price_action"/>
+                                    <field name="amount"/>
+                                    <field name="percentage"/>
+                                    <field name="active" widget="boolean_toggle"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Compatibility Rules" name="compat">
+                            <field name="compatibility_rule_ids">
+                                <list editable="bottom">
+                                    <field name="name"/>
+                                    <field name="rule_type"/>
+                                    <field name="source_option_id"
+                                           domain="[('template_id','=',parent.id)]"/>
+                                    <field name="target_option_id"
+                                           domain="[('template_id','=',parent.id)]"/>
+                                    <field name="severity"/>
+                                    <field name="message"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Description" name="description">
+                            <field name="description"/>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_cpq_template_search" model="ir.ui.view">
+        <field name="name">cpq.template.search</field>
+        <field name="model">cpq.template</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="category_id"/>
+                <filter name="active_templates" string="Active"
+                        domain="[('state','=','active')]"/>
+                <filter name="draft_templates" string="Draft"
+                        domain="[('state','=','draft')]"/>
+                <filter name="archived_templates" string="Archived"
+                        domain="[('state','=','archived')]"/>
+                <separator/>
+                <filter name="group_category" string="Category"
+                        context="{'group_by':'category_id'}"/>
+                <filter name="group_state" string="Status"
+                        context="{'group_by':'state'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_cpq_template" model="ir.actions.act_window">
+        <field name="name">Templates</field>
+        <field name="res_model">cpq.template</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="search_view_id" ref="view_cpq_template_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create your first CPQ template</p>
+            <p>Define option groups, options, and pricing/compatibility rules, then
+               activate it so sales can configure quotes.</p>
+        </field>
+    </record>
+
+</odoo>

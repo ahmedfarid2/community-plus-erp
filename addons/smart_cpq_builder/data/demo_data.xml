@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="demo_template_window" model="cpq.template">
+            <field name="name">Aluminum Window (Demo)</field>
+            <field name="code">ALU-WIN</field>
+            <field name="state">active</field>
+            <field name="base_price">200.0</field>
+        </record>
+
+        <!-- Material (single, required) -->
+        <record id="demo_grp_material" model="cpq.option.group">
+            <field name="template_id" ref="demo_template_window"/>
+            <field name="name">Material</field>
+            <field name="code">MAT</field>
+            <field name="sequence">10</field>
+            <field name="selection_type">single</field>
+            <field name="is_required" eval="True"/>
+        </record>
+        <record id="demo_opt_standard" model="cpq.option">
+            <field name="group_id" ref="demo_grp_material"/>
+            <field name="name">Standard Aluminum</field>
+            <field name="code">STD</field>
+            <field name="price_type">none</field>
+            <field name="cost">60.0</field>
+        </record>
+        <record id="demo_opt_premium" model="cpq.option">
+            <field name="group_id" ref="demo_grp_material"/>
+            <field name="name">Premium Aluminum</field>
+            <field name="code">PREMIUM</field>
+            <field name="price_type">percentage</field>
+            <field name="percentage_value">15.0</field>
+            <field name="cost">110.0</field>
+        </record>
+
+        <!-- Glazing (single, required) -->
+        <record id="demo_grp_glass" model="cpq.option.group">
+            <field name="template_id" ref="demo_template_window"/>
+            <field name="name">Glazing</field>
+            <field name="code">GLZ</field>
+            <field name="sequence">20</field>
+            <field name="selection_type">single</field>
+            <field name="is_required" eval="True"/>
+        </record>
+        <record id="demo_opt_single" model="cpq.option">
+            <field name="group_id" ref="demo_grp_glass"/>
+            <field name="name">Single Glazing</field>
+            <field name="code">SGL</field>
+            <field name="price_type">none</field>
+            <field name="cost">20.0</field>
+        </record>
+        <record id="demo_opt_double" model="cpq.option">
+            <field name="group_id" ref="demo_grp_glass"/>
+            <field name="name">Double Glazing</field>
+            <field name="code">DBL</field>
+            <field name="price_type">fixed</field>
+            <field name="fixed_price">50.0</field>
+            <field name="cost">35.0</field>
+        </record>
+
+        <!-- Accessories (multiple, up to 3) -->
+        <record id="demo_grp_acc" model="cpq.option.group">
+            <field name="template_id" ref="demo_template_window"/>
+            <field name="name">Accessories</field>
+            <field name="code">ACC</field>
+            <field name="sequence">30</field>
+            <field name="selection_type">multiple</field>
+            <field name="max_selection">3</field>
+        </record>
+        <record id="demo_opt_handles" model="cpq.option">
+            <field name="group_id" ref="demo_grp_acc"/>
+            <field name="name">Premium Handles</field>
+            <field name="code">HANDLES</field>
+            <field name="price_type">fixed</field>
+            <field name="fixed_price">25.0</field>
+            <field name="cost">12.0</field>
+        </record>
+        <record id="demo_opt_net" model="cpq.option">
+            <field name="group_id" ref="demo_grp_acc"/>
+            <field name="name">Mosquito Net</field>
+            <field name="code">NET</field>
+            <field name="price_type">fixed</field>
+            <field name="fixed_price">15.0</field>
+            <field name="cost">7.0</field>
+        </record>
+
+        <!-- Installation (single) -->
+        <record id="demo_grp_install" model="cpq.option.group">
+            <field name="template_id" ref="demo_template_window"/>
+            <field name="name">Installation</field>
+            <field name="code">INS</field>
+            <field name="sequence">40</field>
+            <field name="selection_type">single</field>
+        </record>
+        <record id="demo_opt_proinstall" model="cpq.option">
+            <field name="group_id" ref="demo_grp_install"/>
+            <field name="name">Professional Installation</field>
+            <field name="code">PRO</field>
+            <field name="price_type">fixed</field>
+            <field name="fixed_price">60.0</field>
+            <field name="cost">40.0</field>
+        </record>
+
+        <!-- Pricing rule: 5% bulk discount above 10 units -->
+        <record id="demo_rule_bulk" model="cpq.pricing.rule">
+            <field name="template_id" ref="demo_template_window"/>
+            <field name="name">Bulk discount (qty &gt; 10)</field>
+            <field name="sequence">10</field>
+            <field name="condition_type">quantity_based</field>
+            <field name="condition_expression">quantity &gt; 10</field>
+            <field name="price_action">discount_percentage</field>
+            <field name="percentage">5.0</field>
+        </record>
+
+        <!-- Compatibility: premium handles require premium material -->
+        <record id="demo_compat_handles" model="cpq.compatibility.rule">
+            <field name="template_id" ref="demo_template_window"/>
+            <field name="name">Premium handles require premium aluminum</field>
+            <field name="rule_type">requires</field>
+            <field name="source_option_id" ref="demo_opt_handles"/>
+            <field name="target_option_id" ref="demo_opt_premium"/>
+            <field name="severity">blocking</field>
+        </record>
+
+        <!-- A draft configuration to explore -->
+        <record id="demo_config_1" model="cpq.configuration">
+            <field name="template_id" ref="demo_template_window"/>
+            <field name="quantity">1.0</field>
+            <field name="selected_option_ids" eval="[(6,0,[ref('demo_opt_premium'), ref('demo_opt_double'), ref('demo_opt_handles')])]"/>
+        </record>
+
+    </data>
+</odoo>

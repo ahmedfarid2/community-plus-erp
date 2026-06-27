@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="seq_cpq_configuration" model="ir.sequence">
+        <field name="name">CPQ Configuration</field>
+        <field name="code">cpq.configuration</field>
+        <field name="prefix">CPQ/%(year)s/</field>
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+</odoo>

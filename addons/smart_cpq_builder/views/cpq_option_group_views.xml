@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_cpq_option_group_list" model="ir.ui.view">
+        <field name="name">cpq.option.group.list</field>
+        <field name="model">cpq.option.group</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="template_id"/>
+                <field name="name"/>
+                <field name="selection_type"/>
+                <field name="is_required"/>
+                <field name="min_selection"/>
+                <field name="max_selection"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_cpq_option_group_form" model="ir.ui.view">
+        <field name="name">cpq.option.group.form</field>
+        <field name="model">cpq.option.group</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="e.g. Material"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="template_id"/>
+                            <field name="code"/>
+                            <field name="selection_type"/>
+                        </group>
+                        <group>
+                            <field name="is_required"/>
+                            <field name="min_selection"
+                                   invisible="selection_type != 'multiple'"/>
+                            <field name="max_selection"
+                                   invisible="selection_type != 'multiple'"/>
+                            <field name="help_text"/>
+                        </group>
+                    </group>
+                    <field name="option_ids" context="{'default_group_id': id}">
+                        <list editable="bottom">
+                            <field name="sequence" widget="handle"/>
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="price_type"/>
+                            <field name="fixed_price"
+                                   invisible="price_type != 'fixed'"/>
+                            <field name="percentage_value"
+                                   invisible="price_type != 'percentage'"/>
+                            <field name="formula_expression"
+                                   invisible="price_type != 'formula'"/>
+                            <field name="cost"/>
+                            <field name="active" widget="boolean_toggle"/>
+                            <field name="currency_id" column_invisible="1"/>
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_cpq_option_group_search" model="ir.ui.view">
+        <field name="name">cpq.option.group.search</field>
+        <field name="model">cpq.option.group</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="template_id"/>
+                <filter name="group_template" string="Template"
+                        context="{'group_by':'template_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_cpq_option_group" model="ir.actions.act_window">
+        <field name="name">Option Groups</field>
+        <field name="res_model">cpq.option.group</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_cpq_option_group_search"/>
+    </record>
+
+</odoo>

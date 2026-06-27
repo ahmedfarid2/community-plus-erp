@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_cpq_pricing_rule_list" model="ir.ui.view">
+        <field name="name">cpq.pricing.rule.list</field>
+        <field name="model">cpq.pricing.rule</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="template_id" optional="show"/>
+                <field name="name"/>
+                <field name="condition_type"/>
+                <field name="condition_expression" optional="show"/>
+                <field name="price_action"/>
+                <field name="amount"/>
+                <field name="percentage"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_cpq_pricing_rule_form" model="ir.ui.view">
+        <field name="name">cpq.pricing.rule.form</field>
+        <field name="model">cpq.pricing.rule</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="e.g. +15% for premium material"/></h1>
+                    </div>
+                    <group>
+                        <group string="Condition">
+                            <field name="template_id"/>
+                            <field name="sequence"/>
+                            <field name="condition_type"/>
+                            <field name="condition_expression"
+                                   invisible="condition_type == 'always'"/>
+                        </group>
+                        <group string="Action">
+                            <field name="price_action"/>
+                            <field name="amount"
+                                   invisible="price_action not in ('add_fixed','discount_fixed','set_price')"/>
+                            <field name="percentage"
+                                   invisible="price_action not in ('add_percentage','discount_percentage')"/>
+                            <field name="formula_expression"
+                                   invisible="price_action != 'formula'"/>
+                            <field name="applies_to"/>
+                        </group>
+                    </group>
+                    <field name="notes" placeholder="Explain this rule…"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_cpq_pricing_rule_search" model="ir.ui.view">
+        <field name="name">cpq.pricing.rule.search</field>
+        <field name="model">cpq.pricing.rule</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="template_id"/>
+                <filter name="group_template" string="Template"
+                        context="{'group_by':'template_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_cpq_pricing_rule" model="ir.actions.act_window">
+        <field name="name">Pricing Rules</field>
+        <field name="res_model">cpq.pricing.rule</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_cpq_pricing_rule_search"/>
+    </record>
+
+</odoo>

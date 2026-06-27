@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_cpq_option_list" model="ir.ui.view">
+        <field name="name">cpq.option.list</field>
+        <field name="model">cpq.option</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="template_id" optional="show"/>
+                <field name="group_id"/>
+                <field name="name"/>
+                <field name="code" optional="show"/>
+                <field name="price_type"/>
+                <field name="fixed_price"/>
+                <field name="cost" optional="hide"/>
+                <field name="active" widget="boolean_toggle"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_cpq_option_form" model="ir.ui.view">
+        <field name="name">cpq.option.form</field>
+        <field name="model">cpq.option</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="e.g. Solid Wood"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="group_id"/>
+                            <field name="code"/>
+                            <field name="price_type"/>
+                            <field name="fixed_price"
+                                   invisible="price_type != 'fixed'"/>
+                            <field name="percentage_value"
+                                   invisible="price_type != 'percentage'"/>
+                            <field name="formula_expression"
+                                   invisible="price_type != 'formula'"/>
+                        </group>
+                        <group>
+                            <field name="cost"/>
+                            <field name="margin_percent"/>
+                            <field name="active"/>
+                            <field name="currency_id" groups="base.group_multi_currency"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="help_text"/>
+                        <field name="description"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_cpq_option_search" model="ir.ui.view">
+        <field name="name">cpq.option.search</field>
+        <field name="model">cpq.option</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="template_id"/>
+                <field name="group_id"/>
+                <filter name="group_template" string="Template"
+                        context="{'group_by':'template_id'}"/>
+                <filter name="group_group" string="Group"
+                        context="{'group_by':'group_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_cpq_option" model="ir.actions.act_window">
+        <field name="name">Options</field>
+        <field name="res_model">cpq.option</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_cpq_option_search"/>
+    </record>
+
+</odoo>

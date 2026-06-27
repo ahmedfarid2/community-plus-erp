@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="module_category_cpq" model="ir.module.category">
+        <field name="name">CPQ</field>
+        <field name="description">Configure, Price, Quote.</field>
+        <field name="sequence">26</field>
+    </record>
+
+    <record id="privilege_cpq" model="res.groups.privilege">
+        <field name="name">CPQ</field>
+        <field name="category_id" ref="module_category_cpq"/>
+        <field name="sequence">26</field>
+    </record>
+
+    <record id="group_cpq_user" model="res.groups">
+        <field name="name">User</field>
+        <field name="privilege_id" ref="privilege_cpq"/>
+        <field name="comment">Create and manage their own configurations; read active templates.</field>
+    </record>
+
+    <record id="group_cpq_manager" model="res.groups">
+        <field name="name">Manager</field>
+        <field name="privilege_id" ref="privilege_cpq"/>
+        <field name="implied_ids" eval="[(4, ref('group_cpq_user'))]"/>
+        <field name="comment">View all configurations and calculation logs.</field>
+    </record>
+
+    <record id="group_cpq_admin" model="res.groups">
+        <field name="name">Administrator</field>
+        <field name="privilege_id" ref="privilege_cpq"/>
+        <field name="implied_ids" eval="[(4, ref('group_cpq_manager'))]"/>
+        <field name="comment">Configure templates, options, pricing and compatibility rules.</field>
+    </record>
+
+    <!-- ============================ Record Rules ============================ -->
+    <record id="rule_configuration_user" model="ir.rule">
+        <field name="name">CPQ Configuration: own</field>
+        <field name="model_id" ref="model_cpq_configuration"/>
+        <field name="groups" eval="[(4, ref('group_cpq_user'))]"/>
+        <field name="domain_force">['|', ('user_id', '=', user.id), ('create_uid', '=', user.id)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_configuration_manager" model="ir.rule">
+        <field name="name">CPQ Configuration: managers see all</field>
+        <field name="model_id" ref="model_cpq_configuration"/>
+        <field name="groups" eval="[(4, ref('group_cpq_manager'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+</odoo>

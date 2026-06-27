@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_cpq_root" name="CPQ"
+              web_icon="smart_cpq_builder,static/description/icon.png"
+              sequence="55"/>
+
+    <menuitem id="menu_cpq_configurations" name="Configurations"
+              parent="menu_cpq_root" action="action_cpq_configuration"
+              sequence="10"/>
+
+    <menuitem id="menu_cpq_templates" name="Templates"
+              parent="menu_cpq_root" action="action_cpq_template"
+              sequence="20"/>
+
+    <menuitem id="menu_cpq_logs" name="Calculation Logs"
+              parent="menu_cpq_root" action="action_cpq_calculation_log"
+              sequence="30"
+              groups="smart_cpq_builder.group_cpq_manager"/>
+
+    <menuitem id="menu_cpq_config" name="Configuration"
+              parent="menu_cpq_root" sequence="90"
+              groups="smart_cpq_builder.group_cpq_admin"/>
+
+    <menuitem id="menu_cpq_option_groups" name="Option Groups"
+              parent="menu_cpq_config" action="action_cpq_option_group"
+              sequence="10"/>
+
+    <menuitem id="menu_cpq_options" name="Options"
+              parent="menu_cpq_config" action="action_cpq_option"
+              sequence="20"/>
+
+    <menuitem id="menu_cpq_pricing_rules" name="Pricing Rules"
+              parent="menu_cpq_config" action="action_cpq_pricing_rule"
+              sequence="30"/>
+
+    <menuitem id="menu_cpq_compatibility_rules" name="Compatibility Rules"
+              parent="menu_cpq_config" action="action_cpq_compatibility_rule"
+              sequence="40"/>
+
+</odoo>

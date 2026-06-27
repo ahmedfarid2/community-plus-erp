@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_cpq_calculation_log_list" model="ir.ui.view">
+        <field name="name">cpq.calculation.log.list</field>
+        <field name="model">cpq.calculation.log</field>
+        <field name="arch" type="xml">
+            <list create="false">
+                <field name="configuration_id"/>
+                <field name="description"/>
+                <field name="rule_id" optional="show"/>
+                <field name="amount_before"/>
+                <field name="price_delta"/>
+                <field name="amount_after"/>
+                <field name="message" optional="show"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_cpq_calculation_log_search" model="ir.ui.view">
+        <field name="name">cpq.calculation.log.search</field>
+        <field name="model">cpq.calculation.log</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="configuration_id"/>
+                <field name="rule_id"/>
+                <filter name="group_config" string="Configuration"
+                        context="{'group_by':'configuration_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_cpq_calculation_log" model="ir.actions.act_window">
+        <field name="name">Calculation Logs</field>
+        <field name="res_model">cpq.calculation.log</field>
+        <field name="view_mode">list</field>
+        <field name="search_view_id" ref="view_cpq_calculation_log_search"/>
+    </record>
+
+</odoo>

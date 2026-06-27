@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_cpq_compatibility_rule_list" model="ir.ui.view">
+        <field name="name">cpq.compatibility.rule.list</field>
+        <field name="model">cpq.compatibility.rule</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="template_id" optional="show"/>
+                <field name="name"/>
+                <field name="rule_type"/>
+                <field name="source_option_id"/>
+                <field name="target_option_id"/>
+                <field name="severity" widget="badge"
+                       decoration-danger="severity == 'blocking'"
+                       decoration-warning="severity == 'warning'"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_cpq_compatibility_rule_form" model="ir.ui.view">
+        <field name="name">cpq.compatibility.rule.form</field>
+        <field name="model">cpq.compatibility.rule</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="e.g. Premium handles require premium material"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="template_id"/>
+                            <field name="rule_type"/>
+                            <field name="severity"/>
+                        </group>
+                        <group>
+                            <field name="source_option_id"
+                                   domain="[('template_id','=',template_id)]"/>
+                            <field name="target_option_id"
+                                   domain="[('template_id','=',template_id)]"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="message" placeholder="Shown to the sales user when violated…"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_cpq_compatibility_rule_search" model="ir.ui.view">
+        <field name="name">cpq.compatibility.rule.search</field>
+        <field name="model">cpq.compatibility.rule</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="template_id"/>
+                <filter name="group_template" string="Template"
+                        context="{'group_by':'template_id'}"/>
+                <filter name="group_type" string="Type"
+                        context="{'group_by':'rule_type'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_cpq_compatibility_rule" model="ir.actions.act_window">
+        <field name="name">Compatibility Rules</field>
+        <field name="res_model">cpq.compatibility.rule</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_cpq_compatibility_rule_search"/>
+    </record>
+
+</odoo>
