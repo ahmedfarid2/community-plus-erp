@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_dashboard_lite_board,hr.dashboard.lite.board,model_hr_dashboard_lite_board,base.group_user,1,1,1,1

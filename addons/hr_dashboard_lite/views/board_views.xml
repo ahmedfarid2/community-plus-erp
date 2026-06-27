@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_hr_dashboard_lite_board_form" model="ir.ui.view">
+        <field name="name">hr.dashboard.lite.board.form</field>
+        <field name="model">hr.dashboard.lite.board</field>
+        <field name="arch" type="xml">
+            <form string="HR Dashboard" create="false" edit="false">
+                <div class="cp_dash">
+                    <div class="cp_hero d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="cp_hero_title">Human Resources</p>
+                            <span class="cp_hero_sub">People · Time Off · Recruitment</span>
+                        </div>
+                        <div class="cp_hero_metric">
+                            <div class="v"><field name="employees"/></div>
+                            <div class="l">Employees</div>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-3 col-md-6">
+                            <div class="cp_card cp-primary"><div class="cp_card_body">
+                                <div class="cp_icon"><i class="fa fa-users" title="Headcount"/></div>
+                                <div class="cp_label">Headcount</div>
+                                <div class="cp_value"><field name="employees"/></div>
+                                <button name="action_employees" type="object" class="cp_link">View →</button>
+                            </div></div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="cp_card cp-info"><div class="cp_card_body">
+                                <div class="cp_icon"><i class="fa fa-sitemap" title="Departments"/></div>
+                                <div class="cp_label">Departments</div>
+                                <div class="cp_value"><field name="departments"/></div>
+                            </div></div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="cp_card cp-success"><div class="cp_card_body">
+                                <div class="cp_icon"><i class="fa fa-user-plus" title="New hires"/></div>
+                                <div class="cp_label">New Hires (30d)</div>
+                                <div class="cp_value"><field name="new_hires_30"/></div>
+                            </div></div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="cp_card cp-purple"><div class="cp_card_body">
+                                <div class="cp_icon"><i class="fa fa-briefcase" title="Open positions"/></div>
+                                <div class="cp_label">Open Positions</div>
+                                <div class="cp_value"><field name="jobs_open"/></div>
+                                <button name="action_jobs" type="object" class="cp_link">View →</button>
+                            </div></div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="cp_card cp-warning"><div class="cp_card_body">
+                                <div class="cp_icon"><i class="fa fa-plane" title="On leave"/></div>
+                                <div class="cp_label">On Leave Today</div>
+                                <div class="cp_value"><field name="on_leave_today"/></div>
+                                <button name="action_on_leave" type="object" class="cp_link">View →</button>
+                            </div></div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="cp_card cp-danger"><div class="cp_card_body">
+                                <div class="cp_icon"><i class="fa fa-check-square-o" title="Approve"/></div>
+                                <div class="cp_label">Time Off to Approve</div>
+                                <div class="cp_value"><field name="leave_to_approve"/></div>
+                                <button name="action_leave_approve" type="object" class="cp_link">View →</button>
+                            </div></div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="cp_card cp-slate"><div class="cp_card_body">
+                                <div class="cp_icon"><i class="fa fa-id-badge" title="Applicants"/></div>
+                                <div class="cp_label">Applicants</div>
+                                <div class="cp_value"><field name="applicants"/></div>
+                                <button name="action_applicants" type="object" class="cp_link">View →</button>
+                            </div></div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="cp_card cp-warning"><div class="cp_card_body">
+                                <div class="cp_icon"><i class="fa fa-money" title="Expenses"/></div>
+                                <div class="cp_label">Expenses to Approve</div>
+                                <div class="cp_value"><field name="expenses_to_approve"/></div>
+                                <button name="action_expenses" type="object" class="cp_link">View →</button>
+                            </div></div>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <button name="action_refresh" type="object" string="Refresh"
+                                class="btn btn-primary btn-sm" icon="fa-refresh"/>
+                    </div>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_hr_dashboard_lite_board" model="ir.actions.act_window">
+        <field name="name">Dashboard</field>
+        <field name="res_model">hr.dashboard.lite.board</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+    </record>
+
+    <menuitem id="menu_hr_dashboard_lite" name="Dashboard"
+              parent="hr.menu_hr_root"
+              action="action_hr_dashboard_lite_board" sequence="1"/>
+
+</odoo>

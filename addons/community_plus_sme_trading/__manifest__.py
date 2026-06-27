@@ -64,6 +64,7 @@ Open-source addons may be installed separately after license and version audit.
         "sale_management",
         "stock",
         "subscriptions_lite",
+        "hr_dashboard_lite",
         "website_sale",
         "whatsapp_lite",
         "social_lite",
