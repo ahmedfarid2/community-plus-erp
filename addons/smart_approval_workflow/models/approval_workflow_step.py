@@ -63,7 +63,9 @@ class ApprovalWorkflowStep(models.Model):
         if self.approver_type == "user":
             return self.approver_user_id
         if self.approver_type == "group":
-            return self.approver_group_id.sudo().users.filtered("active")
+            # all_user_ids includes members via group implication (Odoo 19
+            # renamed res.groups.users -> user_ids / all_user_ids).
+            return self.approver_group_id.sudo().all_user_ids.filtered("active")
         if self.approver_type == "manager":
             return self._manager_users(request.requester_id)
         return self.env["res.users"]
