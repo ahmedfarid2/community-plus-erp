@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="hr_expense_view_form_approval" model="ir.ui.view">
+        <field name="name">hr.expense.form.approval</field>
+        <field name="model">hr.expense</field>
+        <field name="inherit_id" ref="hr_expense.hr_expense_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_sa_approval_request" type="object"
+                        class="oe_stat_button" icon="fa-check-square-o"
+                        invisible="not sa_approval_request_id">
+                    <div class="o_stat_info">
+                        <span class="o_stat_text">Approval</span>
+                    </div>
+                </button>
+            </xpath>
+            <field name="employee_id" position="before">
+                <field name="sa_approval_request_id" invisible="1"/>
+                <field name="sa_approval_state" widget="badge"
+                       invisible="sa_approval_state == 'none'"
+                       decoration-info="sa_approval_state == 'pending'"
+                       decoration-success="sa_approval_state == 'approved'"
+                       decoration-danger="sa_approval_state == 'rejected'"
+                       decoration-warning="sa_approval_state == 'to_request'"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>

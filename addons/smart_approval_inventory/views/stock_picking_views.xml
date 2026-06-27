@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_picking_form_approval" model="ir.ui.view">
+        <field name="name">stock.picking.form.approval</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_approval_request" type="object"
+                        class="oe_stat_button" icon="fa-check-square-o"
+                        invisible="not approval_request_id">
+                    <div class="o_stat_info">
+                        <span class="o_stat_text">Approval</span>
+                    </div>
+                </button>
+            </xpath>
+            <field name="partner_id" position="before">
+                <field name="approval_request_id" invisible="1"/>
+                <field name="approval_state" widget="badge"
+                       invisible="approval_state == 'none'"
+                       decoration-info="approval_state == 'pending'"
+                       decoration-success="approval_state == 'approved'"
+                       decoration-danger="approval_state == 'rejected'"
+                       decoration-warning="approval_state == 'to_request'"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>
