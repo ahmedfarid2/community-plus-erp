@@ -10,7 +10,7 @@ class SubscriptionBoard(models.TransientModel):
 
     mrr = fields.Monetary(compute="_compute_kpis")
     arr = fields.Monetary(compute="_compute_kpis")
-    active = fields.Integer(compute="_compute_kpis")
+    active_count = fields.Integer(compute="_compute_kpis")
     draft = fields.Integer(compute="_compute_kpis")
     paused = fields.Integer(compute="_compute_kpis")
     churned = fields.Integer(compute="_compute_kpis")
@@ -23,13 +23,13 @@ class SubscriptionBoard(models.TransientModel):
         for b in self:
             cdom = [("company_id", "=", b.company_id.id)]
             act = C.search(cdom + [("state", "=", "active")])
-            b.active = len(act)
+            b.active_count = len(act)
             b.draft = C.search_count(cdom + [("state", "=", "draft")])
             b.paused = C.search_count(cdom + [("state", "=", "paused")])
             b.churned = C.search_count(cdom + [("state", "=", "closed")])
             b.mrr = sum(act.mapped("mrr"))
             b.arr = b.mrr * 12
-            b.arpu = (b.mrr / b.active) if b.active else 0.0
+            b.arpu = (b.mrr / b.active_count) if b.active_count else 0.0
             today = fields.Date.context_today(self)
             b.due_invoicing = C.search_count(
                 cdom + [("state", "=", "active"), ("next_invoice_date", "<=", today)])
