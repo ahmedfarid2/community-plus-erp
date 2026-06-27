@@ -65,6 +65,10 @@ plan = [
      "condition": "domain_based",
      "domain": "[('picking_type_code', '=', 'outgoing')]",
      "step": "Warehouse Manager"},
+    {"name": "CPQ Low Margin (< 15%)", "model": "cpq.configuration",
+     "condition": "domain_based",
+     "domain": "[('margin_percent', '<', 15)]",
+     "step": "Sales Director"},
 ]
 
 for spec in plan:

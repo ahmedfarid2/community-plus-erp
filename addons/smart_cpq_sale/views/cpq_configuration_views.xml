@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_cpq_configuration_form_sale" model="ir.ui.view">
+        <field name="name">cpq.configuration.form.sale</field>
+        <field name="model">cpq.configuration</field>
+        <field name="inherit_id" ref="smart_cpq_builder.view_cpq_configuration_form"/>
+        <field name="arch" type="xml">
+            <button name="action_recalculate" position="before">
+                <button name="action_create_quotation" type="object"
+                        string="Create Quotation" class="btn-primary"
+                        invisible="state not in ('validated','quoted') or sale_order_id"/>
+                <button name="action_view_sale_order" type="object"
+                        string="View Quotation"
+                        invisible="not sale_order_id"/>
+            </button>
+            <field name="validation_message" position="before">
+                <field name="sale_order_id" invisible="1"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_cpq_configuration_form_approval" model="ir.ui.view">
+        <field name="name">cpq.configuration.form.approval</field>
+        <field name="model">cpq.configuration</field>
+        <field name="inherit_id" ref="smart_cpq_builder.view_cpq_configuration_form"/>
+        <field name="arch" type="xml">
+            <button name="action_recalculate" position="after">
+                <button name="action_view_approval_request" type="object"
+                        string="View Approval"
+                        invisible="not approval_request_id"/>
+            </button>
+            <field name="validation_message" position="before">
+                <field name="approval_request_id" invisible="1"/>
+                <field name="approval_state" widget="badge"
+                       invisible="approval_state == 'none'"
+                       decoration-info="approval_state == 'pending'"
+                       decoration-success="approval_state == 'approved'"
+                       decoration-danger="approval_state == 'rejected'"
+                       decoration-warning="approval_state == 'to_request'"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>
