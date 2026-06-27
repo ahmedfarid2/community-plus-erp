@@ -88,7 +88,7 @@ class PaymentPlan(models.Model):
             ("sale.order", "Sales Order"),
             ("account.move", "Invoice"),
             ("project.project", "Project"),
-            ("subscription.lite.contract", "Subscription"),
+            ("subscription.subscription", "Subscription"),
         ]
         return [(model, label) for model, label in candidates
                 if model in self.env]
