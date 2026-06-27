@@ -6,154 +6,130 @@
         <field name="model">dashboards.lite.board</field>
         <field name="arch" type="xml">
             <form string="Company Dashboard" create="false" edit="false">
-                <header>
-                    <button name="action_refresh" type="object" string="Refresh"
-                            class="btn-primary" icon="fa-refresh"/>
-                </header>
-                <sheet>
-                    <field name="currency_id" invisible="1"/>
-                    <field name="company_id" invisible="1"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="company_id" invisible="1"/>
+                <div class="o_cpdash">
 
-                    <h3 class="text-primary"><i class="fa fa-money me-2"/>Finance</h3>
-                    <div class="row g-3 mb-2">
-                        <div class="col-lg-3 col-md-6">
-                            <div class="card h-100 shadow-sm border-0">
-                                <div class="card-body text-center">
-                                    <i class="fa fa-university fa-2x text-info" title="KPI"/>
-                                    <div class="text-muted small mt-2">Cash &amp; Bank</div>
-                                    <h2 class="text-info mb-0"><field name="cash"/></h2>
-                                </div>
-                            </div>
+                    <div class="o_cpdash_hero d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="o_cpdash_hero_title">
+                                <field name="company_name" readonly="1" nolabel="1"/>
+                            </p>
+                            <span class="o_cpdash_hero_sub">Company Dashboard · live KPIs across every app</span>
                         </div>
-                        <div class="col-lg-3 col-md-6">
-                            <div class="card h-100 shadow-sm border-0">
-                                <div class="card-body text-center">
-                                    <i class="fa fa-hand-o-down fa-2x text-success" title="KPI"/>
-                                    <div class="text-muted small mt-2">Receivable</div>
-                                    <h2 class="text-success mb-0"><field name="receivable"/></h2>
-                                    <button name="action_receivable" type="object"
-                                            class="btn btn-sm btn-link p-0">View →</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-md-6">
-                            <div class="card h-100 shadow-sm border-0">
-                                <div class="card-body text-center">
-                                    <i class="fa fa-hand-o-up fa-2x text-danger" title="KPI"/>
-                                    <div class="text-muted small mt-2">Payable</div>
-                                    <h2 class="text-danger mb-0"><field name="payable"/></h2>
-                                    <button name="action_payable" type="object"
-                                            class="btn btn-sm btn-link p-0">View →</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-md-6">
-                            <div class="card h-100 shadow-sm border-0">
-                                <div class="card-body text-center">
-                                    <i class="fa fa-line-chart fa-2x text-primary" title="KPI"/>
-                                    <div class="text-muted small mt-2">Net Profit (YTD)</div>
-                                    <h2 class="text-primary mb-0"><field name="net_profit_ytd"/></h2>
-                                </div>
-                            </div>
-                        </div>
+                        <button name="action_refresh" type="object" string="Refresh"
+                                class="btn btn-light" icon="fa-refresh"/>
                     </div>
 
-                    <h3 class="text-primary"><i class="fa fa-shopping-cart me-2"/>Sales &amp; People</h3>
-                    <div class="row g-3 mb-2">
-                        <div class="col-lg-3 col-md-6">
-                            <div class="card h-100 shadow-sm border-0">
-                                <div class="card-body text-center">
-                                    <i class="fa fa-file-text-o fa-2x text-warning" title="KPI"/>
-                                    <div class="text-muted small mt-2">Unpaid Invoices</div>
-                                    <h3 class="mb-0"><field name="unpaid_invoices"/></h3>
-                                    <button name="action_unpaid_invoices" type="object"
-                                            class="btn btn-sm btn-link p-0">View →</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-md-6">
-                            <div class="card h-100 shadow-sm border-0">
-                                <div class="card-body text-center">
-                                    <i class="fa fa-repeat fa-2x text-info" title="KPI"/>
-                                    <div class="text-muted small mt-2">MRR</div>
-                                    <h3 class="mb-0"><field name="mrr"/></h3>
-                                    <button name="action_subscriptions" type="object"
-                                            class="btn btn-sm btn-link p-0">View →</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-md-6">
-                            <div class="card h-100 shadow-sm border-0">
-                                <div class="card-body text-center">
-                                    <i class="fa fa-tags fa-2x text-success" title="KPI"/>
-                                    <div class="text-muted small mt-2">Open Quotations</div>
-                                    <h3 class="mb-0"><field name="open_quotations"/></h3>
-                                    <button name="action_quotations" type="object"
-                                            class="btn btn-sm btn-link p-0">View →</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-md-6">
-                            <div class="card h-100 shadow-sm border-0">
-                                <div class="card-body text-center">
-                                    <i class="fa fa-users fa-2x text-secondary" title="KPI"/>
-                                    <div class="text-muted small mt-2">Employees</div>
-                                    <h3 class="mb-0"><field name="employees"/></h3>
-                                    <button name="action_employees" type="object"
-                                            class="btn btn-sm btn-link p-0">View →</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <h3 class="text-primary"><i class="fa fa-cogs me-2"/>Operations</h3>
+                    <!-- Finance -->
+                    <div class="o_cpdash_section"><i class="fa fa-money" title="Finance"/>Finance</div>
                     <div class="row g-3">
                         <div class="col-lg-3 col-md-6">
-                            <div class="card h-100 shadow-sm border-0">
-                                <div class="card-body text-center">
-                                    <i class="fa fa-life-ring fa-2x text-danger" title="KPI"/>
-                                    <div class="text-muted small mt-2">Open Tickets</div>
-                                    <h3 class="mb-0"><field name="open_tickets"/></h3>
-                                    <button name="action_tickets" type="object"
-                                            class="btn btn-sm btn-link p-0">View →</button>
-                                </div>
-                            </div>
+                            <div class="o_cpdash_card accent-info"><div class="o_cpdash_body">
+                                <div class="o_cpdash_icon"><i class="fa fa-university" title="Cash"/></div>
+                                <div class="o_cpdash_label">Cash &amp; Bank</div>
+                                <div class="o_cpdash_value"><field name="cash"/></div>
+                            </div></div>
                         </div>
                         <div class="col-lg-3 col-md-6">
-                            <div class="card h-100 shadow-sm border-0">
-                                <div class="card-body text-center">
-                                    <i class="fa fa-check-square-o fa-2x text-warning" title="KPI"/>
-                                    <div class="text-muted small mt-2">Pending Approvals</div>
-                                    <h3 class="mb-0"><field name="pending_approvals"/></h3>
-                                    <button name="action_approvals" type="object"
-                                            class="btn btn-sm btn-link p-0">View →</button>
-                                </div>
-                            </div>
+                            <div class="o_cpdash_card accent-success"><div class="o_cpdash_body">
+                                <div class="o_cpdash_icon"><i class="fa fa-hand-o-down" title="Receivable"/></div>
+                                <div class="o_cpdash_label">Receivable</div>
+                                <div class="o_cpdash_value"><field name="receivable"/></div>
+                                <button name="action_receivable" type="object" class="o_cpdash_link">View →</button>
+                            </div></div>
                         </div>
                         <div class="col-lg-3 col-md-6">
-                            <div class="card h-100 shadow-sm border-0">
-                                <div class="card-body text-center">
-                                    <i class="fa fa-exclamation-triangle fa-2x text-danger" title="KPI"/>
-                                    <div class="text-muted small mt-2">Expiring Documents</div>
-                                    <h3 class="mb-0"><field name="expiring_docs"/></h3>
-                                    <button name="action_expiring_docs" type="object"
-                                            class="btn btn-sm btn-link p-0">View →</button>
-                                </div>
-                            </div>
+                            <div class="o_cpdash_card accent-danger"><div class="o_cpdash_body">
+                                <div class="o_cpdash_icon"><i class="fa fa-hand-o-up" title="Payable"/></div>
+                                <div class="o_cpdash_label">Payable</div>
+                                <div class="o_cpdash_value"><field name="payable"/></div>
+                                <button name="action_payable" type="object" class="o_cpdash_link">View →</button>
+                            </div></div>
                         </div>
                         <div class="col-lg-3 col-md-6">
-                            <div class="card h-100 shadow-sm border-0">
-                                <div class="card-body text-center">
-                                    <i class="fa fa-calendar fa-2x text-info" title="KPI"/>
-                                    <div class="text-muted small mt-2">Today's Room Bookings</div>
-                                    <h3 class="mb-0"><field name="todays_bookings"/></h3>
-                                    <button name="action_bookings" type="object"
-                                            class="btn btn-sm btn-link p-0">View →</button>
-                                </div>
-                            </div>
+                            <div class="o_cpdash_card accent-primary"><div class="o_cpdash_body">
+                                <div class="o_cpdash_icon"><i class="fa fa-line-chart" title="Net Profit"/></div>
+                                <div class="o_cpdash_label">Net Profit (YTD)</div>
+                                <div class="o_cpdash_value"><field name="net_profit_ytd"/></div>
+                            </div></div>
                         </div>
                     </div>
-                </sheet>
+
+                    <!-- Sales &amp; People -->
+                    <div class="o_cpdash_section"><i class="fa fa-shopping-cart" title="Sales"/>Sales &amp; People</div>
+                    <div class="row g-3">
+                        <div class="col-lg-3 col-md-6">
+                            <div class="o_cpdash_card accent-warning"><div class="o_cpdash_body">
+                                <div class="o_cpdash_icon"><i class="fa fa-file-text-o" title="Unpaid"/></div>
+                                <div class="o_cpdash_label">Unpaid Invoices</div>
+                                <div class="o_cpdash_value"><field name="unpaid_invoices"/></div>
+                                <button name="action_unpaid_invoices" type="object" class="o_cpdash_link">View →</button>
+                            </div></div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="o_cpdash_card accent-info"><div class="o_cpdash_body">
+                                <div class="o_cpdash_icon"><i class="fa fa-repeat" title="MRR"/></div>
+                                <div class="o_cpdash_label">MRR</div>
+                                <div class="o_cpdash_value"><field name="mrr"/></div>
+                                <button name="action_subscriptions" type="object" class="o_cpdash_link">View →</button>
+                            </div></div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="o_cpdash_card accent-success"><div class="o_cpdash_body">
+                                <div class="o_cpdash_icon"><i class="fa fa-tags" title="Quotations"/></div>
+                                <div class="o_cpdash_label">Open Quotations</div>
+                                <div class="o_cpdash_value"><field name="open_quotations"/></div>
+                                <button name="action_quotations" type="object" class="o_cpdash_link">View →</button>
+                            </div></div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="o_cpdash_card accent-slate"><div class="o_cpdash_body">
+                                <div class="o_cpdash_icon"><i class="fa fa-users" title="Employees"/></div>
+                                <div class="o_cpdash_label">Employees</div>
+                                <div class="o_cpdash_value"><field name="employees"/></div>
+                                <button name="action_employees" type="object" class="o_cpdash_link">View →</button>
+                            </div></div>
+                        </div>
+                    </div>
+
+                    <!-- Operations -->
+                    <div class="o_cpdash_section"><i class="fa fa-cogs" title="Operations"/>Operations</div>
+                    <div class="row g-3">
+                        <div class="col-lg-3 col-md-6">
+                            <div class="o_cpdash_card accent-danger"><div class="o_cpdash_body">
+                                <div class="o_cpdash_icon"><i class="fa fa-life-ring" title="Tickets"/></div>
+                                <div class="o_cpdash_label">Open Tickets</div>
+                                <div class="o_cpdash_value"><field name="open_tickets"/></div>
+                                <button name="action_tickets" type="object" class="o_cpdash_link">View →</button>
+                            </div></div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="o_cpdash_card accent-warning"><div class="o_cpdash_body">
+                                <div class="o_cpdash_icon"><i class="fa fa-check-square-o" title="Approvals"/></div>
+                                <div class="o_cpdash_label">Pending Approvals</div>
+                                <div class="o_cpdash_value"><field name="pending_approvals"/></div>
+                                <button name="action_approvals" type="object" class="o_cpdash_link">View →</button>
+                            </div></div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="o_cpdash_card accent-purple"><div class="o_cpdash_body">
+                                <div class="o_cpdash_icon"><i class="fa fa-exclamation-triangle" title="Expiring"/></div>
+                                <div class="o_cpdash_label">Expiring Documents</div>
+                                <div class="o_cpdash_value"><field name="expiring_docs"/></div>
+                                <button name="action_expiring_docs" type="object" class="o_cpdash_link">View →</button>
+                            </div></div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="o_cpdash_card accent-info"><div class="o_cpdash_body">
+                                <div class="o_cpdash_icon"><i class="fa fa-calendar" title="Bookings"/></div>
+                                <div class="o_cpdash_label">Today's Room Bookings</div>
+                                <div class="o_cpdash_value"><field name="todays_bookings"/></div>
+                                <button name="action_bookings" type="object" class="o_cpdash_link">View →</button>
+                            </div></div>
+                        </div>
+                    </div>
+                </div>
             </form>
         </field>
     </record>

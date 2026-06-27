@@ -6,6 +6,7 @@ class Dashboard(models.TransientModel):
     _description = "Company Dashboard"
 
     company_id = fields.Many2one("res.company", default=lambda s: s.env.company)
+    company_name = fields.Char(related="company_id.name")
     currency_id = fields.Many2one(related="company_id.currency_id")
 
     # Finance
