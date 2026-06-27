@@ -23,6 +23,8 @@ Open-source addons may be installed separately after license and version audit.
         "community_plus_theme",
         "web_dark_mode",
         "web_refresher",
+        "ai_lite",
+        "phone_lite",
         "account_cashflow_lite",
         "account_overview_lite",
         "account_deferred_lite",

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_ai_lite_conversation_form" model="ir.ui.view">
+        <field name="name">ai.lite.conversation.form</field>
+        <field name="model">ai.lite.conversation</field>
+        <field name="arch" type="xml">
+            <form string="AI Assistant">
+                <sheet>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <field name="line_ids" readonly="1">
+                        <list>
+                            <field name="role"/>
+                            <field name="content"/>
+                        </list>
+                    </field>
+                    <group>
+                        <field name="prompt" nolabel="1" placeholder="Ask the assistant anything..."/>
+                    </group>
+                    <footer>
+                        <button name="action_send" type="object" string="Send"
+                                class="btn-primary"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_ai_lite_conversation_list" model="ir.ui.view">
+        <field name="name">ai.lite.conversation.list</field>
+        <field name="model">ai.lite.conversation</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="user_id"/>
+                <field name="write_date"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_ai_lite_conversation" model="ir.actions.act_window">
+        <field name="name">Conversations</field>
+        <field name="res_model">ai.lite.conversation</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_ai_lite_root" name="AI"
+              web_icon="base_setup,static/description/icon.png" sequence="110"/>
+    <menuitem id="menu_ai_lite_chats" name="Assistant"
+              parent="menu_ai_lite_root" action="action_ai_lite_conversation" sequence="10"/>
+
+</odoo>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_phone_lite_call_form" model="ir.ui.view">
+        <field name="name">phone.lite.call.form</field>
+        <field name="model">phone.lite.call</field>
+        <field name="arch" type="xml">
+            <form string="Phone Call">
+                <header>
+                    <button name="action_done" type="object" string="Completed"
+                            class="btn-primary" invisible="state in ('done','cancel')"/>
+                    <button name="action_missed" type="object" string="Missed"
+                            invisible="state in ('done','missed','cancel')"/>
+                    <button name="action_cancel" type="object" string="Cancel"
+                            invisible="state in ('done','cancel')"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="phone_number" widget="phone"/>
+                            <field name="direction"/>
+                        </group>
+                        <group>
+                            <field name="call_date"/>
+                            <field name="duration"/>
+                            <field name="user_id"/>
+                        </group>
+                    </group>
+                    <div class="alert alert-info" role="alert">
+                        Tap the phone number to dial via your computer/softphone
+                        (a <code>tel:</code> link). Log the outcome and duration here.
+                    </div>
+                    <field name="notes" placeholder="Call notes..."/>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_phone_lite_call_list" model="ir.ui.view">
+        <field name="name">phone.lite.call.list</field>
+        <field name="model">phone.lite.call</field>
+        <field name="arch" type="xml">
+            <list decoration-success="state == 'done'" decoration-danger="state == 'missed'">
+                <field name="call_date"/>
+                <field name="partner_id"/>
+                <field name="phone_number" widget="phone"/>
+                <field name="direction"/>
+                <field name="duration"/>
+                <field name="user_id"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_phone_lite_call" model="ir.actions.act_window">
+        <field name="name">Calls</field>
+        <field name="res_model">phone.lite.call</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_phone_lite_root" name="Phone"
+              web_icon="mail,static/description/icon.png" sequence="109"/>
+    <menuitem id="menu_phone_lite_calls" name="Call Log"
+              parent="menu_phone_lite_root" action="action_phone_lite_call" sequence="10"/>
+
+</odoo>
