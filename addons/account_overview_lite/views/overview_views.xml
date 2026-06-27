@@ -145,4 +145,9 @@
               parent="account.menu_finance" action="action_account_overview"
               sequence="1"/>
 
+    <!-- Make the Accounting app LAND on the premium Overview by default. -->
+    <record id="account.menu_finance" model="ir.ui.menu">
+        <field name="action" ref="action_account_overview"/>
+    </record>
+
 </odoo>
