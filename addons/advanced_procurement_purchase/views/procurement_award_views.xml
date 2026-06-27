@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_award_form_purchase" model="ir.ui.view">
+        <field name="name">procurement.award.form.purchase</field>
+        <field name="model">procurement.award</field>
+        <field name="inherit_id" ref="advanced_procurement_suite.view_award_form"/>
+        <field name="arch" type="xml">
+            <button name="action_view_audit" position="before">
+                <button name="action_convert_to_po" type="object"
+                        string="Convert to Purchase Order" class="btn-primary"
+                        invisible="state != 'approved' or purchase_order_id"/>
+                <button name="action_view_purchase_order" type="object"
+                        string="View Purchase Order" invisible="not purchase_order_id"/>
+            </button>
+            <field name="savings_amount" position="after">
+                <field name="purchase_order_id" invisible="1"/>
+            </field>
+        </field>
+    </record>
+</odoo>
