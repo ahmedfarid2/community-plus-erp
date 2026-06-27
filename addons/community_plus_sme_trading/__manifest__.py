@@ -40,6 +40,8 @@ Open-source addons may be installed separately after license and version audit.
         "field_service_lite",
         "helpdesk_lite",
         "hr",
+        "knowledge_lite",
+        "meeting_rooms_lite",
         "hr_expense",
         "mrp",
         "ocr_lite",

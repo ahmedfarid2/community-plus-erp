@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Rooms -->
+    <record id="view_meeting_lite_room_list" model="ir.ui.view">
+        <field name="name">meeting.lite.room.list</field>
+        <field name="model">meeting.lite.room</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="name"/>
+                <field name="capacity"/>
+                <field name="location"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+    <record id="action_meeting_lite_room" model="ir.actions.act_window">
+        <field name="name">Rooms</field>
+        <field name="res_model">meeting.lite.room</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Bookings -->
+    <record id="view_meeting_lite_booking_calendar" model="ir.ui.view">
+        <field name="name">meeting.lite.booking.calendar</field>
+        <field name="model">meeting.lite.booking</field>
+        <field name="arch" type="xml">
+            <calendar string="Bookings" date_start="start_datetime"
+                      date_stop="stop_datetime" color="room_id" mode="week">
+                <field name="room_id"/>
+                <field name="organizer_id"/>
+            </calendar>
+        </field>
+    </record>
+    <record id="view_meeting_lite_booking_list" model="ir.ui.view">
+        <field name="name">meeting.lite.booking.list</field>
+        <field name="model">meeting.lite.booking</field>
+        <field name="arch" type="xml">
+            <list decoration-success="state == 'confirmed'" decoration-muted="state == 'cancel'">
+                <field name="name"/>
+                <field name="room_id"/>
+                <field name="organizer_id"/>
+                <field name="start_datetime"/>
+                <field name="stop_datetime"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_meeting_lite_booking_form" model="ir.ui.view">
+        <field name="name">meeting.lite.booking.form</field>
+        <field name="model">meeting.lite.booking</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_confirm" type="object" string="Confirm"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_cancel" type="object" string="Cancel"
+                            invisible="state == 'cancel'"/>
+                    <button name="action_reset" type="object" string="Reset"
+                            invisible="state == 'draft'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <group>
+                        <group>
+                            <field name="room_id"/>
+                            <field name="organizer_id"/>
+                        </group>
+                        <group>
+                            <field name="start_datetime"/>
+                            <field name="stop_datetime"/>
+                        </group>
+                    </group>
+                    <field name="attendee_ids" widget="many2many_tags"/>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+    <record id="action_meeting_lite_booking" model="ir.actions.act_window">
+        <field name="name">Bookings</field>
+        <field name="res_model">meeting.lite.booking</field>
+        <field name="view_mode">calendar,list,form</field>
+    </record>
+
+    <menuitem id="menu_meeting_lite_root" name="Meeting Rooms"
+              web_icon="mail,static/description/icon.png" sequence="106"/>
+    <menuitem id="menu_meeting_lite_bookings" name="Bookings"
+              parent="menu_meeting_lite_root" action="action_meeting_lite_booking"
+              sequence="10"/>
+    <menuitem id="menu_meeting_lite_config" name="Configuration"
+              parent="menu_meeting_lite_root" sequence="90"/>
+    <menuitem id="menu_meeting_lite_rooms" name="Rooms"
+              parent="menu_meeting_lite_config" action="action_meeting_lite_room"
+              sequence="10"/>
+
+</odoo>

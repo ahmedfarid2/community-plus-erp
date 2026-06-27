@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_knowledge_lite_article_list" model="ir.ui.view">
+        <field name="name">knowledge.lite.article.list</field>
+        <field name="model">knowledge.lite.article</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="full_name" string="Article"/>
+                <field name="author_id"/>
+                <field name="is_favorite" widget="boolean_favorite"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_knowledge_lite_article_form" model="ir.ui.view">
+        <field name="name">knowledge.lite.article.form</field>
+        <field name="model">knowledge.lite.article</field>
+        <field name="arch" type="xml">
+            <form string="Article">
+                <header>
+                    <button name="action_toggle_favorite" type="object"
+                            string="★ Favorite" class="btn-secondary"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Article title..."/></h1>
+                    </div>
+                    <group>
+                        <field name="parent_id"/>
+                        <field name="author_id"/>
+                    </group>
+                    <field name="body" placeholder="Write your article..."/>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_knowledge_lite_article_search" model="ir.ui.view">
+        <field name="name">knowledge.lite.article.search</field>
+        <field name="model">knowledge.lite.article</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="body"/>
+                <filter name="favorites" string="Favorites" domain="[('is_favorite','=',True)]"/>
+                <filter name="top" string="Top-level" domain="[('parent_id','=',False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_knowledge_lite_article" model="ir.actions.act_window">
+        <field name="name">Articles</field>
+        <field name="res_model">knowledge.lite.article</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_top': 1}</field>
+    </record>
+
+    <menuitem id="menu_knowledge_lite_root" name="Knowledge"
+              web_icon="mail,static/description/icon.png" sequence="105"/>
+    <menuitem id="menu_knowledge_lite_articles" name="Articles"
+              parent="menu_knowledge_lite_root" action="action_knowledge_lite_article"
+              sequence="10"/>
+
+</odoo>
