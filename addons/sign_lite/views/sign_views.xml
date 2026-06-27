@@ -82,7 +82,7 @@
     </record>
 
     <menuitem id="menu_sign_lite_root" name="Sign"
-              web_icon="mail,static/description/icon.png" sequence="98"/>
+              web_icon="sign_lite,static/description/icon.png" sequence="98"/>
     <menuitem id="menu_sign_lite_main" name="Requests"
               parent="menu_sign_lite_root" action="action_sign_lite" sequence="10"/>
 

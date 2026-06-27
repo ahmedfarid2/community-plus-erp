@@ -127,7 +127,7 @@
         <field name="view_mode">list,form</field>
     </record>
 
-    <menuitem id="menu_helpdesk_lite_root" name="Helpdesk" sequence="46"/>
+    <menuitem id="menu_helpdesk_lite_root" name="Helpdesk" web_icon="helpdesk_lite,static/description/icon.png" sequence="46"/>
     <menuitem id="menu_helpdesk_lite_ticket" name="Tickets" parent="menu_helpdesk_lite_root" action="action_helpdesk_lite_ticket" sequence="10"/>
     <menuitem id="menu_helpdesk_lite_team" name="Teams" parent="menu_helpdesk_lite_root" action="action_helpdesk_lite_team" sequence="20"/>
 </odoo>

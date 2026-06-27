@@ -85,7 +85,7 @@
     </record>
 
     <menuitem id="menu_appointment_lite_root" name="Appointments"
-              web_icon="mail,static/description/icon.png" sequence="100"/>
+              web_icon="appointment_lite,static/description/icon.png" sequence="100"/>
     <menuitem id="menu_appointment_lite_bookings" name="Appointments"
               parent="menu_appointment_lite_root" action="action_appointment_lite_booking"
               sequence="10"/>

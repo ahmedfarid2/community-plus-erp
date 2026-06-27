@@ -69,7 +69,7 @@
     </record>
 
     <menuitem id="menu_ma_lite_root" name="Marketing Automation"
-              web_icon="mail,static/description/icon.png" sequence="102"/>
+              web_icon="marketing_automation_lite,static/description/icon.png" sequence="102"/>
     <menuitem id="menu_ma_lite_campaigns" name="Campaigns"
               parent="menu_ma_lite_root" action="action_ma_lite_campaign" sequence="10"/>
 

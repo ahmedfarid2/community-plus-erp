@@ -67,7 +67,7 @@
     </record>
 
     <menuitem id="menu_planning_lite_root" name="Planning"
-              web_icon="hr,static/description/icon.png" sequence="96"/>
+              web_icon="planning_lite,static/description/icon.png" sequence="96"/>
     <menuitem id="menu_planning_lite_schedule" name="Schedule"
               parent="menu_planning_lite_root" action="action_planning_lite" sequence="10"/>
 

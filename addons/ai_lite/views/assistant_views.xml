@@ -45,7 +45,7 @@
     </record>
 
     <menuitem id="menu_ai_lite_root" name="AI"
-              web_icon="base_setup,static/description/icon.png" sequence="110"/>
+              web_icon="ai_lite,static/description/icon.png" sequence="110"/>
     <menuitem id="menu_ai_lite_chats" name="Assistant"
               parent="menu_ai_lite_root" action="action_ai_lite_conversation" sequence="10"/>
 

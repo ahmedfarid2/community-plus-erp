@@ -58,7 +58,7 @@
     </record>
 
     <menuitem id="menu_knowledge_lite_root" name="Knowledge"
-              web_icon="mail,static/description/icon.png" sequence="105"/>
+              web_icon="knowledge_lite,static/description/icon.png" sequence="105"/>
     <menuitem id="menu_knowledge_lite_articles" name="Articles"
               parent="menu_knowledge_lite_root" action="action_knowledge_lite_article"
               sequence="10"/>

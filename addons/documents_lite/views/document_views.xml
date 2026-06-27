@@ -98,7 +98,7 @@
         <field name="view_mode">list,form</field>
     </record>
 
-    <menuitem id="menu_documents_lite_root" name="Documents" sequence="47"/>
+    <menuitem id="menu_documents_lite_root" name="Documents" web_icon="documents_lite,static/description/icon.png" sequence="47"/>
     <menuitem id="menu_documents_lite_document" name="Documents" parent="menu_documents_lite_root" action="action_documents_lite_document" sequence="10"/>
     <menuitem id="menu_documents_lite_folder" name="Folders" parent="menu_documents_lite_root" action="action_documents_lite_folder" sequence="20"/>
 </odoo>

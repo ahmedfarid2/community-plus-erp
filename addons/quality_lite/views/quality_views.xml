@@ -116,7 +116,7 @@
     </record>
 
     <menuitem id="menu_quality_lite_root" name="Quality"
-              web_icon="stock,static/description/icon.png" sequence="101"/>
+              web_icon="quality_lite,static/description/icon.png" sequence="101"/>
     <menuitem id="menu_quality_lite_checks" name="Quality Checks"
               parent="menu_quality_lite_root" action="action_quality_lite_check" sequence="10"/>
     <menuitem id="menu_quality_lite_config" name="Configuration"

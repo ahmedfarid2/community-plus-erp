@@ -167,7 +167,7 @@
         <field name="view_mode">list,form</field>
     </record>
 
-    <menuitem id="menu_subscription_lite_root" name="Subscriptions" sequence="48"/>
+    <menuitem id="menu_subscription_lite_root" name="Subscriptions" web_icon="subscriptions_lite,static/description/icon.png" sequence="48"/>
     <!-- Top-bar dropdowns mirror Enterprise: Subscriptions / Products / Reporting / Configuration -->
     <menuitem id="menu_subscription_lite_sub" name="Subscriptions" parent="menu_subscription_lite_root" sequence="10"/>
     <menuitem id="menu_subscription_lite_contract" name="Subscriptions" parent="menu_subscription_lite_sub" action="action_subscription_lite_contract" sequence="10"/>

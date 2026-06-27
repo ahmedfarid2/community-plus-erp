@@ -85,7 +85,7 @@
     </record>
 
     <menuitem id="menu_meeting_lite_root" name="Meeting Rooms"
-              web_icon="mail,static/description/icon.png" sequence="106"/>
+              web_icon="meeting_rooms_lite,static/description/icon.png" sequence="106"/>
     <menuitem id="menu_meeting_lite_bookings" name="Bookings"
               parent="menu_meeting_lite_root" action="action_meeting_lite_booking"
               sequence="10"/>

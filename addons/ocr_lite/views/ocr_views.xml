@@ -60,7 +60,7 @@
     </record>
 
     <menuitem id="menu_ocr_lite_root" name="Invoice OCR"
-              web_icon="account,static/description/icon.png" sequence="104"/>
+              web_icon="ocr_lite,static/description/icon.png" sequence="104"/>
     <menuitem id="menu_ocr_lite_docs" name="Documents"
               parent="menu_ocr_lite_root" action="action_ocr_lite_document" sequence="10"/>
 

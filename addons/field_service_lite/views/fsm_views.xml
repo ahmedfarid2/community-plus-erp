@@ -100,7 +100,7 @@
     </record>
 
     <menuitem id="menu_fsm_lite_root" name="Field Service"
-              web_icon="hr,static/description/icon.png" sequence="99"/>
+              web_icon="field_service_lite,static/description/icon.png" sequence="99"/>
     <menuitem id="menu_fsm_lite_orders" name="Orders"
               parent="menu_fsm_lite_root" action="action_fsm_lite_order" sequence="10"/>
 

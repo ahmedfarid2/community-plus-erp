@@ -47,7 +47,7 @@
     </record>
 
     <menuitem id="menu_barcode_lite_root" name="Barcode"
-              web_icon="stock,static/description/icon.png" sequence="103"/>
+              web_icon="barcode_lite,static/description/icon.png" sequence="103"/>
     <menuitem id="menu_barcode_lite_scan" name="Scan"
               parent="menu_barcode_lite_root" action="action_barcode_lite_session"
               sequence="10"/>

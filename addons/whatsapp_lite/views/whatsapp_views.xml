@@ -85,7 +85,7 @@
     </record>
 
     <menuitem id="menu_whatsapp_lite_root" name="WhatsApp"
-              web_icon="mail,static/description/icon.png" sequence="107"/>
+              web_icon="whatsapp_lite,static/description/icon.png" sequence="107"/>
     <menuitem id="menu_whatsapp_lite_messages" name="Messages"
               parent="menu_whatsapp_lite_root" action="action_whatsapp_lite_message" sequence="10"/>
     <menuitem id="menu_whatsapp_lite_config" name="Configuration"

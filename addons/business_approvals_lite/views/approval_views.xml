@@ -97,7 +97,7 @@
         <field name="view_mode">list,form</field>
     </record>
 
-    <menuitem id="menu_business_approvals_root" name="Approvals" sequence="45"/>
+    <menuitem id="menu_business_approvals_root" name="Approvals" web_icon="business_approvals_lite,static/description/icon.png" sequence="45"/>
     <menuitem id="menu_business_approval_request" name="Requests" parent="menu_business_approvals_root" action="action_business_approval_request" sequence="10"/>
     <menuitem id="menu_business_approval_category" name="Categories" parent="menu_business_approvals_root" action="action_business_approval_category" sequence="20"/>
 </odoo>

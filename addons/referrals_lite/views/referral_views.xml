@@ -81,7 +81,7 @@
     </record>
 
     <menuitem id="menu_referral_lite_root" name="Referrals"
-              web_icon="hr,static/description/icon.png" sequence="97"/>
+              web_icon="referrals_lite,static/description/icon.png" sequence="97"/>
     <menuitem id="menu_referral_lite_main" name="Referrals"
               parent="menu_referral_lite_root" action="action_referral_lite" sequence="10"/>
 

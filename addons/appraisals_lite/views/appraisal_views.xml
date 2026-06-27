@@ -92,7 +92,7 @@
     </record>
 
     <menuitem id="menu_appraisal_lite_root" name="Appraisals"
-              web_icon="hr,static/description/icon.png" sequence="95"/>
+              web_icon="appraisals_lite,static/description/icon.png" sequence="95"/>
     <menuitem id="menu_appraisal_lite_main" name="Appraisals"
               parent="menu_appraisal_lite_root" sequence="10"/>
     <menuitem id="menu_appraisal_lite_all" name="All Appraisals"
