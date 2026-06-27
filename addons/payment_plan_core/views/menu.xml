@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_payment_plan_root" name="Payment Plans"
+              web_icon="payment_plan_core,static/description/icon.png"
+              sequence="45"/>
+
+    <menuitem id="menu_payment_plan_operations" name="Operations"
+              parent="menu_payment_plan_root" sequence="10"/>
+
+    <menuitem id="menu_payment_plan" name="Payment Plans"
+              parent="menu_payment_plan_operations"
+              action="action_payment_plan" sequence="10"/>
+
+    <menuitem id="menu_payment_plan_line" name="Payment Lines"
+              parent="menu_payment_plan_operations"
+              action="action_payment_plan_line" sequence="20"/>
+
+    <menuitem id="menu_overdue_collections" name="Overdue Collections"
+              parent="menu_payment_plan_operations"
+              action="action_overdue_collections" sequence="30"/>
+
+    <menuitem id="menu_collection_followup" name="Follow-ups"
+              parent="menu_payment_plan_operations"
+              action="action_collection_followup" sequence="40"/>
+
+    <menuitem id="menu_payment_plan_config" name="Configuration"
+              parent="menu_payment_plan_root" sequence="90"
+              groups="payment_plan_core.group_payment_plan_manager"/>
+
+    <menuitem id="menu_payment_plan_template" name="Templates"
+              parent="menu_payment_plan_config"
+              action="action_payment_plan_template" sequence="10"/>
+
+    <menuitem id="menu_payment_plan_type" name="Plan Types"
+              parent="menu_payment_plan_config"
+              action="action_payment_plan_type" sequence="20"/>
+
+</odoo>

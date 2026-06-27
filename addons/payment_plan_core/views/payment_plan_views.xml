@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_payment_plan_list" model="ir.ui.view">
+        <field name="name">payment.plan.list</field>
+        <field name="model">payment.plan</field>
+        <field name="arch" type="xml">
+            <list decoration-muted="state in ('closed','cancelled')"
+                  decoration-danger="overdue_amount &gt; 0"
+                  decoration-success="state == 'active' and remaining_amount &lt;= 0">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="plan_type_id" optional="show"/>
+                <field name="responsible_user_id" optional="show"/>
+                <field name="next_due_date"/>
+                <field name="total_amount" sum="Total"/>
+                <field name="paid_amount" sum="Paid"/>
+                <field name="remaining_amount" sum="Remaining"/>
+                <field name="overdue_amount" sum="Overdue"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-success="state == 'active'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_payment_plan_form" model="ir.ui.view">
+        <field name="name">payment.plan.form</field>
+        <field name="model">payment.plan</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_generate_lines" type="object"
+                            string="Generate Lines" class="btn-secondary"
+                            invisible="state != 'draft' or not template_id"/>
+                    <button name="action_activate" type="object"
+                            string="Activate" class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_close" type="object" string="Close"
+                            invisible="state != 'active'"/>
+                    <button name="action_cancel" type="object" string="Cancel"
+                            invisible="state in ('closed','cancelled')"/>
+                    <button name="action_reset_to_draft" type="object"
+                            string="Reset to Draft"
+                            invisible="state not in ('closed','cancelled')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,active,closed"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_lines" type="object"
+                                class="oe_stat_button" icon="fa-list-ul">
+                            <field name="line_count" widget="statinfo"
+                                   string="Lines"/>
+                        </button>
+                        <button name="action_view_overdue" type="object"
+                                class="oe_stat_button" icon="fa-exclamation-triangle">
+                            <field name="overdue_line_count" widget="statinfo"
+                                   string="Overdue"/>
+                        </button>
+                        <button name="action_view_followups" type="object"
+                                class="oe_stat_button" icon="fa-phone">
+                            <field name="followup_count" widget="statinfo"
+                                   string="Follow-ups"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="plan_type_id"/>
+                            <field name="source_ref"/>
+                            <field name="responsible_user_id"/>
+                        </group>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="currency_id" groups="base.group_multi_currency"/>
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                            <field name="next_due_date"/>
+                        </group>
+                    </group>
+                    <group string="Generate from Template">
+                        <group>
+                            <field name="template_id"/>
+                            <field name="total_amount"/>
+                        </group>
+                        <group>
+                            <field name="paid_amount"/>
+                            <field name="remaining_amount"/>
+                            <field name="overdue_amount"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Payment Lines" name="lines">
+                            <field name="line_ids">
+                                <list editable="bottom"
+                                      decoration-danger="status == 'overdue'"
+                                      decoration-warning="status == 'due'"
+                                      decoration-success="status == 'paid'"
+                                      decoration-muted="status == 'cancelled'">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="due_date"/>
+                                    <field name="amount"/>
+                                    <field name="paid_amount"/>
+                                    <field name="remaining_amount"/>
+                                    <field name="days_overdue" optional="hide"/>
+                                    <field name="notes" optional="hide"/>
+                                    <field name="status" widget="badge"
+                                           decoration-danger="status == 'overdue'"
+                                           decoration-warning="status == 'due'"
+                                           decoration-success="status == 'paid'"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                    <button name="action_mark_paid" type="object"
+                                            icon="fa-check" title="Mark paid"
+                                            invisible="status in ('paid','cancelled')"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Follow-ups" name="followups">
+                            <field name="followup_ids" context="{'default_partner_id': partner_id}">
+                                <list editable="bottom">
+                                    <field name="followup_date"/>
+                                    <field name="followup_type"/>
+                                    <field name="assigned_to"/>
+                                    <field name="next_action_date"/>
+                                    <field name="status" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="notes" placeholder="Internal notes about this plan…"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_payment_plan_search" model="ir.ui.view">
+        <field name="name">payment.plan.search</field>
+        <field name="model">payment.plan</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" string="Plan"/>
+                <field name="partner_id"/>
+                <field name="responsible_user_id"/>
+                <field name="plan_type_id"/>
+                <filter name="active_plans" string="Active"
+                        domain="[('state','=','active')]"/>
+                <filter name="draft_plans" string="Draft"
+                        domain="[('state','=','draft')]"/>
+                <filter name="closed_plans" string="Closed"
+                        domain="[('state','=','closed')]"/>
+                <separator/>
+                <filter name="has_overdue" string="Overdue"
+                        domain="[('overdue_amount','&gt;',0)]"/>
+                <filter name="has_remaining" string="Has Remaining"
+                        domain="[('remaining_amount','&gt;',0)]"/>
+                <separator/>
+                <filter name="my_plans" string="My Plans"
+                        domain="[('responsible_user_id','=',uid)]"/>
+                <separator/>
+                <filter name="group_state" string="Status"
+                        context="{'group_by':'state'}"/>
+                <filter name="group_partner" string="Customer"
+                        context="{'group_by':'partner_id'}"/>
+                <filter name="group_responsible" string="Responsible"
+                        context="{'group_by':'responsible_user_id'}"/>
+                <filter name="group_type" string="Plan Type"
+                        context="{'group_by':'plan_type_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_payment_plan" model="ir.actions.act_window">
+        <field name="name">Payment Plans</field>
+        <field name="res_model">payment.plan</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_payment_plan_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create your first payment plan</p>
+            <p>Schedule customer payments, track partial payments and overdue
+               balances, and follow up on collections — all inside Odoo.</p>
+        </field>
+    </record>
+
+</odoo>

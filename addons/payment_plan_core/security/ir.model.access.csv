@@ -1,0 +1,11 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_payment_plan_user,payment.plan.user,model_payment_plan,group_payment_plan_user,1,1,1,0
+access_payment_plan_manager,payment.plan.manager,model_payment_plan,group_payment_plan_manager,1,1,1,1
+access_payment_plan_line_user,payment.plan.line.user,model_payment_plan_line,group_payment_plan_user,1,1,1,1
+access_payment_plan_line_manager,payment.plan.line.manager,model_payment_plan_line,group_payment_plan_manager,1,1,1,1
+access_payment_plan_template_user,payment.plan.template.user,model_payment_plan_template,group_payment_plan_user,1,0,0,0
+access_payment_plan_template_manager,payment.plan.template.manager,model_payment_plan_template,group_payment_plan_manager,1,1,1,1
+access_payment_plan_type_user,payment.plan.type.user,model_payment_plan_type,group_payment_plan_user,1,0,0,0
+access_payment_plan_type_manager,payment.plan.type.manager,model_payment_plan_type,group_payment_plan_manager,1,1,1,1
+access_collection_followup_user,collection.followup.user,model_collection_followup,group_payment_plan_user,1,1,1,0
+access_collection_followup_manager,collection.followup.manager,model_collection_followup,group_payment_plan_manager,1,1,1,1

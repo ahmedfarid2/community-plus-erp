@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_payment_plan_type_list" model="ir.ui.view">
+        <field name="name">payment.plan.type.list</field>
+        <field name="model">payment.plan.type</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_payment_plan_type" model="ir.actions.act_window">
+        <field name="name">Plan Types</field>
+        <field name="res_model">payment.plan.type</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

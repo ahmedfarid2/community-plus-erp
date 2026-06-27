@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_payment_plan_line_list" model="ir.ui.view">
+        <field name="name">payment.plan.line.list</field>
+        <field name="model">payment.plan.line</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="status == 'overdue'"
+                  decoration-warning="status == 'due'"
+                  decoration-success="status == 'paid'"
+                  decoration-muted="status == 'cancelled'">
+                <field name="plan_id"/>
+                <field name="partner_id"/>
+                <field name="due_date"/>
+                <field name="amount" sum="Amount"/>
+                <field name="paid_amount" sum="Paid"/>
+                <field name="remaining_amount" sum="Remaining"/>
+                <field name="days_overdue" optional="show"/>
+                <field name="responsible_user_id" optional="hide"/>
+                <field name="status" widget="badge"
+                       decoration-danger="status == 'overdue'"
+                       decoration-warning="status == 'due'"
+                       decoration-success="status == 'paid'"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_payment_plan_line_form" model="ir.ui.view">
+        <field name="name">payment.plan.line.form</field>
+        <field name="model">payment.plan.line</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_mark_paid" type="object"
+                            string="Mark Paid" class="btn-primary"
+                            invisible="status in ('paid','cancelled')"/>
+                    <button name="action_cancel_line" type="object"
+                            string="Cancel Line"
+                            invisible="status == 'cancelled'"/>
+                    <field name="status" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="plan_id"/>
+                            <field name="partner_id"/>
+                            <field name="due_date"/>
+                            <field name="days_overdue"/>
+                        </group>
+                        <group>
+                            <field name="amount"/>
+                            <field name="paid_amount"/>
+                            <field name="remaining_amount"/>
+                            <field name="currency_id" groups="base.group_multi_currency"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="notes"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_payment_plan_line_search" model="ir.ui.view">
+        <field name="name">payment.plan.line.search</field>
+        <field name="model">payment.plan.line</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="plan_id"/>
+                <field name="partner_id"/>
+                <filter name="overdue" string="Overdue"
+                        domain="[('status','=','overdue')]"/>
+                <filter name="due_today" string="Due Today"
+                        domain="[('due_date','=',context_today().strftime('%Y-%m-%d')),('status','in',('due','overdue','partial','pending'))]"/>
+                <filter name="due_this_week" string="Due This Week"
+                        domain="[('due_date','&gt;=',(context_today()).strftime('%Y-%m-%d')),('due_date','&lt;=',(context_today()+relativedelta(days=7)).strftime('%Y-%m-%d')),('remaining_amount','&gt;',0)]"/>
+                <separator/>
+                <filter name="partial" string="Partial Payments"
+                        domain="[('status','=','partial')]"/>
+                <filter name="paid" string="Paid"
+                        domain="[('status','=','paid')]"/>
+                <filter name="pending" string="Pending"
+                        domain="[('status','=','pending')]"/>
+                <separator/>
+                <filter name="my_lines" string="My Lines"
+                        domain="[('responsible_user_id','=',uid)]"/>
+                <separator/>
+                <filter name="group_status" string="Status"
+                        context="{'group_by':'status'}"/>
+                <filter name="group_plan" string="Plan"
+                        context="{'group_by':'plan_id'}"/>
+                <filter name="group_partner" string="Customer"
+                        context="{'group_by':'partner_id'}"/>
+                <filter name="group_due" string="Due Date"
+                        context="{'group_by':'due_date'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_payment_plan_line" model="ir.actions.act_window">
+        <field name="name">Payment Lines</field>
+        <field name="res_model">payment.plan.line</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_payment_plan_line_search"/>
+    </record>
+
+    <record id="action_overdue_collections" model="ir.actions.act_window">
+        <field name="name">Overdue Collections</field>
+        <field name="res_model">payment.plan.line</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('status','=','overdue')]</field>
+        <field name="search_view_id" ref="view_payment_plan_line_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No overdue lines — nice!</p>
+            <p>Lines past their due date (after the grace period) with a
+               remaining balance appear here.</p>
+        </field>
+    </record>
+
+</odoo>

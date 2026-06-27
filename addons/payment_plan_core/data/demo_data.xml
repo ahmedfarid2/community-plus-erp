@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Plan types -->
+        <record id="demo_type_installments" model="payment.plan.type">
+            <field name="name">Installments</field>
+            <field name="code">INSTALL</field>
+        </record>
+        <record id="demo_type_milestone" model="payment.plan.type">
+            <field name="name">Milestone Payments</field>
+            <field name="code">MILESTONE</field>
+        </record>
+        <record id="demo_type_retainer" model="payment.plan.type">
+            <field name="name">Service Retainer</field>
+            <field name="code">RETAINER</field>
+        </record>
+
+        <!-- Templates -->
+        <record id="demo_tmpl_3_monthly" model="payment.plan.template">
+            <field name="name">3 Monthly Payments</field>
+            <field name="number_of_payments">3</field>
+            <field name="frequency">monthly</field>
+            <field name="equal_distribution" eval="True"/>
+            <field name="grace_period_days">5</field>
+        </record>
+        <record id="demo_tmpl_5050" model="payment.plan.template">
+            <field name="name">50 / 50 Payment</field>
+            <field name="number_of_payments">2</field>
+            <field name="frequency">monthly</field>
+            <field name="equal_distribution" eval="False"/>
+            <field name="first_payment_percent">50</field>
+            <field name="grace_period_days">0</field>
+        </record>
+        <record id="demo_tmpl_6_monthly" model="payment.plan.template">
+            <field name="name">6 Monthly Payments</field>
+            <field name="number_of_payments">6</field>
+            <field name="frequency">monthly</field>
+            <field name="equal_distribution" eval="True"/>
+            <field name="grace_period_days">7</field>
+        </record>
+
+        <!-- A sample plan with generated-style lines -->
+        <record id="demo_plan_1" model="payment.plan">
+            <field name="partner_id" ref="base.res_partner_2"/>
+            <field name="plan_type_id" ref="demo_type_installments"/>
+            <field name="template_id" ref="demo_tmpl_3_monthly"/>
+            <field name="total_amount">3000.0</field>
+            <field name="start_date" eval="(DateTime.today() - relativedelta(months=1)).strftime('%Y-%m-%d')"/>
+            <field name="state">active</field>
+        </record>
+        <record id="demo_plan_1_line_1" model="payment.plan.line">
+            <field name="plan_id" ref="demo_plan_1"/>
+            <field name="sequence">10</field>
+            <field name="due_date" eval="(DateTime.today() - relativedelta(months=1)).strftime('%Y-%m-%d')"/>
+            <field name="amount">1000.0</field>
+            <field name="paid_amount">1000.0</field>
+        </record>
+        <record id="demo_plan_1_line_2" model="payment.plan.line">
+            <field name="plan_id" ref="demo_plan_1"/>
+            <field name="sequence">20</field>
+            <field name="due_date" eval="(DateTime.today() - relativedelta(days=3)).strftime('%Y-%m-%d')"/>
+            <field name="amount">1000.0</field>
+            <field name="paid_amount">400.0</field>
+        </record>
+        <record id="demo_plan_1_line_3" model="payment.plan.line">
+            <field name="plan_id" ref="demo_plan_1"/>
+            <field name="sequence">30</field>
+            <field name="due_date" eval="(DateTime.today() + relativedelta(months=1)).strftime('%Y-%m-%d')"/>
+            <field name="amount">1000.0</field>
+        </record>
+
+        <!-- A follow-up on the overdue line -->
+        <record id="demo_followup_1" model="collection.followup">
+            <field name="partner_id" ref="base.res_partner_2"/>
+            <field name="plan_id" ref="demo_plan_1"/>
+            <field name="line_id" ref="demo_plan_1_line_2"/>
+            <field name="followup_type">call</field>
+            <field name="status">planned</field>
+            <field name="next_action_date" eval="(DateTime.today() + relativedelta(days=3)).strftime('%Y-%m-%d')"/>
+            <field name="notes">Customer promised the balance by next week.</field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Settings → Users grouping (Odoo 19: category lives on the privilege) -->
+    <record id="module_category_payment_plan" model="ir.module.category">
+        <field name="name">Payment Plans</field>
+        <field name="description">Manage scheduled payments and collections.</field>
+        <field name="sequence">20</field>
+    </record>
+
+    <record id="privilege_payment_plan" model="res.groups.privilege">
+        <field name="name">Payment Plans</field>
+        <field name="category_id" ref="module_category_payment_plan"/>
+        <field name="sequence">20</field>
+    </record>
+
+    <record id="group_payment_plan_user" model="res.groups">
+        <field name="name">User</field>
+        <field name="privilege_id" ref="privilege_payment_plan"/>
+        <field name="comment">Manage the payment plans and follow-ups assigned to them.</field>
+    </record>
+
+    <record id="group_payment_plan_manager" model="res.groups">
+        <field name="name">Manager</field>
+        <field name="privilege_id" ref="privilege_payment_plan"/>
+        <field name="implied_ids" eval="[(4, ref('group_payment_plan_user'))]"/>
+        <field name="comment">Full access to all plans, plus templates and plan types configuration.</field>
+    </record>
+
+    <!-- ============================ Record Rules ============================ -->
+
+    <!-- Managers: every record, no restriction. -->
+    <record id="rule_payment_plan_manager_all" model="ir.rule">
+        <field name="name">Payment Plan: manager sees all</field>
+        <field name="model_id" ref="model_payment_plan"/>
+        <field name="groups" eval="[(4, ref('group_payment_plan_manager'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <!-- Users: only plans they are responsible for or created. -->
+    <record id="rule_payment_plan_user_own" model="ir.rule">
+        <field name="name">Payment Plan: user sees own</field>
+        <field name="model_id" ref="model_payment_plan"/>
+        <field name="groups" eval="[(4, ref('group_payment_plan_user'))]"/>
+        <field name="domain_force">['|', ('responsible_user_id', '=', user.id), ('create_uid', '=', user.id)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Lines follow the parent plan's responsibility. -->
+    <record id="rule_payment_plan_line_manager_all" model="ir.rule">
+        <field name="name">Payment Line: manager sees all</field>
+        <field name="model_id" ref="model_payment_plan_line"/>
+        <field name="groups" eval="[(4, ref('group_payment_plan_manager'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+    <record id="rule_payment_plan_line_user_own" model="ir.rule">
+        <field name="name">Payment Line: user sees own</field>
+        <field name="model_id" ref="model_payment_plan_line"/>
+        <field name="groups" eval="[(4, ref('group_payment_plan_user'))]"/>
+        <field name="domain_force">['|', ('plan_id.responsible_user_id', '=', user.id), ('plan_id.create_uid', '=', user.id)]</field>
+    </record>
+
+    <!-- Follow-ups: assigned to the user, or on a plan they own. -->
+    <record id="rule_followup_manager_all" model="ir.rule">
+        <field name="name">Follow-up: manager sees all</field>
+        <field name="model_id" ref="model_collection_followup"/>
+        <field name="groups" eval="[(4, ref('group_payment_plan_manager'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+    <record id="rule_followup_user_own" model="ir.rule">
+        <field name="name">Follow-up: user sees own</field>
+        <field name="model_id" ref="model_collection_followup"/>
+        <field name="groups" eval="[(4, ref('group_payment_plan_user'))]"/>
+        <field name="domain_force">['|', '|', ('assigned_to', '=', user.id), ('create_uid', '=', user.id), ('plan_id.responsible_user_id', '=', user.id)]</field>
+    </record>
+
+</odoo>
