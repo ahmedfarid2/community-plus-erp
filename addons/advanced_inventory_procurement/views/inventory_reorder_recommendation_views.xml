@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_reco_form_procurement" model="ir.ui.view">
+        <field name="name">inventory.reorder.recommendation.form.procurement</field>
+        <field name="model">inventory.reorder.recommendation</field>
+        <field name="inherit_id" ref="advanced_inventory_optimization.view_reco_form"/>
+        <field name="arch" type="xml">
+            <button name="action_reject" position="before">
+                <button name="action_create_procurement_request" type="object"
+                        string="Create Purchase Request" class="btn-primary"
+                        invisible="state != 'approved' or procurement_request_id"/>
+                <button name="action_view_procurement_request" type="object"
+                        string="View Purchase Request"
+                        invisible="not procurement_request_id"/>
+            </button>
+            <field name="rejection_reason" position="before">
+                <field name="procurement_request_id" invisible="1"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="action_recos_to_request" model="ir.actions.server">
+        <field name="name">Create Purchase Request (Procurement)</field>
+        <field name="model_id" ref="advanced_inventory_optimization.model_inventory_reorder_recommendation"/>
+        <field name="binding_model_id" ref="advanced_inventory_optimization.model_inventory_reorder_recommendation"/>
+        <field name="state">code</field>
+        <field name="code">action = records.action_create_procurement_request()</field>
+    </record>
+</odoo>
