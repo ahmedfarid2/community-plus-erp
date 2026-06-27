@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_wo_form_account" model="ir.ui.view">
+        <field name="name">fsm.work.order.form.account</field>
+        <field name="model">fsm.work.order</field>
+        <field name="inherit_id" ref="smart_field_service_suite.view_wo_form"/>
+        <field name="arch" type="xml">
+            <button name="action_review" position="after">
+                <button name="action_create_invoice" type="object"
+                        string="Create Invoice" class="btn-primary"
+                        invisible="invoice_status != 'to_invoice'"/>
+                <button name="action_view_invoice" type="object"
+                        string="View Invoice" invisible="not invoice_id"/>
+            </button>
+            <field name="invoice_status" position="after">
+                <field name="invoice_id" invisible="1"/>
+            </field>
+        </field>
+    </record>
+</odoo>
