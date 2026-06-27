@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_forecast_list" model="ir.ui.view">
+        <field name="name">inventory.forecast.profile.list</field><field name="model">inventory.forecast.profile</field>
+        <field name="arch" type="xml">
+            <list editable="bottom"><field name="name"/><field name="method"/><field name="period_days"/>
+                <field name="weight_recent_period"/><field name="seasonality_factor"/><field name="active" widget="boolean_toggle"/></list>
+        </field>
+    </record>
+    <record id="action_forecast" model="ir.actions.act_window">
+        <field name="name">Forecast Profiles</field><field name="res_model">inventory.forecast.profile</field><field name="view_mode">list,form</field>
+    </record>
+</odoo>

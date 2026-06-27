@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="demo_rule_default" model="inventory.optimization.rule">
+            <field name="name">Default Optimization Rule</field>
+            <field name="analysis_period_days">90</field>
+            <field name="slow_moving_days">90</field><field name="dead_stock_days">180</field>
+            <field name="safety_stock_days">7</field>
+            <field name="minimum_stock_coverage_days">14</field>
+            <field name="maximum_stock_coverage_days">120</field>
+            <field name="default_supplier_lead_time_days">7</field>
+        </record>
+        <record id="demo_forecast" model="inventory.forecast.profile">
+            <field name="name">Default Moving Average</field>
+            <field name="method">moving_average</field><field name="period_days">90</field>
+        </record>
+    </data>
+</odoo>

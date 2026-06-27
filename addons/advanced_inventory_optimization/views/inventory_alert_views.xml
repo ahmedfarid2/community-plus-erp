@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_alert_list" model="ir.ui.view">
+        <field name="name">inventory.alert.list</field><field name="model">inventory.alert</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="severity == 'critical'" decoration-warning="severity == 'warning'" decoration-muted="state in ('resolved','ignored')">
+                <field name="detected_date"/><field name="alert_type"/><field name="product_id"/><field name="warehouse_id" optional="show"/>
+                <field name="severity" widget="badge"/><field name="message"/><field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_alert_form" model="ir.ui.view">
+        <field name="name">inventory.alert.form</field><field name="model">inventory.alert</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_acknowledge" type="object" string="Acknowledge" invisible="state != 'open'"/>
+                    <button name="action_resolve" type="object" string="Resolve" class="btn-primary" invisible="state in ('resolved','ignored')"/>
+                    <button name="action_ignore" type="object" string="Ignore" invisible="state in ('resolved','ignored')"/>
+                    <button name="action_create_activity" type="object" string="Create Activity"/>
+                    <button name="action_view_product" type="object" string="Product"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <group><group>
+                        <field name="alert_type"/><field name="product_id"/><field name="warehouse_id"/>
+                    </group><group>
+                        <field name="severity"/><field name="detected_date"/><field name="responsible_user_id"/><field name="resolved_date"/>
+                    </group></group>
+                    <group string="Message"><field name="message" nolabel="1"/></group>
+                </sheet><chatter/>
+            </form>
+        </field>
+    </record>
+    <record id="view_alert_search" model="ir.ui.view">
+        <field name="name">inventory.alert.search</field><field name="model">inventory.alert</field>
+        <field name="arch" type="xml">
+            <search><field name="product_id"/><field name="alert_type"/>
+                <filter name="my" string="My Alerts" domain="[('responsible_user_id','=',uid)]"/>
+                <filter name="open" string="Open" domain="[('state','=','open')]"/>
+                <filter name="resolved" string="Resolved" domain="[('state','=','resolved')]"/>
+                <separator/>
+                <filter name="critical" string="Critical" domain="[('severity','=','critical')]"/>
+                <filter name="group_type" string="Type" context="{'group_by':'alert_type'}"/>
+                <filter name="group_state" string="Status" context="{'group_by':'state'}"/>
+            </search>
+        </field>
+    </record>
+    <record id="action_alert" model="ir.actions.act_window">
+        <field name="name">Inventory Alerts</field><field name="res_model">inventory.alert</field><field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_alert_search"/>
+    </record>
+</odoo>

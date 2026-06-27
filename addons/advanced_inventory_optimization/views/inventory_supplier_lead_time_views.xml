@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_lead_list" model="ir.ui.view">
+        <field name="name">inventory.supplier.lead.time.list</field><field name="model">inventory.supplier.lead.time</field>
+        <field name="arch" type="xml">
+            <list editable="bottom"><field name="product_id"/><field name="vendor_id"/><field name="average_lead_time_days"/>
+                <field name="minimum_lead_time_days"/><field name="maximum_lead_time_days"/><field name="reliability_score"/></list>
+        </field>
+    </record>
+    <record id="action_lead" model="ir.actions.act_window">
+        <field name="name">Supplier Lead Times</field><field name="res_model">inventory.supplier.lead.time</field><field name="view_mode">list,form</field>
+    </record>
+</odoo>

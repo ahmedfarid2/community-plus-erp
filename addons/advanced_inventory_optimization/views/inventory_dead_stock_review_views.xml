@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_dead_list" model="ir.ui.view">
+        <field name="name">inventory.dead.stock.review.list</field><field name="model">inventory.dead.stock.review</field>
+        <field name="arch" type="xml">
+            <list decoration-muted="state in ('done','cancelled')">
+                <field name="name"/><field name="product_id"/><field name="warehouse_id"/><field name="qty_on_hand"/>
+                <field name="stock_value"/><field name="days_without_movement"/><field name="recommended_action"/><field name="state" widget="badge"/>
+                <field name="currency_id" column_invisible="1"/></list>
+        </field>
+    </record>
+    <record id="view_dead_form" model="ir.ui.view">
+        <field name="name">inventory.dead.stock.review.form</field><field name="model">inventory.dead.stock.review</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_start_review" type="object" string="Start Review" invisible="state != 'draft'"/>
+                    <button name="action_plan_action" type="object" string="Plan Action" class="btn-primary" invisible="state != 'under_review'"/>
+                    <button name="action_done" type="object" string="Mark Done" invisible="state != 'action_planned'"/>
+                    <button name="action_cancel" type="object" string="Cancel" invisible="state in ('done','cancelled')"/>
+                    <button name="action_reset_to_draft" type="object" string="Reset to Draft" invisible="state == 'draft'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <group><group>
+                        <field name="product_id"/><field name="warehouse_id"/><field name="responsible_user_id"/><field name="recommended_action"/>
+                    </group><group>
+                        <field name="qty_on_hand"/><field name="stock_value"/><field name="last_movement_date"/>
+                        <field name="days_without_movement"/><field name="currency_id" invisible="1"/>
+                    </group></group>
+                    <group string="Action Notes"><field name="action_notes" nolabel="1"/></group>
+                </sheet><chatter/>
+            </form>
+        </field>
+    </record>
+    <record id="action_dead" model="ir.actions.act_window">
+        <field name="name">Dead Stock Reviews</field><field name="res_model">inventory.dead.stock.review</field><field name="view_mode">list,form</field>
+    </record>
+</odoo>

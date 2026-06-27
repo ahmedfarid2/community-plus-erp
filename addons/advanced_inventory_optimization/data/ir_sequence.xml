@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="seq_reco" model="ir.sequence"><field name="name">Reorder Recommendation</field><field name="code">inventory.reorder.recommendation</field><field name="prefix">RR/%(year)s/</field><field name="padding">4</field><field name="company_id" eval="False"/></record>
+    <record id="seq_dead" model="ir.sequence"><field name="name">Dead Stock Review</field><field name="code">inventory.dead.stock.review</field><field name="prefix">DSR/%(year)s/</field><field name="padding">4</field><field name="company_id" eval="False"/></record>
+</odoo>

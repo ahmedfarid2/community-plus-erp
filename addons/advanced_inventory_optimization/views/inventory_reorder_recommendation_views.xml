@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_reco_list" model="ir.ui.view">
+        <field name="name">inventory.reorder.recommendation.list</field><field name="model">inventory.reorder.recommendation</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="priority == 'critical'" decoration-success="state in ('approved','converted')" decoration-muted="state in ('rejected','cancelled')">
+                <field name="name"/><field name="product_id"/><field name="warehouse_id" optional="show"/><field name="vendor_id"/>
+                <field name="current_qty"/><field name="suggested_qty"/><field name="estimated_total_cost" sum="Est. Cost"/>
+                <field name="priority" widget="badge"/><field name="state" widget="badge"/><field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_reco_form" model="ir.ui.view">
+        <field name="name">inventory.reorder.recommendation.form</field><field name="model">inventory.reorder.recommendation</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_approve" type="object" string="Approve" class="btn-primary" invisible="state not in ('draft','recommended')"/>
+                    <button name="action_reject" type="object" string="Reject" invisible="state in ('rejected','converted','cancelled')"/>
+                    <button name="action_cancel" type="object" string="Cancel" invisible="state in ('cancelled','converted')"/>
+                    <button name="action_reset_to_draft" type="object" string="Reset to Draft" invisible="state in ('draft',)"/>
+                    <field name="state" widget="statusbar" statusbar_visible="recommended,approved,converted"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_product" type="object" class="oe_stat_button" icon="fa-cube"><div class="o_stat_info"><span class="o_stat_text">Product</span></div></button>
+                        <button name="action_view_vendor" type="object" class="oe_stat_button" icon="fa-user" invisible="not vendor_id"><div class="o_stat_info"><span class="o_stat_text">Vendor</span></div></button>
+                    </div>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <group><group>
+                        <field name="product_id"/><field name="warehouse_id"/><field name="vendor_id"/>
+                        <field name="reason"/><field name="priority"/>
+                    </group><group>
+                        <field name="current_qty"/><field name="forecasted_qty"/><field name="average_daily_demand"/>
+                        <field name="supplier_lead_time_days"/><field name="safety_stock_qty"/><field name="reorder_point_qty"/>
+                        <field name="suggested_qty"/><field name="estimated_unit_cost"/><field name="estimated_total_cost"/>
+                        <field name="currency_id" invisible="1"/>
+                    </group></group>
+                    <field name="rejection_reason" placeholder="Required to reject…"/>
+                </sheet><chatter/>
+            </form>
+        </field>
+    </record>
+    <record id="view_reco_search" model="ir.ui.view">
+        <field name="name">inventory.reorder.recommendation.search</field><field name="model">inventory.reorder.recommendation</field>
+        <field name="arch" type="xml">
+            <search><field name="product_id"/><field name="vendor_id"/>
+                <filter name="recommended" string="Recommended" domain="[('state','=','recommended')]"/>
+                <filter name="approved" string="Approved" domain="[('state','=','approved')]"/>
+                <filter name="rejected" string="Rejected" domain="[('state','=','rejected')]"/>
+                <filter name="converted" string="Converted" domain="[('state','=','converted')]"/>
+                <filter name="group_state" string="Status" context="{'group_by':'state'}"/>
+                <filter name="group_vendor" string="Vendor" context="{'group_by':'vendor_id'}"/>
+            </search>
+        </field>
+    </record>
+    <record id="action_reco" model="ir.actions.act_window">
+        <field name="name">Reorder Recommendations</field><field name="res_model">inventory.reorder.recommendation</field><field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_reco_search"/>
+    </record>
+</odoo>

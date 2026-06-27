@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_rule_list" model="ir.ui.view">
+        <field name="name">inventory.optimization.rule.list</field><field name="model">inventory.optimization.rule</field>
+        <field name="arch" type="xml">
+            <list><field name="sequence" widget="handle"/><field name="name"/><field name="warehouse_id"/><field name="product_category_id"/>
+                <field name="analysis_period_days"/><field name="active" widget="boolean_toggle"/></list>
+        </field>
+    </record>
+    <record id="view_rule_form" model="ir.ui.view">
+        <field name="name">inventory.optimization.rule.form</field><field name="model">inventory.optimization.rule</field>
+        <field name="arch" type="xml">
+            <form><sheet>
+                <div class="oe_title"><h1><field name="name" placeholder="e.g. Default / Retail"/></h1></div>
+                <group><group string="Scope">
+                    <field name="warehouse_id"/><field name="product_category_id"/><field name="active"/>
+                </group><group string="Periods (days)">
+                    <field name="analysis_period_days"/><field name="slow_moving_days"/><field name="dead_stock_days"/>
+                    <field name="safety_stock_days"/><field name="minimum_stock_coverage_days"/><field name="maximum_stock_coverage_days"/>
+                    <field name="default_supplier_lead_time_days"/>
+                </group></group>
+                <group><group string="Reorder">
+                    <field name="reorder_rounding_method"/><field name="pack_size" invisible="reorder_rounding_method != 'pack_size'"/>
+                </group><group string="Alerts">
+                    <field name="alert_stockout"/><field name="alert_overstock"/><field name="alert_slow_moving"/>
+                    <field name="alert_dead_stock"/><field name="alert_negative_stock"/>
+                </group></group>
+            </sheet></form>
+        </field>
+    </record>
+    <record id="action_rule" model="ir.actions.act_window">
+        <field name="name">Optimization Rules</field><field name="res_model">inventory.optimization.rule</field><field name="view_mode">list,form</field>
+    </record>
+</odoo>

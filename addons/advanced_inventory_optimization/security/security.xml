@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="module_category_inv_opt" model="ir.module.category">
+        <field name="name">Inventory Optimization</field>
+        <field name="description">Inventory health, reorder and alerts.</field>
+        <field name="sequence">30</field>
+    </record>
+
+    <record id="privilege_inv_opt" model="res.groups.privilege">
+        <field name="name">Inventory Optimization</field>
+        <field name="category_id" ref="module_category_inv_opt"/>
+        <field name="sequence">30</field>
+    </record>
+
+    <record id="group_inv_user" model="res.groups">
+        <field name="name">User</field>
+        <field name="privilege_id" ref="privilege_inv_opt"/>
+        <field name="comment">View stock health, alerts and recommendations; acknowledge alerts.</field>
+    </record>
+    <record id="group_inv_manager" model="res.groups">
+        <field name="name">Manager</field>
+        <field name="privilege_id" ref="privilege_inv_opt"/>
+        <field name="implied_ids" eval="[(4, ref('group_inv_user'))]"/>
+        <field name="comment">Approve/reject recommendations and manage dead-stock reviews.</field>
+    </record>
+    <record id="group_inv_admin" model="res.groups">
+        <field name="name">Administrator</field>
+        <field name="privilege_id" ref="privilege_inv_opt"/>
+        <field name="implied_ids" eval="[(4, ref('group_inv_manager'))]"/>
+        <field name="comment">Configure optimization rules, forecast profiles and settings.</field>
+    </record>
+
+</odoo>

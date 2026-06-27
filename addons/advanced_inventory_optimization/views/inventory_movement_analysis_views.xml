@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_move_list" model="ir.ui.view">
+        <field name="name">inventory.movement.analysis.list</field><field name="model">inventory.movement.analysis</field>
+        <field name="arch" type="xml">
+            <list><field name="analysis_date"/><field name="product_id"/><field name="warehouse_id"/>
+                <field name="total_in_qty"/><field name="total_out_qty"/><field name="average_daily_out_qty"/>
+                <field name="movement_count"/><field name="abnormal_movement_detected"/></list>
+        </field>
+    </record>
+    <record id="action_move" model="ir.actions.act_window">
+        <field name="name">Movement Analysis</field><field name="res_model">inventory.movement.analysis</field><field name="view_mode">list,form</field>
+    </record>
+</odoo>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_inv_root" name="Inventory Optimization"
+              web_icon="advanced_inventory_optimization,static/description/icon.png"
+              sequence="53"/>
+
+    <menuitem id="menu_inv_monitoring" name="Monitoring" parent="menu_inv_root" sequence="10"/>
+    <menuitem id="menu_inv_health" name="Stock Health" parent="menu_inv_monitoring" action="action_health" sequence="10"/>
+    <menuitem id="menu_inv_reco" name="Reorder Recommendations" parent="menu_inv_monitoring" action="action_reco" sequence="20"/>
+    <menuitem id="menu_inv_alerts" name="Inventory Alerts" parent="menu_inv_monitoring" action="action_alert" sequence="30"/>
+    <menuitem id="menu_inv_dead" name="Dead Stock Reviews" parent="menu_inv_monitoring" action="action_dead" sequence="40"/>
+    <menuitem id="menu_inv_run" name="Run Analysis" parent="menu_inv_monitoring" action="action_run_analysis" sequence="50"
+              groups="advanced_inventory_optimization.group_inv_manager"/>
+
+    <menuitem id="menu_inv_analysis" name="Analysis" parent="menu_inv_root" sequence="20"
+              groups="advanced_inventory_optimization.group_inv_manager"/>
+    <menuitem id="menu_inv_move" name="Movement Analysis" parent="menu_inv_analysis" action="action_move" sequence="10"/>
+    <menuitem id="menu_inv_lead" name="Supplier Lead Times" parent="menu_inv_analysis" action="action_lead" sequence="20"/>
+    <menuitem id="menu_inv_log" name="Optimization Logs" parent="menu_inv_analysis" action="action_log" sequence="30"/>
+
+    <menuitem id="menu_inv_config" name="Configuration" parent="menu_inv_root" sequence="90"
+              groups="advanced_inventory_optimization.group_inv_admin"/>
+    <menuitem id="menu_inv_rules" name="Optimization Rules" parent="menu_inv_config" action="action_rule" sequence="10"/>
+    <menuitem id="menu_inv_forecast" name="Forecast Profiles" parent="menu_inv_config" action="action_forecast" sequence="20"/>
+
+</odoo>

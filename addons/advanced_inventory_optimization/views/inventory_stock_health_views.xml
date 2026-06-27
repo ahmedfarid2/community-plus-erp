@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_health_list" model="ir.ui.view">
+        <field name="name">inventory.stock.health.list</field><field name="model">inventory.stock.health</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="state == 'critical'" decoration-warning="state == 'warning'" decoration-muted="state == 'ignored'">
+                <field name="product_id"/><field name="warehouse_id" optional="show"/>
+                <field name="qty_available"/><field name="average_daily_demand"/><field name="stock_coverage_days"/>
+                <field name="suggested_reorder_qty"/><field name="stockout_risk" widget="badge"/>
+                <field name="movement_status" widget="badge"/><field name="health_score"/><field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_health_kanban" model="ir.ui.view">
+        <field name="name">inventory.stock.health.kanban</field><field name="model">inventory.stock.health</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state">
+                <field name="state"/>
+                <templates><t t-name="card">
+                    <div class="oe_kanban_details">
+                        <strong><field name="product_id"/></strong>
+                        <div class="text-muted"><field name="warehouse_id"/></div>
+                        <div>Coverage: <field name="stock_coverage_days"/>d · Score <field name="health_score"/></div>
+                        <div><field name="stockout_risk" widget="label_selection"
+                              options="{'classes': {'none':'success','low':'info','medium':'warning','high':'danger','critical':'danger'}}"/>
+                              <field name="movement_status" widget="label_selection"
+                              options="{'classes': {'fast_moving':'success','normal':'info','slow_moving':'warning','dead_stock':'danger'}}"/></div>
+                    </div>
+                </t></templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_health_form" model="ir.ui.view">
+        <field name="name">inventory.stock.health.form</field><field name="model">inventory.stock.health</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_recompute" type="object" string="Recompute"/>
+                    <button name="action_create_recommendation" type="object" string="Create Reorder Recommendation" class="btn-primary"/>
+                    <button name="action_create_dead_stock_review" type="object" string="Create Dead Stock Review" invisible="movement_status not in ('slow_moving','dead_stock')"/>
+                    <button name="action_ignore" type="object" string="Ignore Warning" invisible="is_ignored"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_alerts" type="object" class="oe_stat_button" icon="fa-bell"><div class="o_stat_info"><span class="o_stat_text">Alerts</span></div></button>
+                        <button name="action_view_recommendations" type="object" class="oe_stat_button" icon="fa-shopping-cart"><div class="o_stat_info"><span class="o_stat_text">Reorders</span></div></button>
+                        <button name="action_view_dead_stock" type="object" class="oe_stat_button" icon="fa-trash"><div class="o_stat_info"><span class="o_stat_text">Dead Stock</span></div></button>
+                    </div>
+                    <div class="oe_title"><h1><field name="product_id"/></h1></div>
+                    <group><group string="Stock">
+                        <field name="warehouse_id"/><field name="qty_available"/><field name="forecasted_qty"/>
+                        <field name="incoming_qty"/><field name="outgoing_qty"/><field name="last_movement_date"/>
+                        <field name="days_without_movement"/><field name="is_ignored" invisible="1"/>
+                    </group><group string="Optimization">
+                        <field name="average_daily_demand"/><field name="stock_coverage_days"/><field name="safety_stock_qty"/>
+                        <field name="reorder_point_qty"/><field name="suggested_reorder_qty"/>
+                        <field name="stockout_risk" widget="badge"/><field name="overstock_risk" widget="badge"/>
+                        <field name="movement_status" widget="badge"/><field name="health_score"/>
+                        <field name="rule_id"/><field name="last_computed_date"/>
+                    </group></group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_health_graph" model="ir.ui.view">
+        <field name="name">inventory.stock.health.graph</field><field name="model">inventory.stock.health</field>
+        <field name="arch" type="xml">
+            <graph string="Stock Health" type="bar"><field name="stockout_risk"/><field name="health_score" type="measure"/></graph>
+        </field>
+    </record>
+
+    <record id="view_health_search" model="ir.ui.view">
+        <field name="name">inventory.stock.health.search</field><field name="model">inventory.stock.health</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="product_id"/><field name="warehouse_id"/>
+                <filter name="critical_stockout" string="Critical Stockout Risk" domain="[('stockout_risk','=','critical')]"/>
+                <filter name="high_stockout" string="High Stockout Risk" domain="[('stockout_risk','=','high')]"/>
+                <filter name="overstock" string="Overstock" domain="[('overstock_risk','=','high')]"/>
+                <filter name="slow" string="Slow Moving" domain="[('movement_status','=','slow_moving')]"/>
+                <filter name="dead" string="Dead Stock" domain="[('movement_status','=','dead_stock')]"/>
+                <filter name="negative" string="Negative Stock" domain="[('qty_available','&lt;',0)]"/>
+                <separator/>
+                <filter name="low_cov" string="Low Coverage" domain="[('stock_coverage_days','&lt;',14),('stock_coverage_days','&gt;',0)]"/>
+                <filter name="high_cov" string="High Coverage" domain="[('stock_coverage_days','&gt;',120)]"/>
+                <separator/>
+                <filter name="group_state" string="Status" context="{'group_by':'state'}"/>
+                <filter name="group_wh" string="Warehouse" context="{'group_by':'warehouse_id'}"/>
+                <filter name="group_move" string="Movement" context="{'group_by':'movement_status'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_health" model="ir.actions.act_window">
+        <field name="name">Stock Health</field><field name="res_model">inventory.stock.health</field>
+        <field name="view_mode">kanban,list,form,graph</field>
+        <field name="search_view_id" ref="view_health_search"/>
+    </record>
+
+    <record id="action_run_analysis" model="ir.actions.server">
+        <field name="name">Run Inventory Analysis</field>
+        <field name="model_id" ref="model_inventory_stock_health"/>
+        <field name="state">code</field>
+        <field name="code">model._run_analysis()</field>
+    </record>
+</odoo>

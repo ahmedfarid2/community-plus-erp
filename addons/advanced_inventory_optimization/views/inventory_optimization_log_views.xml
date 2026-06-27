@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_log_list" model="ir.ui.view">
+        <field name="name">inventory.optimization.log.list</field><field name="model">inventory.optimization.log</field>
+        <field name="arch" type="xml">
+            <list create="false"><field name="event_date"/><field name="event_type"/><field name="product_id"/>
+                <field name="warehouse_id"/><field name="user_id"/><field name="description"/></list>
+        </field>
+    </record>
+    <record id="action_log" model="ir.actions.act_window">
+        <field name="name">Optimization Logs</field><field name="res_model">inventory.optimization.log</field><field name="view_mode">list</field>
+    </record>
+</odoo>
