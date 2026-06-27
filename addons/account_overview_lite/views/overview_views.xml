@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_account_overview_form" model="ir.ui.view">
+        <field name="name">account.overview.board.form</field>
+        <field name="model">account.overview.board</field>
+        <field name="arch" type="xml">
+            <form string="Accounting Overview" create="false" edit="false">
+                <field name="currency_id" invisible="1"/>
+                <div class="cp_dash">
+
+                    <div class="cp_hero d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="cp_hero_title"><field name="company_name" nolabel="1"/></p>
+                            <span class="cp_hero_sub">Accounting Overview · live financial KPIs</span>
+                        </div>
+                        <div class="cp_hero_metric">
+                            <div class="v"><field name="net_profit_ytd"/></div>
+                            <div class="l">Net Profit · YTD</div>
+                        </div>
+                    </div>
+
+                    <div class="cp_section"><i class="fa fa-balance-scale" title="Position"/>Financial Position</div>
+                    <div class="row g-3">
+                        <div class="col-lg-3 col-md-6">
+                            <div class="cp_card cp-info"><div class="cp_card_body">
+                                <div class="cp_icon"><i class="fa fa-university" title="Cash"/></div>
+                                <div class="cp_label">Cash &amp; Bank</div>
+                                <div class="cp_value"><field name="cash"/></div>
+                            </div></div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="cp_card cp-success"><div class="cp_card_body">
+                                <div class="cp_icon"><i class="fa fa-hand-o-down" title="Receivable"/></div>
+                                <div class="cp_label">Receivable</div>
+                                <div class="cp_value"><field name="receivable"/></div>
+                                <button name="action_receivable" type="object" class="cp_link">View →</button>
+                            </div></div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="cp_card cp-danger"><div class="cp_card_body">
+                                <div class="cp_icon"><i class="fa fa-hand-o-up" title="Payable"/></div>
+                                <div class="cp_label">Payable</div>
+                                <div class="cp_value"><field name="payable"/></div>
+                                <button name="action_payable" type="object" class="cp_link">View →</button>
+                            </div></div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="cp_card cp-primary"><div class="cp_card_body">
+                                <div class="cp_icon"><i class="fa fa-balance-scale" title="Working Capital"/></div>
+                                <div class="cp_label">Working Capital</div>
+                                <div class="cp_value"><field name="working_capital"/></div>
+                            </div></div>
+                        </div>
+                    </div>
+
+                    <div class="cp_section"><i class="fa fa-line-chart" title="P&amp;L"/>Profit &amp; Loss</div>
+                    <div class="row g-3">
+                        <div class="col-lg-3 col-md-6">
+                            <div class="cp_card cp-success"><div class="cp_card_body">
+                                <div class="cp_icon"><i class="fa fa-arrow-up" title="Revenue"/></div>
+                                <div class="cp_label">Revenue (YTD)</div>
+                                <div class="cp_value"><field name="revenue_ytd"/></div>
+                            </div></div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="cp_card cp-warning"><div class="cp_card_body">
+                                <div class="cp_icon"><i class="fa fa-arrow-down" title="Expenses"/></div>
+                                <div class="cp_label">Expenses (YTD)</div>
+                                <div class="cp_value"><field name="expense_ytd"/></div>
+                            </div></div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="cp_card cp-primary"><div class="cp_card_body">
+                                <div class="cp_icon"><i class="fa fa-trophy" title="Net Profit"/></div>
+                                <div class="cp_label">Net Profit (YTD)</div>
+                                <div class="cp_value"><field name="net_profit_ytd"/></div>
+                            </div></div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="cp_card cp-info"><div class="cp_card_body">
+                                <div class="cp_icon"><i class="fa fa-calendar" title="This Month"/></div>
+                                <div class="cp_label">Revenue (This Month)</div>
+                                <div class="cp_value"><field name="revenue_month"/></div>
+                            </div></div>
+                        </div>
+                    </div>
+
+                    <div class="cp_section"><i class="fa fa-clock-o" title="Receivables"/>To Collect / Pay / File</div>
+                    <div class="row g-3">
+                        <div class="col-lg-3 col-md-6">
+                            <div class="cp_card cp-warning"><div class="cp_card_body">
+                                <div class="cp_icon"><i class="fa fa-file-text-o" title="Unpaid"/></div>
+                                <div class="cp_label">Unpaid Invoices</div>
+                                <div class="cp_value"><field name="unpaid_inv_amount"/></div>
+                                <button name="action_receivable" type="object" class="cp_link">View →</button>
+                            </div></div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="cp_card cp-danger"><div class="cp_card_body">
+                                <div class="cp_icon"><i class="fa fa-exclamation-triangle" title="Overdue"/></div>
+                                <div class="cp_label">Overdue</div>
+                                <div class="cp_value"><field name="overdue_amount"/></div>
+                                <button name="action_overdue" type="object" class="cp_link">View →</button>
+                            </div></div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="cp_card cp-slate"><div class="cp_card_body">
+                                <div class="cp_icon"><i class="fa fa-credit-card" title="Bills"/></div>
+                                <div class="cp_label">Bills to Pay</div>
+                                <div class="cp_value"><field name="unpaid_bill_amount"/></div>
+                                <button name="action_payable" type="object" class="cp_link">View →</button>
+                            </div></div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="cp_card cp-purple"><div class="cp_card_body">
+                                <div class="cp_icon"><i class="fa fa-bank" title="Tax"/></div>
+                                <div class="cp_label">Net Tax Due</div>
+                                <div class="cp_value"><field name="tax_due"/></div>
+                            </div></div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 mt-3">
+                        <button name="action_cashflow" type="object" string="Cash Flow"
+                                class="btn btn-outline-primary btn-sm" icon="fa-exchange"/>
+                        <button name="action_loans" type="object" string="Loans"
+                                class="btn btn-outline-primary btn-sm" icon="fa-bank"/>
+                        <button name="action_refresh" type="object" string="Refresh"
+                                class="btn btn-primary btn-sm" icon="fa-refresh"/>
+                    </div>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_account_overview" model="ir.actions.act_window">
+        <field name="name">Overview</field>
+        <field name="res_model">account.overview.board</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+    </record>
+
+    <menuitem id="menu_account_overview" name="Overview"
+              parent="account.menu_finance" action="action_account_overview"
+              sequence="1"/>
+
+</odoo>

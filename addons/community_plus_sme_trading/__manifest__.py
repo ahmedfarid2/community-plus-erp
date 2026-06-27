@@ -22,6 +22,7 @@ Open-source addons may be installed separately after license and version audit.
         "account",
         "community_plus_theme",
         "account_cashflow_lite",
+        "account_overview_lite",
         "account_deferred_lite",
         "account_financial_reports_lite",
         "account_loan_lite",
