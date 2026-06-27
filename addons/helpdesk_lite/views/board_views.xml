@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_helpdesk_lite_board_form" model="ir.ui.view">
+        <field name="name">helpdesk.lite.board.form</field>
+        <field name="model">helpdesk.lite.board</field>
+        <field name="arch" type="xml">
+            <form string="Helpdesk Dashboard" create="false" edit="false">
+                <div class="cp_dash">
+                    <div class="cp_hero d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="cp_hero_title">Helpdesk</p>
+                            <span class="cp_hero_sub">Live support overview</span>
+                        </div>
+                        <div class="cp_hero_metric">
+                            <div class="v"><field name="open_tickets"/></div>
+                            <div class="l">Open Tickets</div>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-lg-4 col-md-6">
+                            <div class="cp_card cp-danger"><div class="cp_card_body">
+                                <div class="cp_icon"><i class="fa fa-fire" title="Urgent"/></div>
+                                <div class="cp_label">Urgent</div>
+                                <div class="cp_value"><field name="urgent"/></div>
+                                <button name="action_urgent" type="object" class="cp_link">View →</button>
+                            </div></div>
+                        </div>
+                        <div class="col-lg-4 col-md-6">
+                            <div class="cp_card cp-warning"><div class="cp_card_body">
+                                <div class="cp_icon"><i class="fa fa-user-times" title="Unassigned"/></div>
+                                <div class="cp_label">Unassigned</div>
+                                <div class="cp_value"><field name="unassigned"/></div>
+                                <button name="action_unassigned" type="object" class="cp_link">View →</button>
+                            </div></div>
+                        </div>
+                        <div class="col-lg-4 col-md-6">
+                            <div class="cp_card cp-primary"><div class="cp_card_body">
+                                <div class="cp_icon"><i class="fa fa-user" title="Mine"/></div>
+                                <div class="cp_label">Assigned to Me</div>
+                                <div class="cp_value"><field name="my_open"/></div>
+                                <button name="action_mine" type="object" class="cp_link">View →</button>
+                            </div></div>
+                        </div>
+                        <div class="col-lg-4 col-md-6">
+                            <div class="cp_card cp-slate"><div class="cp_card_body">
+                                <div class="cp_icon"><i class="fa fa-hourglass-half" title="Waiting"/></div>
+                                <div class="cp_label">Waiting</div>
+                                <div class="cp_value"><field name="waiting"/></div>
+                            </div></div>
+                        </div>
+                        <div class="col-lg-4 col-md-6">
+                            <div class="cp_card cp-success"><div class="cp_card_body">
+                                <div class="cp_icon"><i class="fa fa-check-circle" title="Solved"/></div>
+                                <div class="cp_label">Solved</div>
+                                <div class="cp_value"><field name="solved"/></div>
+                            </div></div>
+                        </div>
+                        <div class="col-lg-4 col-md-6">
+                            <div class="cp_card cp-info"><div class="cp_card_body">
+                                <div class="cp_icon"><i class="fa fa-life-ring" title="Open"/></div>
+                                <div class="cp_label">All Open</div>
+                                <div class="cp_value"><field name="open_tickets"/></div>
+                                <button name="action_open" type="object" class="cp_link">View →</button>
+                            </div></div>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <button name="action_refresh" type="object" string="Refresh"
+                                class="btn btn-primary btn-sm" icon="fa-refresh"/>
+                    </div>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_helpdesk_lite_board" model="ir.actions.act_window">
+        <field name="name">Dashboard</field>
+        <field name="res_model">helpdesk.lite.board</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+    </record>
+
+    <menuitem id="menu_helpdesk_lite_dashboard" name="Dashboard"
+              parent="menu_helpdesk_lite_root" action="action_helpdesk_lite_board"
+              sequence="1"/>
+
+</odoo>

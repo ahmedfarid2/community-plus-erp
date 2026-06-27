@@ -5,10 +5,11 @@
     "summary": "Clean-room support tickets for Odoo Community",
     "author": "Farid",
     "license": "LGPL-3",
-    "depends": ["mail"],
+    "depends": ["community_plus_theme", "mail"],
     "data": [
         "security/ir.model.access.csv",
         "views/helpdesk_views.xml",
+        "views/board_views.xml",
     ],
     "installable": True,
     "application": True,
