@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_technician_list" model="ir.ui.view">
+        <field name="name">fsm.technician.list</field><field name="model">fsm.technician</field>
+        <field name="arch" type="xml">
+            <list><field name="name"/><field name="team_id"/><field name="phone"/><field name="availability_status" widget="badge"/><field name="hourly_cost"/></list>
+        </field>
+    </record>
+    <record id="view_technician_form" model="ir.ui.view">
+        <field name="name">fsm.technician.form</field><field name="model">fsm.technician</field>
+        <field name="arch" type="xml">
+            <form><sheet>
+                <div class="oe_title"><h1><field name="name"/></h1></div>
+                <group><group>
+                    <field name="user_id"/><field name="team_id"/><field name="phone"/><field name="email"/>
+                </group><group>
+                    <field name="availability_status"/><field name="hourly_cost"/><field name="currency_id" invisible="1"/>
+                    <field name="skill_ids" widget="many2many_tags"/><field name="service_area_ids" widget="many2many_tags"/><field name="active"/>
+                </group></group>
+            </sheet></form>
+        </field>
+    </record>
+    <record id="view_technician_kanban" model="ir.ui.view">
+        <field name="name">fsm.technician.kanban</field><field name="model">fsm.technician</field>
+        <field name="arch" type="xml">
+            <kanban><templates><t t-name="card">
+                <div class="oe_kanban_details">
+                    <strong><field name="name"/></strong>
+                    <div class="text-muted"><field name="team_id"/></div>
+                    <div><field name="availability_status" widget="label_selection"
+                          options="{'classes': {'available':'success','busy':'warning','off_duty':'secondary','on_leave':'danger'}}"/></div>
+                </div>
+            </t></templates></kanban>
+        </field>
+    </record>
+    <record id="action_technician" model="ir.actions.act_window">
+        <field name="name">Technicians</field><field name="res_model">fsm.technician</field><field name="view_mode">kanban,list,form</field>
+    </record>
+</odoo>

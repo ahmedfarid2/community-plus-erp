@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_wo_list" model="ir.ui.view">
+        <field name="name">fsm.work.order.list</field><field name="model">fsm.work.order</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="sla_status == 'breached'" decoration-warning="sla_status == 'warning'"
+                  decoration-success="state == 'completed'" decoration-muted="state == 'cancelled'">
+                <field name="name"/><field name="partner_id"/><field name="service_type_id" optional="show"/>
+                <field name="technician_id"/><field name="priority" widget="priority"/>
+                <field name="scheduled_start"/><field name="sla_status" widget="badge"/>
+                <field name="state" widget="badge" decoration-success="state == 'completed'" decoration-info="state == 'in_progress'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_wo_kanban" model="ir.ui.view">
+        <field name="name">fsm.work.order.kanban</field><field name="model">fsm.work.order</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state">
+                <field name="state"/>
+                <templates><t t-name="card">
+                    <div class="oe_kanban_details">
+                        <strong><field name="name"/></strong>
+                        <div><field name="partner_id"/></div>
+                        <div class="text-muted"><field name="service_type_id"/></div>
+                        <div class="mt-1">
+                            <field name="technician_id"/>
+                            <span class="float-end"><field name="priority" widget="priority"/></span>
+                        </div>
+                        <div><field name="sla_status" widget="label_selection"
+                              options="{'classes': {'on_track':'success','warning':'warning','breached':'danger','completed':'secondary'}}"/></div>
+                    </div>
+                </t></templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_wo_calendar" model="ir.ui.view">
+        <field name="name">fsm.work.order.calendar</field><field name="model">fsm.work.order</field>
+        <field name="arch" type="xml">
+            <calendar date_start="scheduled_start" date_stop="scheduled_end" color="technician_id" mode="week">
+                <field name="partner_id"/><field name="technician_id"/>
+            </calendar>
+        </field>
+    </record>
+
+    <record id="view_wo_graph" model="ir.ui.view">
+        <field name="name">fsm.work.order.graph</field><field name="model">fsm.work.order</field>
+        <field name="arch" type="xml">
+            <graph string="Work Orders" type="bar">
+                <field name="technician_id"/><field name="state"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_wo_form" model="ir.ui.view">
+        <field name="name">fsm.work.order.form</field><field name="model">fsm.work.order</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_schedule" type="object" string="Schedule" invisible="state != 'draft'"/>
+                    <button name="action_dispatch" type="object" string="Dispatch" class="btn-primary" invisible="state != 'scheduled'"/>
+                    <button name="action_start_travel" type="object" string="Start Travel" invisible="state != 'dispatched'"/>
+                    <button name="action_start_work" type="object" string="Arrive / Start Work" class="btn-primary" invisible="state not in ('dispatched','traveling')"/>
+                    <button name="action_waiting_parts" type="object" string="Waiting Parts" invisible="state != 'in_progress'"/>
+                    <button name="action_waiting_customer" type="object" string="Waiting Customer" invisible="state != 'in_progress'"/>
+                    <button name="action_complete" type="object" string="Complete" class="btn-primary" invisible="state not in ('in_progress','waiting_parts','waiting_customer')"/>
+                    <button name="action_review" type="object" string="Review" invisible="state != 'completed'"/>
+                    <button name="action_load_checklist" type="object" string="Load Checklist" invisible="state not in ('draft','scheduled','dispatched')"/>
+                    <button name="action_cancel" type="object" string="Cancel" invisible="state in ('completed','reviewed','cancelled')"/>
+                    <button name="action_reset_to_draft" type="object" string="Reset to Draft" invisible="state in ('draft','reviewed')"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,scheduled,dispatched,in_progress,completed"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_checklist" type="object" class="oe_stat_button" icon="fa-check-square-o">
+                            <field name="checklist_count" widget="statinfo" string="Checklist"/></button>
+                        <button name="action_view_parts" type="object" class="oe_stat_button" icon="fa-cubes">
+                            <field name="part_count" widget="statinfo" string="Parts"/></button>
+                        <button name="action_view_time" type="object" class="oe_stat_button" icon="fa-clock-o">
+                            <field name="time_count" widget="statinfo" string="Time"/></button>
+                        <button name="action_view_logs" type="object" class="oe_stat_button" icon="fa-history">
+                            <field name="log_count" widget="statinfo" string="Logs"/></button>
+                    </div>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <div class="alert alert-warning" role="alert" invisible="not skill_warning">
+                        <field name="skill_warning"/>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="partner_id"/><field name="service_location_id"/><field name="asset_id"/>
+                            <field name="service_type_id"/><field name="priority" widget="priority"/>
+                        </group>
+                        <group>
+                            <field name="team_id"/><field name="technician_id"/>
+                            <field name="secondary_technician_ids" widget="many2many_tags"/>
+                            <field name="sla_status" widget="badge"/>
+                            <field name="billable"/>
+                        </group>
+                    </group>
+                    <group string="Scheduling &amp; SLA">
+                        <group>
+                            <field name="scheduled_start"/><field name="scheduled_end"/>
+                            <field name="travel_start"/><field name="travel_end"/><field name="travel_duration"/>
+                        </group>
+                        <group>
+                            <field name="actual_start"/><field name="actual_end"/><field name="work_duration"/>
+                            <field name="response_deadline"/><field name="resolution_deadline"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Checklist" name="checklist">
+                            <field name="checklist_line_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/><field name="name"/><field name="is_required"/>
+                                    <field name="answer_type"/><field name="answer_yes_no"/><field name="answer_text"/>
+                                    <field name="answer_number"/><field name="is_done" widget="boolean_toggle"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Parts &amp; Materials" name="parts">
+                            <field name="part_line_ids">
+                                <list editable="bottom">
+                                    <field name="product_id"/><field name="description"/><field name="quantity"/>
+                                    <field name="unit_cost"/><field name="unit_price"/><field name="subtotal_price"/>
+                                    <field name="billable" widget="boolean_toggle"/><field name="currency_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Time" name="time">
+                            <field name="time_line_ids">
+                                <list editable="bottom">
+                                    <field name="technician_id"/><field name="time_type"/><field name="start_time"/>
+                                    <field name="end_time"/><field name="duration_hours"/><field name="billable" widget="boolean_toggle"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Diagnosis &amp; Work" name="work">
+                            <group><field name="diagnosis"/><field name="work_performed"/><field name="customer_notes"/><field name="internal_notes"/></group>
+                        </page>
+                        <page string="Sign-off" name="signoff">
+                            <group><group>
+                                <field name="signed_by"/><field name="signed_date"/>
+                                <button name="action_sign" type="object" string="Confirm Sign-off" class="btn-secondary"/>
+                            </group><group>
+                                <field name="customer_signature" widget="image"/>
+                            </group></group>
+                        </page>
+                        <page string="Profitability" name="profit">
+                            <group class="oe_subtotal_footer">
+                                <field name="cost_total"/><field name="billable_total"/><field name="profit_total"/>
+                                <field name="invoice_status"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_wo_search" model="ir.ui.view">
+        <field name="name">fsm.work.order.search</field><field name="model">fsm.work.order</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/><field name="partner_id"/><field name="technician_id"/><field name="asset_id"/>
+                <filter name="my_wo" string="My Work Orders" domain="[('technician_id.user_id','=',uid)]"/>
+                <separator/>
+                <filter name="today" string="Today" domain="[('scheduled_start','>=', context_today().strftime('%Y-%m-%d')), ('scheduled_start','&lt;', (context_today()+relativedelta(days=1)).strftime('%Y-%m-%d'))]"/>
+                <filter name="week" string="This Week" domain="[('scheduled_start','>=', (context_today()-relativedelta(days=context_today().weekday())).strftime('%Y-%m-%d')), ('scheduled_start','&lt;', (context_today()+relativedelta(days=7-context_today().weekday())).strftime('%Y-%m-%d'))]"/>
+                <filter name="unassigned" string="Unassigned" domain="[('technician_id','=',False)]"/>
+                <separator/>
+                <filter name="scheduled" string="Scheduled" domain="[('state','=','scheduled')]"/>
+                <filter name="dispatched" string="Dispatched" domain="[('state','=','dispatched')]"/>
+                <filter name="in_progress" string="In Progress" domain="[('state','=','in_progress')]"/>
+                <filter name="waiting_parts" string="Waiting Parts" domain="[('state','=','waiting_parts')]"/>
+                <filter name="waiting_customer" string="Waiting Customer" domain="[('state','=','waiting_customer')]"/>
+                <filter name="completed" string="Completed" domain="[('state','=','completed')]"/>
+                <filter name="reviewed" string="Reviewed" domain="[('state','=','reviewed')]"/>
+                <filter name="cancelled" string="Cancelled" domain="[('state','=','cancelled')]"/>
+                <separator/>
+                <filter name="high" string="High Priority" domain="[('priority','=','2')]"/>
+                <filter name="critical" string="Critical" domain="[('priority','=','3')]"/>
+                <filter name="sla_warning" string="SLA Warning" domain="[('sla_status','=','warning')]"/>
+                <filter name="sla_breached" string="SLA Breached" domain="[('sla_status','=','breached')]"/>
+                <separator/>
+                <filter name="billable" string="Billable" domain="[('billable','=',True)]"/>
+                <filter name="to_invoice" string="To Invoice" domain="[('invoice_status','=','to_invoice')]"/>
+                <separator/>
+                <filter name="group_state" string="Status" context="{'group_by':'state'}"/>
+                <filter name="group_tech" string="Technician" context="{'group_by':'technician_id'}"/>
+                <filter name="group_type" string="Service Type" context="{'group_by':'service_type_id'}"/>
+                <filter name="group_sla" string="SLA" context="{'group_by':'sla_status'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_work_order" model="ir.actions.act_window">
+        <field name="name">Work Orders</field><field name="res_model">fsm.work.order</field>
+        <field name="view_mode">kanban,list,calendar,form,graph</field>
+        <field name="search_view_id" ref="view_wo_search"/>
+    </record>
+    <record id="action_my_work_order" model="ir.actions.act_window">
+        <field name="name">My Work Orders</field><field name="res_model">fsm.work.order</field>
+        <field name="view_mode">list,kanban,calendar,form</field>
+        <field name="domain">[('technician_id.user_id','=',uid)]</field>
+        <field name="search_view_id" ref="view_wo_search"/>
+    </record>
+    <record id="action_scheduling" model="ir.actions.act_window">
+        <field name="name">Scheduling</field><field name="res_model">fsm.work.order</field>
+        <field name="view_mode">calendar,list,form</field>
+        <field name="search_view_id" ref="view_wo_search"/>
+    </record>
+
+</odoo>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Asset Type -->
+    <record id="view_asset_type_list" model="ir.ui.view">
+        <field name="name">fsm.asset.type.list</field><field name="model">fsm.asset.type</field>
+        <field name="arch" type="xml">
+            <list editable="bottom"><field name="name"/><field name="code"/><field name="active" widget="boolean_toggle"/></list>
+        </field>
+    </record>
+    <record id="action_asset_type" model="ir.actions.act_window">
+        <field name="name">Asset Types</field><field name="res_model">fsm.asset.type</field><field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Skill -->
+    <record id="view_skill_list" model="ir.ui.view">
+        <field name="name">fsm.skill.list</field><field name="model">fsm.skill</field>
+        <field name="arch" type="xml">
+            <list editable="bottom"><field name="name"/><field name="code"/><field name="active" widget="boolean_toggle"/></list>
+        </field>
+    </record>
+    <record id="action_skill" model="ir.actions.act_window">
+        <field name="name">Skills</field><field name="res_model">fsm.skill</field><field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Service Area -->
+    <record id="view_area_list" model="ir.ui.view">
+        <field name="name">fsm.service.area.list</field><field name="model">fsm.service.area</field>
+        <field name="arch" type="xml">
+            <list editable="bottom"><field name="name"/><field name="code"/><field name="active" widget="boolean_toggle"/></list>
+        </field>
+    </record>
+    <record id="action_area" model="ir.actions.act_window">
+        <field name="name">Service Areas</field><field name="res_model">fsm.service.area</field><field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Service Type -->
+    <record id="view_service_type_list" model="ir.ui.view">
+        <field name="name">fsm.service.type.list</field><field name="model">fsm.service.type</field>
+        <field name="arch" type="xml">
+            <list><field name="name"/><field name="code"/><field name="default_duration_hours"/><field name="default_priority"/><field name="billable_by_default" widget="boolean_toggle"/></list>
+        </field>
+    </record>
+    <record id="view_service_type_form" model="ir.ui.view">
+        <field name="name">fsm.service.type.form</field><field name="model">fsm.service.type</field>
+        <field name="arch" type="xml">
+            <form><sheet>
+                <div class="oe_title"><h1><field name="name" placeholder="e.g. Preventive Maintenance"/></h1></div>
+                <group><group>
+                    <field name="code"/><field name="default_duration_hours"/><field name="default_priority"/>
+                </group><group>
+                    <field name="billable_by_default"/><field name="checklist_template_id"/><field name="skill_ids" widget="many2many_tags"/>
+                </group></group>
+                <field name="notes" placeholder="Notes…"/>
+            </sheet></form>
+        </field>
+    </record>
+    <record id="action_service_type" model="ir.actions.act_window">
+        <field name="name">Service Types</field><field name="res_model">fsm.service.type</field><field name="view_mode">list,form</field>
+    </record>
+
+    <!-- SLA Policy -->
+    <record id="view_sla_list" model="ir.ui.view">
+        <field name="name">fsm.sla.policy.list</field><field name="model">fsm.sla.policy</field>
+        <field name="arch" type="xml">
+            <list editable="bottom"><field name="name"/><field name="priority"/><field name="response_time_hours"/><field name="resolution_time_hours"/><field name="active" widget="boolean_toggle"/></list>
+        </field>
+    </record>
+    <record id="action_sla" model="ir.actions.act_window">
+        <field name="name">SLA Policies</field><field name="res_model">fsm.sla.policy</field><field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Checklist Template -->
+    <record id="view_checklist_template_form" model="ir.ui.view">
+        <field name="name">fsm.checklist.template.form</field><field name="model">fsm.checklist.template</field>
+        <field name="arch" type="xml">
+            <form><sheet>
+                <div class="oe_title"><h1><field name="name" placeholder="e.g. AC Service Checklist"/></h1></div>
+                <group><field name="service_type_id"/><field name="active"/></group>
+                <field name="checklist_item_ids">
+                    <list editable="bottom">
+                        <field name="sequence" widget="handle"/><field name="name"/>
+                        <field name="is_required" widget="boolean_toggle"/><field name="expected_answer_type"/>
+                    </list>
+                </field>
+            </sheet></form>
+        </field>
+    </record>
+    <record id="view_checklist_template_list" model="ir.ui.view">
+        <field name="name">fsm.checklist.template.list</field><field name="model">fsm.checklist.template</field>
+        <field name="arch" type="xml">
+            <list><field name="name"/><field name="service_type_id"/><field name="active" widget="boolean_toggle"/></list>
+        </field>
+    </record>
+    <record id="action_checklist_template" model="ir.actions.act_window">
+        <field name="name">Checklist Templates</field><field name="res_model">fsm.checklist.template</field><field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

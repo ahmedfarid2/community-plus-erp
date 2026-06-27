@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="demo_atype_ac" model="fsm.asset.type"><field name="name">AC Unit</field><field name="code">AC</field></record>
+        <record id="demo_atype_server" model="fsm.asset.type"><field name="name">Server</field><field name="code">SRV</field></record>
+        <record id="demo_atype_appliance" model="fsm.asset.type"><field name="name">Appliance</field><field name="code">APP</field></record>
+
+        <record id="demo_skill_hvac" model="fsm.skill"><field name="name">HVAC</field><field name="code">HVAC</field></record>
+        <record id="demo_skill_it" model="fsm.skill"><field name="name">IT Support</field><field name="code">IT</field></record>
+        <record id="demo_skill_elec" model="fsm.skill"><field name="name">Electrical</field><field name="code">ELEC</field></record>
+
+        <record id="demo_stype_repair" model="fsm.service.type">
+            <field name="name">Repair</field><field name="code">REP</field><field name="default_priority">2</field>
+        </record>
+        <record id="demo_stype_pm" model="fsm.service.type">
+            <field name="name">Preventive Maintenance</field><field name="code">PM</field><field name="default_duration_hours">2.0</field>
+        </record>
+        <record id="demo_stype_install" model="fsm.service.type">
+            <field name="name">Installation</field><field name="code">INST</field>
+        </record>
+
+        <record id="demo_sla_low" model="fsm.sla.policy"><field name="name">Low</field><field name="priority">0</field><field name="response_time_hours">24</field><field name="resolution_time_hours">120</field></record>
+        <record id="demo_sla_med" model="fsm.sla.policy"><field name="name">Medium</field><field name="priority">1</field><field name="response_time_hours">8</field><field name="resolution_time_hours">48</field></record>
+        <record id="demo_sla_high" model="fsm.sla.policy"><field name="name">High</field><field name="priority">2</field><field name="response_time_hours">4</field><field name="resolution_time_hours">24</field></record>
+        <record id="demo_sla_crit" model="fsm.sla.policy"><field name="name">Critical</field><field name="priority">3</field><field name="response_time_hours">1</field><field name="resolution_time_hours">8</field></record>
+
+        <record id="demo_team" model="fsm.team"><field name="name">North Team</field></record>
+        <record id="demo_tech_1" model="fsm.technician">
+            <field name="name">Sam Carter</field><field name="team_id" ref="demo_team"/>
+            <field name="skill_ids" eval="[(6,0,[ref('demo_skill_hvac'), ref('demo_skill_elec')])]"/>
+            <field name="hourly_cost">35.0</field>
+        </record>
+        <record id="demo_tech_2" model="fsm.technician">
+            <field name="name">Lina Rossi</field><field name="team_id" ref="demo_team"/>
+            <field name="skill_ids" eval="[(6,0,[ref('demo_skill_it')])]"/>
+            <field name="hourly_cost">40.0</field>
+        </record>
+
+        <record id="demo_location" model="fsm.service.location">
+            <field name="name">HQ Rooftop</field><field name="partner_id" ref="base.res_partner_2"/><field name="city">Springfield</field>
+        </record>
+        <record id="demo_asset" model="fsm.customer.asset">
+            <field name="name">Rooftop AC Unit #1</field><field name="partner_id" ref="base.res_partner_2"/>
+            <field name="service_location_id" ref="demo_location"/><field name="asset_type_id" ref="demo_atype_ac"/>
+            <field name="serial_number">AC-2024-001</field><field name="status">active</field>
+        </record>
+
+        <record id="demo_request" model="fsm.service.request">
+            <field name="partner_id" ref="base.res_partner_2"/><field name="service_type_id" ref="demo_stype_repair"/>
+            <field name="priority">2</field><field name="source">phone</field>
+            <field name="description">AC not cooling on the 3rd floor.</field>
+        </record>
+
+        <record id="demo_contract" model="fsm.maintenance.contract">
+            <field name="partner_id" ref="base.res_partner_2"/><field name="service_location_id" ref="demo_location"/>
+            <field name="asset_ids" eval="[(6,0,[ref('demo_asset')])]"/><field name="service_type_id" ref="demo_stype_pm"/>
+            <field name="assigned_team_id" ref="demo_team"/><field name="assigned_technician_id" ref="demo_tech_1"/>
+            <field name="recurrence_frequency">quarterly</field><field name="state">active</field>
+            <field name="next_service_date" eval="(DateTime.today()+relativedelta(days=7)).strftime('%Y-%m-%d')"/>
+            <field name="contract_end_date" eval="(DateTime.today()+relativedelta(years=1)).strftime('%Y-%m-%d')"/>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_fsm_root" name="Field Service"
+              web_icon="smart_field_service_suite,static/description/icon.png"
+              sequence="48"/>
+
+    <menuitem id="menu_fsm_operations" name="Operations" parent="menu_fsm_root" sequence="10"/>
+    <menuitem id="menu_fsm_requests" name="Service Requests" parent="menu_fsm_operations"
+              action="action_service_request" sequence="10"
+              groups="smart_field_service_suite.group_fsm_dispatcher"/>
+    <menuitem id="menu_fsm_work_orders" name="Work Orders" parent="menu_fsm_operations"
+              action="action_work_order" sequence="20"/>
+    <menuitem id="menu_fsm_my_work_orders" name="My Work Orders" parent="menu_fsm_operations"
+              action="action_my_work_order" sequence="30"/>
+    <menuitem id="menu_fsm_scheduling" name="Scheduling" parent="menu_fsm_operations"
+              action="action_scheduling" sequence="40"
+              groups="smart_field_service_suite.group_fsm_dispatcher"/>
+
+    <menuitem id="menu_fsm_customers" name="Customers" parent="menu_fsm_root" sequence="20"
+              groups="smart_field_service_suite.group_fsm_dispatcher"/>
+    <menuitem id="menu_fsm_locations" name="Customers &amp; Locations" parent="menu_fsm_customers"
+              action="action_location" sequence="10"/>
+    <menuitem id="menu_fsm_assets" name="Customer Assets" parent="menu_fsm_customers"
+              action="action_asset" sequence="20"/>
+
+    <menuitem id="menu_fsm_resources" name="Resources" parent="menu_fsm_root" sequence="30"
+              groups="smart_field_service_suite.group_fsm_manager"/>
+    <menuitem id="menu_fsm_technicians" name="Technicians" parent="menu_fsm_resources"
+              action="action_technician" sequence="10"/>
+    <menuitem id="menu_fsm_teams" name="Teams" parent="menu_fsm_resources"
+              action="action_team" sequence="20"/>
+    <menuitem id="menu_fsm_contracts" name="Maintenance Contracts" parent="menu_fsm_resources"
+              action="action_contract" sequence="30"/>
+
+    <menuitem id="menu_fsm_config" name="Configuration" parent="menu_fsm_root" sequence="90"
+              groups="smart_field_service_suite.group_fsm_admin"/>
+    <menuitem id="menu_fsm_service_types" name="Service Types" parent="menu_fsm_config"
+              action="action_service_type" sequence="10"/>
+    <menuitem id="menu_fsm_asset_types" name="Asset Types" parent="menu_fsm_config"
+              action="action_asset_type" sequence="20"/>
+    <menuitem id="menu_fsm_skills" name="Skills" parent="menu_fsm_config"
+              action="action_skill" sequence="30"/>
+    <menuitem id="menu_fsm_areas" name="Service Areas" parent="menu_fsm_config"
+              action="action_area" sequence="40"/>
+    <menuitem id="menu_fsm_sla" name="SLA Policies" parent="menu_fsm_config"
+              action="action_sla" sequence="50"/>
+    <menuitem id="menu_fsm_checklists" name="Checklist Templates" parent="menu_fsm_config"
+              action="action_checklist_template" sequence="60"/>
+    <menuitem id="menu_fsm_logs" name="Operation Logs" parent="menu_fsm_config"
+              action="action_log" sequence="70"
+              groups="smart_field_service_suite.group_fsm_manager"/>
+
+</odoo>

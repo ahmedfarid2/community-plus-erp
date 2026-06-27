@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_asset_list" model="ir.ui.view">
+        <field name="name">fsm.customer.asset.list</field><field name="model">fsm.customer.asset</field>
+        <field name="arch" type="xml">
+            <list decoration-warning="status == 'under_maintenance'" decoration-muted="status == 'retired'">
+                <field name="name"/><field name="partner_id"/><field name="asset_type_id"/><field name="serial_number"/>
+                <field name="last_service_date"/><field name="next_service_date"/><field name="status" widget="badge"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_asset_form" model="ir.ui.view">
+        <field name="name">fsm.customer.asset.form</field><field name="model">fsm.customer.asset</field>
+        <field name="arch" type="xml">
+            <form><sheet>
+                <div class="oe_button_box" name="button_box">
+                    <button name="action_view_work_orders" type="object" class="oe_stat_button" icon="fa-wrench">
+                        <field name="work_order_count" widget="statinfo" string="Service History"/>
+                    </button>
+                    <button name="action_view_contracts" type="object" class="oe_stat_button" icon="fa-file-text-o">
+                        <field name="contract_count" widget="statinfo" string="Contracts"/>
+                    </button>
+                </div>
+                <div class="oe_title"><h1><field name="name" placeholder="e.g. Rooftop AC Unit #3"/></h1></div>
+                <group><group>
+                    <field name="partner_id"/><field name="service_location_id"/><field name="asset_type_id"/>
+                    <field name="serial_number"/><field name="model"/><field name="manufacturer"/>
+                </group><group>
+                    <field name="status"/><field name="installation_date"/><field name="warranty_start_date"/>
+                    <field name="warranty_end_date"/><field name="last_service_date"/><field name="next_service_date"/>
+                </group></group>
+            </sheet>
+            <chatter/>
+            </form>
+        </field>
+    </record>
+    <record id="view_asset_search" model="ir.ui.view">
+        <field name="name">fsm.customer.asset.search</field><field name="model">fsm.customer.asset</field>
+        <field name="arch" type="xml">
+            <search><field name="name"/><field name="partner_id"/><field name="serial_number"/>
+                <filter name="under_maint" string="Under Maintenance" domain="[('status','=','under_maintenance')]"/>
+                <filter name="group_type" string="Type" context="{'group_by':'asset_type_id'}"/>
+                <filter name="group_partner" string="Customer" context="{'group_by':'partner_id'}"/>
+            </search>
+        </field>
+    </record>
+    <record id="action_asset" model="ir.actions.act_window">
+        <field name="name">Customer Assets</field><field name="res_model">fsm.customer.asset</field><field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_asset_search"/>
+    </record>
+</odoo>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="cron_fsm_sla" model="ir.cron">
+        <field name="name">Field Service: SLA check</field>
+        <field name="model_id" ref="model_fsm_work_order"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_check_sla()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">hours</field>
+        <field name="active" eval="True"/>
+    </record>
+    <record id="cron_fsm_generate" model="ir.cron">
+        <field name="name">Field Service: generate recurring work orders</field>
+        <field name="model_id" ref="model_fsm_maintenance_contract"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_generate_work_orders()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active" eval="True"/>
+    </record>
+    <record id="cron_fsm_renewals" model="ir.cron">
+        <field name="name">Field Service: contract renewal reminders</field>
+        <field name="model_id" ref="model_fsm_maintenance_contract"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_renewal_reminders()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active" eval="True"/>
+    </record>
+</odoo>

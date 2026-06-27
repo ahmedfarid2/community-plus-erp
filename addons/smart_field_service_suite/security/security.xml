@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="module_category_fsm" model="ir.module.category">
+        <field name="name">Field Service</field>
+        <field name="description">Field service &amp; maintenance operations.</field>
+        <field name="sequence">28</field>
+    </record>
+
+    <record id="privilege_fsm" model="res.groups.privilege">
+        <field name="name">Field Service</field>
+        <field name="category_id" ref="module_category_fsm"/>
+        <field name="sequence">28</field>
+    </record>
+
+    <record id="group_fsm_technician" model="res.groups">
+        <field name="name">Technician</field>
+        <field name="privilege_id" ref="privilege_fsm"/>
+        <field name="comment">View and update only their assigned work orders.</field>
+    </record>
+    <record id="group_fsm_dispatcher" model="res.groups">
+        <field name="name">Dispatcher</field>
+        <field name="privilege_id" ref="privilege_fsm"/>
+        <field name="implied_ids" eval="[(4, ref('group_fsm_technician'))]"/>
+        <field name="comment">Create requests/work orders, assign and schedule.</field>
+    </record>
+    <record id="group_fsm_manager" model="res.groups">
+        <field name="name">Manager</field>
+        <field name="privilege_id" ref="privilege_fsm"/>
+        <field name="implied_ids" eval="[(4, ref('group_fsm_dispatcher'))]"/>
+        <field name="comment">View all operations, contracts, SLAs and reports.</field>
+    </record>
+    <record id="group_fsm_admin" model="res.groups">
+        <field name="name">Administrator</field>
+        <field name="privilege_id" ref="privilege_fsm"/>
+        <field name="implied_ids" eval="[(4, ref('group_fsm_manager'))]"/>
+        <field name="comment">Configure service types, teams, skills, SLA policies and settings.</field>
+    </record>
+
+    <!-- ========================= Record Rules ========================= -->
+    <!-- Technicians: only their assigned work orders -->
+    <record id="rule_wo_technician" model="ir.rule">
+        <field name="name">Work Order: assigned technician</field>
+        <field name="model_id" ref="model_fsm_work_order"/>
+        <field name="groups" eval="[(4, ref('group_fsm_technician'))]"/>
+        <field name="domain_force">['|', ('technician_id.user_id', '=', user.id), ('secondary_technician_ids.user_id', '=', user.id)]</field>
+        <field name="perm_read" eval="True"/><field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="False"/><field name="perm_unlink" eval="False"/>
+    </record>
+    <record id="rule_wo_all" model="ir.rule">
+        <field name="name">Work Order: dispatchers and up see all</field>
+        <field name="model_id" ref="model_fsm_work_order"/>
+        <field name="groups" eval="[(4, ref('group_fsm_dispatcher'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+    <!-- Lines + logs: technicians limited to their own work orders -->
+    <record id="rule_checklist_technician" model="ir.rule">
+        <field name="name">Checklist: own work orders</field>
+        <field name="model_id" ref="model_fsm_work_order_checklist_line"/>
+        <field name="groups" eval="[(4, ref('group_fsm_technician'))]"/>
+        <field name="domain_force">[('work_order_id.technician_id.user_id', '=', user.id)]</field>
+    </record>
+    <record id="rule_checklist_all" model="ir.rule">
+        <field name="name">Checklist: dispatchers and up</field>
+        <field name="model_id" ref="model_fsm_work_order_checklist_line"/>
+        <field name="groups" eval="[(4, ref('group_fsm_dispatcher'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+    <record id="rule_part_technician" model="ir.rule">
+        <field name="name">Parts: own work orders</field>
+        <field name="model_id" ref="model_fsm_work_order_part_line"/>
+        <field name="groups" eval="[(4, ref('group_fsm_technician'))]"/>
+        <field name="domain_force">[('work_order_id.technician_id.user_id', '=', user.id)]</field>
+    </record>
+    <record id="rule_part_all" model="ir.rule">
+        <field name="name">Parts: dispatchers and up</field>
+        <field name="model_id" ref="model_fsm_work_order_part_line"/>
+        <field name="groups" eval="[(4, ref('group_fsm_dispatcher'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+    <record id="rule_time_technician" model="ir.rule">
+        <field name="name">Time: own work orders</field>
+        <field name="model_id" ref="model_fsm_work_order_time_line"/>
+        <field name="groups" eval="[(4, ref('group_fsm_technician'))]"/>
+        <field name="domain_force">[('work_order_id.technician_id.user_id', '=', user.id)]</field>
+    </record>
+    <record id="rule_time_all" model="ir.rule">
+        <field name="name">Time: dispatchers and up</field>
+        <field name="model_id" ref="model_fsm_work_order_time_line"/>
+        <field name="groups" eval="[(4, ref('group_fsm_dispatcher'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+    <record id="rule_log_technician" model="ir.rule">
+        <field name="name">Logs: own work orders</field>
+        <field name="model_id" ref="model_fsm_operation_log"/>
+        <field name="groups" eval="[(4, ref('group_fsm_technician'))]"/>
+        <field name="domain_force">[('work_order_id.technician_id.user_id', '=', user.id)]</field>
+    </record>
+    <record id="rule_log_all" model="ir.rule">
+        <field name="name">Logs: dispatchers and up</field>
+        <field name="model_id" ref="model_fsm_operation_log"/>
+        <field name="groups" eval="[(4, ref('group_fsm_dispatcher'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+</odoo>

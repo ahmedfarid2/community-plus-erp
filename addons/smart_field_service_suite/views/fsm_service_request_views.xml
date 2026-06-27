@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_sr_list" model="ir.ui.view">
+        <field name="name">fsm.service.request.list</field><field name="model">fsm.service.request</field>
+        <field name="arch" type="xml">
+            <list decoration-info="state == 'new'" decoration-success="state == 'converted'" decoration-muted="state in ('rejected','cancelled')">
+                <field name="name"/><field name="partner_id"/><field name="service_type_id"/><field name="priority" widget="priority"/>
+                <field name="requested_date"/><field name="source"/><field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_sr_form" model="ir.ui.view">
+        <field name="name">fsm.service.request.form</field><field name="model">fsm.service.request</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_review" type="object" string="Review" invisible="state != 'new'"/>
+                    <button name="action_convert_to_work_order" type="object" string="Convert to Work Order" class="btn-primary" invisible="state not in ('new','reviewed')"/>
+                    <button name="action_reject" type="object" string="Reject" invisible="state in ('converted','rejected','cancelled')"/>
+                    <button name="action_cancel" type="object" string="Cancel" invisible="state in ('converted','cancelled')"/>
+                    <button name="action_reset_to_new" type="object" string="Reset to New" invisible="state in ('new','converted')"/>
+                    <button name="action_view_work_order" type="object" string="Open Work Order" invisible="not work_order_id"/>
+                    <field name="state" widget="statusbar" statusbar_visible="new,reviewed,converted"/>
+                </header>
+                <sheet>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <group><group>
+                        <field name="partner_id"/><field name="contact_name"/><field name="contact_phone"/><field name="contact_email"/>
+                        <field name="service_location_id"/><field name="asset_id"/>
+                    </group><group>
+                        <field name="service_type_id"/><field name="priority" widget="priority"/><field name="source"/>
+                        <field name="requested_date"/><field name="preferred_date"/><field name="responsible_user_id"/>
+                        <field name="work_order_id"/>
+                    </group></group>
+                    <group string="Description"><field name="description" nolabel="1"/></group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+    <record id="view_sr_search" model="ir.ui.view">
+        <field name="name">fsm.service.request.search</field><field name="model">fsm.service.request</field>
+        <field name="arch" type="xml">
+            <search><field name="name"/><field name="partner_id"/>
+                <filter name="new" string="New" domain="[('state','=','new')]"/>
+                <filter name="reviewed" string="Reviewed" domain="[('state','=','reviewed')]"/>
+                <filter name="converted" string="Converted" domain="[('state','=','converted')]"/>
+                <filter name="group_state" string="Status" context="{'group_by':'state'}"/>
+                <filter name="group_source" string="Source" context="{'group_by':'source'}"/>
+            </search>
+        </field>
+    </record>
+    <record id="action_service_request" model="ir.actions.act_window">
+        <field name="name">Service Requests</field><field name="res_model">fsm.service.request</field><field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_sr_search"/>
+    </record>
+</odoo>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_mc_list" model="ir.ui.view">
+        <field name="name">fsm.maintenance.contract.list</field><field name="model">fsm.maintenance.contract</field>
+        <field name="arch" type="xml">
+            <list decoration-success="state == 'active'" decoration-muted="state in ('expired','cancelled')">
+                <field name="name"/><field name="partner_id"/><field name="recurrence_frequency"/>
+                <field name="next_service_date"/><field name="contract_end_date"/><field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_mc_form" model="ir.ui.view">
+        <field name="name">fsm.maintenance.contract.form</field><field name="model">fsm.maintenance.contract</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_activate" type="object" string="Activate" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_generate_next_work_order" type="object" string="Generate Next Work Order" invisible="state != 'active'"/>
+                    <button name="action_renew" type="object" string="Renew" invisible="state not in ('active','expired')"/>
+                    <button name="action_expire" type="object" string="Expire" invisible="state != 'active'"/>
+                    <button name="action_cancel" type="object" string="Cancel" invisible="state in ('cancelled',)"/>
+                    <button name="action_reset_to_draft" type="object" string="Reset to Draft" invisible="state in ('draft',)"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,active"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_work_orders" type="object" class="oe_stat_button" icon="fa-wrench">
+                            <field name="work_order_count" widget="statinfo" string="Work Orders"/></button>
+                    </div>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <group><group>
+                        <field name="partner_id"/><field name="service_location_id"/><field name="asset_ids" widget="many2many_tags"/>
+                        <field name="service_type_id"/><field name="assigned_team_id"/><field name="assigned_technician_id"/>
+                    </group><group>
+                        <field name="contract_start_date"/><field name="contract_end_date"/><field name="next_service_date"/>
+                        <field name="recurrence_frequency"/><field name="recurrence_interval"/>
+                        <field name="auto_generate_work_orders"/><field name="renewal_reminder_days"/>
+                    </group></group>
+                    <notebook>
+                        <page string="Service Lines">
+                            <field name="service_line_ids">
+                                <list editable="bottom">
+                                    <field name="service_type_id"/><field name="asset_id"/><field name="frequency"/>
+                                    <field name="interval"/><field name="next_service_date"/><field name="last_service_date"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes"><field name="notes"/></page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+    <record id="view_mc_search" model="ir.ui.view">
+        <field name="name">fsm.maintenance.contract.search</field><field name="model">fsm.maintenance.contract</field>
+        <field name="arch" type="xml">
+            <search><field name="name"/><field name="partner_id"/>
+                <filter name="active" string="Active" domain="[('state','=','active')]"/>
+                <filter name="expiring" string="Expiring (30d)" domain="[('state','=','active'),('contract_end_date','&lt;=', (context_today()+relativedelta(days=30)).strftime('%Y-%m-%d'))]"/>
+                <filter name="group_state" string="Status" context="{'group_by':'state'}"/>
+            </search>
+        </field>
+    </record>
+    <record id="action_contract" model="ir.actions.act_window">
+        <field name="name">Maintenance Contracts</field><field name="res_model">fsm.maintenance.contract</field><field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_mc_search"/>
+    </record>
+</odoo>
