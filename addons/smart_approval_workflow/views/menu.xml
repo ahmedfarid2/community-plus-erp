@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_approval_root" name="Approvals"
+              web_icon="smart_approval_workflow,static/description/icon.png"
+              sequence="50"/>
+
+    <menuitem id="menu_approval_operations" name="Requests"
+              parent="menu_approval_root" sequence="10"/>
+
+    <menuitem id="menu_approval_request" name="Approval Requests"
+              parent="menu_approval_operations"
+              action="action_approval_request" sequence="10"/>
+
+    <menuitem id="menu_my_pending_approvals" name="My Pending Approvals"
+              parent="menu_approval_operations"
+              action="action_my_pending_approvals" sequence="20"/>
+
+    <menuitem id="menu_my_requests" name="My Requests"
+              parent="menu_approval_operations"
+              action="action_my_requests" sequence="30"/>
+
+    <menuitem id="menu_approved_requests" name="Approved Requests"
+              parent="menu_approval_operations"
+              action="action_approved_requests" sequence="40"/>
+
+    <menuitem id="menu_rejected_requests" name="Rejected Requests"
+              parent="menu_approval_operations"
+              action="action_rejected_requests" sequence="50"/>
+
+    <menuitem id="menu_approval_workflows" name="Workflows"
+              parent="menu_approval_root" action="action_approval_workflow"
+              sequence="20"
+              groups="smart_approval_workflow.group_approval_admin"/>
+
+    <menuitem id="menu_approval_config" name="Configuration"
+              parent="menu_approval_root" sequence="90"
+              groups="smart_approval_workflow.group_approval_admin"/>
+
+    <menuitem id="menu_approval_steps" name="Approval Steps"
+              parent="menu_approval_config" action="action_approval_step"
+              sequence="10"/>
+
+    <menuitem id="menu_approval_history" name="Approval History"
+              parent="menu_approval_config" action="action_approval_request_line"
+              sequence="20"/>
+
+</odoo>

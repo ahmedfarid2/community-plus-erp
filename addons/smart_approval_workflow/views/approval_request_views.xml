@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================ Request ============================ -->
+    <record id="view_approval_request_list" model="ir.ui.view">
+        <field name="name">approval.request.list</field>
+        <field name="model">approval.request</field>
+        <field name="arch" type="xml">
+            <list decoration-info="state == 'pending'"
+                  decoration-success="state == 'approved'"
+                  decoration-danger="state == 'rejected'"
+                  decoration-muted="state == 'cancelled'">
+                <field name="name"/>
+                <field name="workflow_id"/>
+                <field name="res_model" optional="show"/>
+                <field name="requester_id"/>
+                <field name="current_step_id" optional="show"/>
+                <field name="progress" optional="show"/>
+                <field name="request_date"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'pending'"
+                       decoration-success="state == 'approved'"
+                       decoration-danger="state == 'rejected'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_approval_request_form" model="ir.ui.view">
+        <field name="name">approval.request.form</field>
+        <field name="model">approval.request</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_submit_for_approval" type="object"
+                            string="Submit for Approval" class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_approve" type="object" string="Approve"
+                            class="btn-primary"
+                            invisible="not can_approve"/>
+                    <button name="action_reject" type="object" string="Reject"
+                            invisible="not can_approve"/>
+                    <button name="action_cancel" type="object" string="Cancel"
+                            invisible="state in ('approved','rejected','cancelled')"/>
+                    <button name="action_reset_to_draft" type="object"
+                            string="Reset to Draft"
+                            invisible="state not in ('rejected','cancelled')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,pending,approved"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_document" type="object"
+                                class="oe_stat_button" icon="fa-external-link"
+                                invisible="not res_id">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Open</span>
+                                <span class="o_stat_text">Document</span>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="workflow_id"
+                                   options="{'no_create': True}"
+                                   readonly="state != 'draft'"/>
+                            <field name="res_model" invisible="1"/>
+                            <field name="resource_ref"
+                                   readonly="state != 'draft'"/>
+                            <field name="requester_id" readonly="state != 'draft'"/>
+                        </group>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="current_step_id"/>
+                            <field name="progress"/>
+                            <field name="request_date"/>
+                            <field name="approved_date"
+                                   invisible="state != 'approved'"/>
+                            <field name="rejected_date"
+                                   invisible="state != 'rejected'"/>
+                        </group>
+                    </group>
+                    <field name="can_approve" invisible="1"/>
+                    <notebook>
+                        <page string="Approval History" name="history">
+                            <field name="approval_line_ids" readonly="1">
+                                <list decoration-success="action == 'approved'"
+                                      decoration-danger="action == 'rejected'"
+                                      decoration-muted="action == 'pending'">
+                                    <field name="step_name"/>
+                                    <field name="approver_id"/>
+                                    <field name="action" widget="badge"
+                                           decoration-success="action == 'approved'"
+                                           decoration-danger="action == 'rejected'"/>
+                                    <field name="action_date"/>
+                                    <field name="comment"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_approval_request_search" model="ir.ui.view">
+        <field name="name">approval.request.search</field>
+        <field name="model">approval.request</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" string="Request"/>
+                <field name="workflow_id"/>
+                <field name="requester_id"/>
+                <filter name="my_pending" string="My Pending Approvals"
+                        domain="[('state','=','pending'),('approval_line_ids','any',[('approver_id','=',uid),('action','=','pending')])]"/>
+                <filter name="my_requests" string="My Requests"
+                        domain="[('requester_id','=',uid)]"/>
+                <separator/>
+                <filter name="pending" string="Pending"
+                        domain="[('state','=','pending')]"/>
+                <filter name="approved" string="Approved"
+                        domain="[('state','=','approved')]"/>
+                <filter name="rejected" string="Rejected"
+                        domain="[('state','=','rejected')]"/>
+                <filter name="cancelled" string="Cancelled"
+                        domain="[('state','=','cancelled')]"/>
+                <separator/>
+                <filter name="today" string="Today"
+                        domain="[('request_date','>=', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter name="this_week" string="This Week"
+                        domain="[('request_date','>=', (context_today() - relativedelta(days=context_today().weekday())).strftime('%Y-%m-%d'))]"/>
+                <separator/>
+                <filter name="group_state" string="Status"
+                        context="{'group_by':'state'}"/>
+                <filter name="group_workflow" string="Workflow"
+                        context="{'group_by':'workflow_id'}"/>
+                <filter name="group_requester" string="Requester"
+                        context="{'group_by':'requester_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_approval_request" model="ir.actions.act_window">
+        <field name="name">Approval Requests</field>
+        <field name="res_model">approval.request</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_approval_request_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No approval requests yet</p>
+            <p>Create a request, link the document, and submit it to route it
+               through the configured approval steps.</p>
+        </field>
+    </record>
+
+    <record id="action_my_pending_approvals" model="ir.actions.act_window">
+        <field name="name">My Pending Approvals</field>
+        <field name="res_model">approval.request</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state','=','pending'),('approval_line_ids','any',[('approver_id','=',uid),('action','=','pending')])]</field>
+        <field name="search_view_id" ref="view_approval_request_search"/>
+    </record>
+
+    <record id="action_my_requests" model="ir.actions.act_window">
+        <field name="name">My Requests</field>
+        <field name="res_model">approval.request</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('requester_id','=',uid)]</field>
+        <field name="search_view_id" ref="view_approval_request_search"/>
+    </record>
+
+    <record id="action_approved_requests" model="ir.actions.act_window">
+        <field name="name">Approved Requests</field>
+        <field name="res_model">approval.request</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state','=','approved')]</field>
+        <field name="search_view_id" ref="view_approval_request_search"/>
+    </record>
+
+    <record id="action_rejected_requests" model="ir.actions.act_window">
+        <field name="name">Rejected Requests</field>
+        <field name="res_model">approval.request</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state','=','rejected')]</field>
+        <field name="search_view_id" ref="view_approval_request_search"/>
+    </record>
+
+    <!-- ========================= Request Line ========================= -->
+    <record id="view_approval_request_line_list" model="ir.ui.view">
+        <field name="name">approval.request.line.list</field>
+        <field name="model">approval.request.line</field>
+        <field name="arch" type="xml">
+            <list create="false"
+                  decoration-success="action == 'approved'"
+                  decoration-danger="action == 'rejected'"
+                  decoration-muted="action == 'pending'">
+                <field name="request_id"/>
+                <field name="step_name"/>
+                <field name="approver_id"/>
+                <field name="action" widget="badge"/>
+                <field name="action_date"/>
+                <field name="comment"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_approval_request_line_form" model="ir.ui.view">
+        <field name="name">approval.request.line.form</field>
+        <field name="model">approval.request.line</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="request_id"/>
+                        <field name="step_name"/>
+                        <field name="approver_id"/>
+                        <field name="action"/>
+                        <field name="action_date"/>
+                        <field name="comment"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_approval_request_line_search" model="ir.ui.view">
+        <field name="name">approval.request.line.search</field>
+        <field name="model">approval.request.line</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="request_id"/>
+                <field name="approver_id"/>
+                <filter name="approved" string="Approved"
+                        domain="[('action','=','approved')]"/>
+                <filter name="rejected" string="Rejected"
+                        domain="[('action','=','rejected')]"/>
+                <separator/>
+                <filter name="group_request" string="Request"
+                        context="{'group_by':'request_id'}"/>
+                <filter name="group_approver" string="Approver"
+                        context="{'group_by':'approver_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_approval_request_line" model="ir.actions.act_window">
+        <field name="name">Approval History</field>
+        <field name="res_model">approval.request.line</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_approval_request_line_search"/>
+    </record>
+
+</odoo>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- A generic two-level workflow on Contacts (always present model) -->
+        <record id="demo_workflow_partner" model="approval.workflow">
+            <field name="name">Contact Approval (Demo)</field>
+            <field name="model_id" ref="base.model_res_partner"/>
+            <field name="condition_type">always</field>
+        </record>
+
+        <record id="demo_step_1" model="approval.workflow.step">
+            <field name="workflow_id" ref="demo_workflow_partner"/>
+            <field name="sequence">10</field>
+            <field name="name">Team Review</field>
+            <field name="approver_type">user</field>
+            <field name="approver_user_id" ref="base.user_admin"/>
+            <field name="required_approval_count">1</field>
+        </record>
+
+        <record id="demo_step_2" model="approval.workflow.step">
+            <field name="workflow_id" ref="demo_workflow_partner"/>
+            <field name="sequence">20</field>
+            <field name="name">Manager Sign-off</field>
+            <field name="approver_type">group</field>
+            <field name="approver_group_id" ref="group_approval_manager"/>
+            <field name="required_approval_count">1</field>
+        </record>
+
+        <!-- A domain-based example: only companies need approval -->
+        <record id="demo_workflow_company" model="approval.workflow">
+            <field name="name">Company Onboarding (Demo)</field>
+            <field name="model_id" ref="base.model_res_partner"/>
+            <field name="condition_type">domain_based</field>
+            <field name="domain_filter">[("is_company", "=", True)]</field>
+        </record>
+
+        <record id="demo_step_company_1" model="approval.workflow.step">
+            <field name="workflow_id" ref="demo_workflow_company"/>
+            <field name="sequence">10</field>
+            <field name="name">Compliance Check</field>
+            <field name="approver_type">user</field>
+            <field name="approver_user_id" ref="base.user_admin"/>
+        </record>
+
+        <!-- A draft request to click through -->
+        <record id="demo_request_1" model="approval.request">
+            <field name="workflow_id" ref="demo_workflow_partner"/>
+            <field name="res_id" eval="ref('base.res_partner_2')"/>
+        </record>
+
+    </data>
+</odoo>

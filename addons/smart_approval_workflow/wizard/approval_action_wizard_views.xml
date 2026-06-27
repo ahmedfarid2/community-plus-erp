@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_approval_action_wizard_form" model="ir.ui.view">
+        <field name="name">approval.action.wizard.form</field>
+        <field name="model">approval.action.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <field name="request_id" invisible="1"/>
+                <field name="action" invisible="1"/>
+                <group>
+                    <field name="comment" placeholder="Add a comment…"
+                           required="action == 'rejected'"/>
+                </group>
+                <footer>
+                    <button name="action_confirm" type="object" string="Confirm"
+                            class="btn-primary"/>
+                    <button string="Discard" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

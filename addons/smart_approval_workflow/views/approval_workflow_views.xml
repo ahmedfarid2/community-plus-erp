@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================ Workflow ============================ -->
+    <record id="view_approval_workflow_list" model="ir.ui.view">
+        <field name="name">approval.workflow.list</field>
+        <field name="model">approval.workflow</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="model_id"/>
+                <field name="condition_type"/>
+                <field name="step_count" string="Steps"/>
+                <field name="active" widget="boolean_toggle"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_approval_workflow_form" model="ir.ui.view">
+        <field name="name">approval.workflow.form</field>
+        <field name="model">approval.workflow</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_requests" type="object"
+                                class="oe_stat_button" icon="fa-check-square-o">
+                            <field name="request_count" widget="statinfo"
+                                   string="Requests"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="e.g. Purchase Order Approval"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="model_id"
+                                   options="{'no_create': True}"/>
+                            <field name="model_name" invisible="1"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="condition_type"/>
+                        </group>
+                    </group>
+                    <group string="Condition" invisible="condition_type == 'always'">
+                        <group invisible="condition_type != 'amount_based'">
+                            <field name="amount_field_id"
+                                   options="{'no_create': True}"
+                                   required="condition_type == 'amount_based'"/>
+                            <field name="minimum_amount"/>
+                        </group>
+                        <group invisible="condition_type != 'domain_based'">
+                            <field name="domain_filter" widget="domain"
+                                   options="{'model': 'model_name'}"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Approval Steps" name="steps">
+                            <field name="approval_step_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="approver_type"/>
+                                    <field name="approver_user_id"
+                                           invisible="approver_type != 'user'"
+                                           required="approver_type == 'user'"/>
+                                    <field name="approver_group_id"
+                                           invisible="approver_type != 'group'"
+                                           required="approver_type == 'group'"/>
+                                    <field name="required_approval_count"/>
+                                    <field name="allow_reject" widget="boolean_toggle"/>
+                                    <field name="active" widget="boolean_toggle"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="notes" placeholder="Internal notes…"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_approval_workflow_search" model="ir.ui.view">
+        <field name="name">approval.workflow.search</field>
+        <field name="model">approval.workflow</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="model_id"/>
+                <filter name="archived" string="Archived"
+                        domain="[('active','=',False)]"/>
+                <separator/>
+                <filter name="group_model" string="Document Model"
+                        context="{'group_by':'model_id'}"/>
+                <filter name="group_condition" string="Condition"
+                        context="{'group_by':'condition_type'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_approval_workflow" model="ir.actions.act_window">
+        <field name="name">Workflows</field>
+        <field name="res_model">approval.workflow</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_approval_workflow_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create your first approval workflow</p>
+            <p>Pick a document model, set when it applies, and add the approval
+               steps. Requests then route through those steps automatically.</p>
+        </field>
+    </record>
+
+    <!-- ========================= Workflow Step ========================= -->
+    <record id="view_approval_step_list" model="ir.ui.view">
+        <field name="name">approval.workflow.step.list</field>
+        <field name="model">approval.workflow.step</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="workflow_id"/>
+                <field name="sequence"/>
+                <field name="name"/>
+                <field name="approver_type"/>
+                <field name="approver_user_id"/>
+                <field name="approver_group_id"/>
+                <field name="required_approval_count"/>
+                <field name="allow_reject"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_approval_step_form" model="ir.ui.view">
+        <field name="name">approval.workflow.step.form</field>
+        <field name="model">approval.workflow.step</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="workflow_id"/>
+                            <field name="name"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group>
+                            <field name="approver_type"/>
+                            <field name="approver_user_id"
+                                   invisible="approver_type != 'user'"
+                                   required="approver_type == 'user'"/>
+                            <field name="approver_group_id"
+                                   invisible="approver_type != 'group'"
+                                   required="approver_type == 'group'"/>
+                            <field name="required_approval_count"/>
+                            <field name="allow_reject"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_approval_step_search" model="ir.ui.view">
+        <field name="name">approval.workflow.step.search</field>
+        <field name="model">approval.workflow.step</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="workflow_id"/>
+                <filter name="group_workflow" string="Workflow"
+                        context="{'group_by':'workflow_id'}"/>
+                <filter name="group_type" string="Approver Type"
+                        context="{'group_by':'approver_type'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_approval_step" model="ir.actions.act_window">
+        <field name="name">Approval Steps</field>
+        <field name="res_model">approval.workflow.step</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_approval_step_search"/>
+    </record>
+
+</odoo>
