@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_social_lite_account,social.lite.account,model_social_lite_account,base.group_system,1,1,1,1
+access_social_lite_account_user,social.lite.account.user,model_social_lite_account,base.group_user,1,0,0,0
+access_social_lite_post,social.lite.post,model_social_lite_post,base.group_user,1,1,1,1

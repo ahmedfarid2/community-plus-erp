@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_whatsapp_lite_message_form" model="ir.ui.view">
+        <field name="name">whatsapp.lite.message.form</field>
+        <field name="model">whatsapp.lite.message</field>
+        <field name="arch" type="xml">
+            <form string="WhatsApp Message">
+                <header>
+                    <button name="action_send" type="object" string="Send"
+                            class="btn-primary" invisible="state == 'sent'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="account_id"/>
+                            <field name="partner_id"/>
+                            <field name="to_number"/>
+                        </group>
+                        <group>
+                            <field name="provider_message_id" readonly="1"/>
+                        </group>
+                    </group>
+                    <field name="body" placeholder="Message text..."/>
+                    <field name="error" readonly="1" invisible="not error"/>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_whatsapp_lite_message_list" model="ir.ui.view">
+        <field name="name">whatsapp.lite.message.list</field>
+        <field name="model">whatsapp.lite.message</field>
+        <field name="arch" type="xml">
+            <list decoration-success="state == 'sent'" decoration-danger="state == 'failed'">
+                <field name="partner_id"/>
+                <field name="to_number"/>
+                <field name="account_id"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_whatsapp_lite_account_form" model="ir.ui.view">
+        <field name="name">whatsapp.lite.account.form</field>
+        <field name="model">whatsapp.lite.account</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="alert alert-info" role="alert">
+                        Get a Phone Number ID + permanent Access Token from
+                        Meta → WhatsApp → Cloud API. Messages send via the official
+                        Graph API once these are set.
+                    </div>
+                    <group>
+                        <field name="name"/>
+                        <field name="phone_number_id"/>
+                        <field name="access_token" password="True"/>
+                        <field name="api_version"/>
+                        <field name="active"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="view_whatsapp_lite_account_list" model="ir.ui.view">
+        <field name="name">whatsapp.lite.account.list</field>
+        <field name="model">whatsapp.lite.account</field>
+        <field name="arch" type="xml">
+            <list><field name="name"/><field name="phone_number_id"/><field name="active"/></list>
+        </field>
+    </record>
+
+    <record id="action_whatsapp_lite_message" model="ir.actions.act_window">
+        <field name="name">Messages</field>
+        <field name="res_model">whatsapp.lite.message</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <record id="action_whatsapp_lite_account" model="ir.actions.act_window">
+        <field name="name">Accounts</field>
+        <field name="res_model">whatsapp.lite.account</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_whatsapp_lite_root" name="WhatsApp"
+              web_icon="mail,static/description/icon.png" sequence="107"/>
+    <menuitem id="menu_whatsapp_lite_messages" name="Messages"
+              parent="menu_whatsapp_lite_root" action="action_whatsapp_lite_message" sequence="10"/>
+    <menuitem id="menu_whatsapp_lite_config" name="Configuration"
+              parent="menu_whatsapp_lite_root" sequence="90"/>
+    <menuitem id="menu_whatsapp_lite_accounts" name="Accounts"
+              parent="menu_whatsapp_lite_config" action="action_whatsapp_lite_account" sequence="10"/>
+
+</odoo>

@@ -57,6 +57,8 @@ Open-source addons may be installed separately after license and version audit.
         "stock",
         "subscriptions_lite",
         "website_sale",
+        "whatsapp_lite",
+        "social_lite",
     ],
     "data": [
         "data/community_plus_metadata.xml",
