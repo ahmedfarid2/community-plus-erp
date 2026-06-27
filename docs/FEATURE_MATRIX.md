@@ -90,12 +90,32 @@ Legend — **source** of each capability:
 
 ---
 
-## What is genuinely Enterprise-only (never shipped, never faked)
+## OCA power add-ons (vetted open-source, in `addons/oca/`)
+
+The official **Odoo Community Association** modules — code-reviewed, production-grade.
+Several **close gaps previously marked Enterprise-only**:
+
+| Module | Adds | Closes |
+|---|---|---|
+| `account_reconcile_oca` | Bank **reconciliation widget** | ✅ Enterprise reconcile widget |
+| `account_statement_import_qif/camt` | **Import bank statements** (QIF/CAMT files) | ✅ partial free alt. to bank sync |
+| `auditlog` | **Audit trail** (who changed what, when) | ✅ Enterprise Audit Trail |
+| `report_xlsx` | **Excel export** on any report | ✅ Excel exports |
+| `mis_builder` | Formula-based financial statements / KPI dashboards | Powerful reporting |
+| `web_responsive` | Modern responsive backend UI | Enterprise-like UX |
+| `queue_job` | Async background jobs | Production scalability |
+| `account_move_name_sequence`, `account_journal_lock_date` | Sequence + period-lock controls | Accounting hardening |
+| `partner_firstname` | First/last name on contacts | Quality of life |
+
+Fetched by `scripts/dev/fetch-thirdparty.sh`; available in `addons_path` for any client.
+
+## What is *still* genuinely Enterprise-only (never shipped, never faked)
 
 These need a **paid subscription or external service** — no free code reproduces them:
-**bank-feed sync, AI invoice OCR, barcode scanning hardware widget, Social Marketing
-(social APIs), Amazon connector, full PLM / Shop-Floor MES, the Timesheet grid widget.**
-Sell Odoo Enterprise to clients who require these; everything else is covered here.
+**live bank-feed auto-sync, AI invoice OCR, barcode scanning hardware widget, Social
+Marketing (social APIs), Amazon connector, full PLM / Shop-Floor MES, the Timesheet grid
+widget.** (Note: bank *statement file import* and *reconciliation* are now covered free by
+OCA above — only the *live auto-sync feed* remains paid.)
 
 ## Custom clean-room modules (17, all LGPL-3, our code)
 

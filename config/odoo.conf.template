@@ -6,7 +6,7 @@ admin_passwd = __MASTER_PASSWORD__
 ; Where custom modules are mounted (see docker-compose.yml).
 ; Includes third-party open-source modules under odoomates/ (fetched by
 ; scripts/dev/fetch-oca.sh). Odoo scans each path for module folders.
-addons_path = /mnt/extra-addons,/mnt/extra-addons/odoomates
+addons_path = /mnt/extra-addons,/mnt/extra-addons/odoomates,/mnt/extra-addons/oca/web,/mnt/extra-addons/oca/reporting-engine,/mnt/extra-addons/oca/server-tools,/mnt/extra-addons/oca/server-ux,/mnt/extra-addons/oca/mis-builder,/mnt/extra-addons/oca/account-financial-tools,/mnt/extra-addons/oca/bank-statement-import,/mnt/extra-addons/oca/account-reconcile,/mnt/extra-addons/oca/queue,/mnt/extra-addons/oca/partner-contact,/mnt/extra-addons/oca/sale-workflow,/mnt/extra-addons/oca/stock-logistics-workflow,/mnt/extra-addons/oca/crm,/mnt/extra-addons/oca/hr
 
 ; Database connection. db_password is intentionally NOT set here so the Odoo
 ; image entrypoint supplies it from the PASSWORD env var (kept in one place: .env).

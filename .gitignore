@@ -24,3 +24,6 @@ __pycache__/
 
 # Third-party open-source addons (fetched by scripts/dev/fetch-thirdparty.sh)
 addons/odoomates/
+
+# OCA third-party addons (fetched by scripts/dev/fetch-thirdparty.sh)
+addons/oca/
