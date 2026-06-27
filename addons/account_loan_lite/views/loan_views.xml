@@ -41,6 +41,23 @@
                     <div class="oe_title">
                         <h1><field name="name" placeholder="e.g. Bank Term Loan"/></h1>
                     </div>
+                    <field name="currency_id" invisible="1"/>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <div class="cp_card cp-warning"><div class="cp_card_body">
+                                <div class="cp_icon"><i class="fa fa-percent" title="Interest"/></div>
+                                <div class="cp_label">Total Interest</div>
+                                <div class="cp_value"><field name="total_interest"/></div>
+                            </div></div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="cp_card cp-success"><div class="cp_card_body">
+                                <div class="cp_icon"><i class="fa fa-credit-card" title="Total Repaid"/></div>
+                                <div class="cp_label">Total Repaid</div>
+                                <div class="cp_value"><field name="total_payment"/></div>
+                            </div></div>
+                        </div>
+                    </div>
                     <group>
                         <group>
                             <field name="principal"/>
@@ -50,9 +67,6 @@
                         <group>
                             <field name="term_number"/>
                             <field name="term_period"/>
-                            <field name="total_interest"/>
-                            <field name="total_payment"/>
-                            <field name="currency_id" invisible="1"/>
                         </group>
                     </group>
                     <field name="line_ids">

@@ -11,26 +11,65 @@
                             class="btn-secondary"/>
                 </header>
                 <sheet>
-                    <group>
-                        <group>
+                    <field name="currency_id" invisible="1"/>
+                    <div class="cp_dash">
+                        <div class="cp_hero d-flex justify-content-between align-items-center">
+                            <div>
+                                <p class="cp_hero_title">Cash Flow Statement</p>
+                                <span class="cp_hero_sub">Operating · Investing · Financing</span>
+                            </div>
+                            <div class="cp_hero_metric">
+                                <div class="v"><field name="closing_balance"/></div>
+                                <div class="l">Closing Cash</div>
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-lg-2 col-md-4 col-6">
+                                <div class="cp_card cp-slate"><div class="cp_card_body">
+                                    <div class="cp_icon"><i class="fa fa-flag-o" title="Opening"/></div>
+                                    <div class="cp_label">Opening</div>
+                                    <div class="cp_value"><field name="opening_balance"/></div>
+                                </div></div>
+                            </div>
+                            <div class="col-lg-2 col-md-4 col-6">
+                                <div class="cp_card cp-success"><div class="cp_card_body">
+                                    <div class="cp_icon"><i class="fa fa-cogs" title="Operating"/></div>
+                                    <div class="cp_label">Operating</div>
+                                    <div class="cp_value"><field name="operating"/></div>
+                                </div></div>
+                            </div>
+                            <div class="col-lg-2 col-md-4 col-6">
+                                <div class="cp_card cp-warning"><div class="cp_card_body">
+                                    <div class="cp_icon"><i class="fa fa-cube" title="Investing"/></div>
+                                    <div class="cp_label">Investing</div>
+                                    <div class="cp_value"><field name="investing"/></div>
+                                </div></div>
+                            </div>
+                            <div class="col-lg-2 col-md-4 col-6">
+                                <div class="cp_card cp-purple"><div class="cp_card_body">
+                                    <div class="cp_icon"><i class="fa fa-bank" title="Financing"/></div>
+                                    <div class="cp_label">Financing</div>
+                                    <div class="cp_value"><field name="financing"/></div>
+                                </div></div>
+                            </div>
+                            <div class="col-lg-2 col-md-4 col-6">
+                                <div class="cp_card cp-primary"><div class="cp_card_body">
+                                    <div class="cp_icon"><i class="fa fa-exchange" title="Net Change"/></div>
+                                    <div class="cp_label">Net Change</div>
+                                    <div class="cp_value"><field name="net_change"/></div>
+                                </div></div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex align-items-end gap-3 mt-3">
                             <field name="date_from"/>
                             <field name="date_to"/>
-                            <field name="currency_id" invisible="1"/>
-                        </group>
-                    </group>
-                    <group string="Cash Flow">
-                        <field name="opening_balance"/>
-                        <field name="operating" string="Operating Activities"/>
-                        <field name="investing" string="Investing Activities"/>
-                        <field name="financing" string="Financing Activities"/>
-                        <field name="net_change" string="Net Change in Cash"/>
-                        <field name="closing_balance"/>
-                    </group>
-                    <div class="text-muted">
-                        Simplified statement: cash &amp; bank movements in the period,
-                        classified by the counterpart of each journal entry
-                        (fixed assets → investing; equity / long-term liabilities →
-                        financing; everything else → operating).
+                        </div>
+                        <div class="text-muted small mt-2">
+                            Cash &amp; bank movements classified by counterpart: fixed assets →
+                            investing; equity / long-term liabilities → financing; else operating.
+                        </div>
                     </div>
                 </sheet>
             </form>

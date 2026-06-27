@@ -45,6 +45,23 @@
                     <div class="oe_title">
                         <h1><field name="name" placeholder="e.g. Annual Subscription 2026"/></h1>
                     </div>
+                    <field name="currency_id" invisible="1"/>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <div class="cp_card cp-success"><div class="cp_card_body">
+                                <div class="cp_icon"><i class="fa fa-check-circle" title="Recognized"/></div>
+                                <div class="cp_label">Recognized</div>
+                                <div class="cp_value"><field name="recognized_amount"/></div>
+                            </div></div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="cp_card cp-warning"><div class="cp_card_body">
+                                <div class="cp_icon"><i class="fa fa-hourglass-half" title="Residual"/></div>
+                                <div class="cp_label">Residual</div>
+                                <div class="cp_value"><field name="residual_amount"/></div>
+                            </div></div>
+                        </div>
+                    </div>
                     <group>
                         <group>
                             <field name="deferred_type"/>
@@ -54,9 +71,6 @@
                         <group>
                             <field name="number"/>
                             <field name="period_months"/>
-                            <field name="recognized_amount"/>
-                            <field name="residual_amount"/>
-                            <field name="currency_id" invisible="1"/>
                         </group>
                     </group>
                     <group>

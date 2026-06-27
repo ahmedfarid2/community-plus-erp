@@ -5,7 +5,7 @@
     "summary": "Loan management with amortization schedule for Odoo Community",
     "author": "Farid",
     "license": "LGPL-3",
-    "depends": ["account"],
+    "depends": ["community_plus_theme", "account"],
     "data": [
         "security/ir.model.access.csv",
         "report/loan_report.xml",
