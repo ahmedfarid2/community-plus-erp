@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Subscription form: invoice smart button + Create Invoices action -->
+    <record id="view_subscription_form_account" model="ir.ui.view">
+        <field name="name">subscription.subscription.form.account</field>
+        <field name="model">subscription.subscription</field>
+        <field name="inherit_id" ref="smart_subscription_manager.view_subscription_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_invoices" type="object"
+                        class="oe_stat_button" icon="fa-file-text-o"
+                        invisible="invoice_count == 0">
+                    <field name="invoice_count" widget="statinfo" string="Invoices"/>
+                </button>
+            </xpath>
+            <button name="action_generate_billing" position="after">
+                <button name="action_create_due_invoices" type="object"
+                        string="Create Invoices"
+                        invisible="state not in ('active',)"/>
+            </button>
+            <!-- add invoice column to the embedded billing list -->
+            <xpath expr="//field[@name='billing_line_ids']/list/field[@name='state']"
+                   position="before">
+                <field name="invoice_id" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Billing line form: create / open / sync invoice -->
+    <record id="view_billing_form_account" model="ir.ui.view">
+        <field name="name">subscription.billing.line.form.account</field>
+        <field name="model">subscription.billing.line</field>
+        <field name="inherit_id" ref="smart_subscription_manager.view_billing_form"/>
+        <field name="arch" type="xml">
+            <button name="action_mark_paid" position="before">
+                <button name="action_create_invoice" type="object"
+                        string="Create Invoice" class="btn-primary"
+                        invisible="invoice_id or state in ('skipped','cancelled')"/>
+                <button name="action_open_invoice" type="object"
+                        string="Open Invoice" invisible="not invoice_id"/>
+                <button name="action_sync_from_invoice" type="object"
+                        string="Sync from Invoice" invisible="not invoice_id"/>
+            </button>
+            <field name="remaining_amount" position="after">
+                <field name="invoice_id"/>
+                <field name="invoice_payment_state" widget="badge"
+                       invisible="not invoice_id"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- Billing line list: invoice column -->
+    <record id="view_billing_list_account" model="ir.ui.view">
+        <field name="name">subscription.billing.line.list.account</field>
+        <field name="model">subscription.billing.line</field>
+        <field name="inherit_id" ref="smart_subscription_manager.view_billing_list"/>
+        <field name="arch" type="xml">
+            <field name="state" position="before">
+                <field name="invoice_id" optional="show"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>
