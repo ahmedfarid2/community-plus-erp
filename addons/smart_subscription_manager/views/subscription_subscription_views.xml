@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_subscription_list" model="ir.ui.view">
+        <field name="name">subscription.subscription.list</field>
+        <field name="model">subscription.subscription</field>
+        <field name="arch" type="xml">
+            <list decoration-success="state == 'active'"
+                  decoration-info="state == 'trial'"
+                  decoration-warning="state == 'paused'"
+                  decoration-muted="state in ('cancelled','closed','expired')"
+                  decoration-danger="payment_status == 'overdue'">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="plan_id"/>
+                <field name="responsible_user_id" optional="show"/>
+                <field name="recurring_price"/>
+                <field name="mrr_amount" sum="MRR"/>
+                <field name="next_billing_date" optional="show"/>
+                <field name="renewal_date" optional="show"/>
+                <field name="health" widget="badge"
+                       decoration-success="health == 'healthy'"
+                       decoration-warning="health == 'at_risk'"
+                       decoration-danger="health == 'overdue'"
+                       decoration-muted="health == 'churned'"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'active'"
+                       decoration-info="state == 'trial'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_subscription_kanban" model="ir.ui.view">
+        <field name="name">subscription.subscription.kanban</field>
+        <field name="model">subscription.subscription</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state">
+                <field name="state"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_details">
+                            <strong><field name="name"/></strong>
+                            <div><field name="partner_id"/></div>
+                            <div class="text-muted"><field name="plan_id"/></div>
+                            <div class="mt-1">
+                                <field name="mrr_amount"/> <field name="currency_id"/> MRR
+                                <span class="float-end">
+                                    <field name="health" widget="label_selection"
+                                           options="{'classes': {'healthy':'success','at_risk':'warning','overdue':'danger','churned':'secondary'}}"/>
+                                </span>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_subscription_form" model="ir.ui.view">
+        <field name="name">subscription.subscription.form</field>
+        <field name="model">subscription.subscription</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_start_trial" type="object" string="Start Trial"
+                            invisible="state != 'draft'"/>
+                    <button name="action_activate" type="object" string="Activate"
+                            class="btn-primary" invisible="state not in ('draft','trial')"/>
+                    <button name="action_generate_billing" type="object"
+                            string="Generate Billing Schedule"
+                            invisible="state not in ('active',)"/>
+                    <button name="action_renew" type="object" string="Renew"
+                            invisible="state not in ('active','expired')"/>
+                    <button name="action_pause" type="object" string="Pause"
+                            invisible="state != 'active'"/>
+                    <button name="action_resume" type="object" string="Resume"
+                            invisible="state != 'paused'"/>
+                    <button name="action_open_change_wizard" type="object"
+                            string="Upgrade / Downgrade"
+                            invisible="state not in ('active','trial')"/>
+                    <button name="action_open_cancel_wizard" type="object"
+                            string="Cancel"
+                            invisible="state in ('cancelled','closed')"/>
+                    <button name="action_close" type="object" string="Close"
+                            invisible="state in ('draft','closed')"/>
+                    <button name="action_reset_to_draft" type="object"
+                            string="Reset to Draft"
+                            invisible="state in ('draft','active','trial')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,trial,active"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_billing" type="object"
+                                class="oe_stat_button" icon="fa-money">
+                            <field name="billing_count" widget="statinfo" string="Billing"/>
+                        </button>
+                        <button name="action_view_events" type="object"
+                                class="oe_stat_button" icon="fa-history">
+                            <field name="event_count" widget="statinfo" string="Events"/>
+                        </button>
+                        <button name="action_view_pauses" type="object"
+                                class="oe_stat_button" icon="fa-pause">
+                            <field name="pause_count" widget="statinfo" string="Pauses"/>
+                        </button>
+                        <button name="action_view_changes" type="object"
+                                class="oe_stat_button" icon="fa-exchange">
+                            <field name="change_count" widget="statinfo" string="Changes"/>
+                        </button>
+                        <button name="action_view_partner" type="object"
+                                class="oe_stat_button" icon="fa-user">
+                            <div class="o_stat_info"><span class="o_stat_text">Customer</span></div>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="plan_id" options="{'no_create': True}"/>
+                            <field name="responsible_user_id"/>
+                            <field name="auto_renew"/>
+                            <field name="invoice_policy"/>
+                        </group>
+                        <group>
+                            <field name="currency_id" groups="base.group_multi_currency"/>
+                            <field name="billing_period"/>
+                            <field name="billing_interval"/>
+                            <field name="health" widget="badge"/>
+                            <field name="payment_status" widget="badge"/>
+                        </group>
+                    </group>
+                    <group string="Dates">
+                        <group>
+                            <field name="start_date"/>
+                            <field name="trial_end_date"/>
+                            <field name="next_billing_date"/>
+                        </group>
+                        <group>
+                            <field name="renewal_date"/>
+                            <field name="end_date"/>
+                            <field name="cancellation_reason_id"
+                                   invisible="state != 'cancelled'"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Pricing" name="pricing">
+                            <group>
+                                <group>
+                                    <field name="recurring_price"/>
+                                    <field name="setup_fee"/>
+                                </group>
+                                <group>
+                                    <field name="discount_amount"/>
+                                    <field name="discount_percent"/>
+                                    <field name="current_amount"/>
+                                    <field name="mrr_amount"/>
+                                    <field name="arr_amount"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Billing Lines" name="billing">
+                            <field name="billing_line_ids">
+                                <list editable="bottom"
+                                      decoration-danger="state == 'overdue'"
+                                      decoration-success="state == 'paid'"
+                                      decoration-muted="state in ('skipped','cancelled')">
+                                    <field name="period_start_date"/>
+                                    <field name="period_end_date"/>
+                                    <field name="due_date"/>
+                                    <field name="amount"/>
+                                    <field name="total_amount"/>
+                                    <field name="paid_amount"/>
+                                    <field name="remaining_amount"/>
+                                    <field name="state" widget="badge"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                    <button name="action_mark_paid" type="object"
+                                            icon="fa-check" title="Mark paid"
+                                            invisible="state in ('paid','cancelled','skipped')"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Lifecycle" name="events">
+                            <field name="lifecycle_event_ids">
+                                <list>
+                                    <field name="event_date"/>
+                                    <field name="event_type"/>
+                                    <field name="user_id"/>
+                                    <field name="old_plan_id" optional="hide"/>
+                                    <field name="new_plan_id" optional="hide"/>
+                                    <field name="reason" optional="hide"/>
+                                    <field name="notes"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes" name="notes"><field name="notes"/></page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_subscription_search" model="ir.ui.view">
+        <field name="name">subscription.subscription.search</field>
+        <field name="model">subscription.subscription</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="plan_id"/>
+                <field name="responsible_user_id"/>
+                <filter name="my_subs" string="My Subscriptions" domain="[('responsible_user_id','=',uid)]"/>
+                <separator/>
+                <filter name="trial" string="Trial" domain="[('state','=','trial')]"/>
+                <filter name="active" string="Active" domain="[('state','=','active')]"/>
+                <filter name="paused" string="Paused" domain="[('state','=','paused')]"/>
+                <filter name="expired" string="Expired" domain="[('state','=','expired')]"/>
+                <filter name="cancelled" string="Cancelled" domain="[('state','=','cancelled')]"/>
+                <separator/>
+                <filter name="overdue" string="Overdue" domain="[('payment_status','=','overdue')]"/>
+                <filter name="at_risk" string="At Risk Customers" domain="[('health','=','at_risk')]"/>
+                <filter name="auto_on" string="Auto Renew On" domain="[('auto_renew','=',True)]"/>
+                <filter name="auto_off" string="Auto Renew Off" domain="[('auto_renew','=',False)]"/>
+                <separator/>
+                <filter name="renew_month" string="Renewal This Month"
+                        domain="[('renewal_date','&gt;=', (context_today().replace(day=1)).strftime('%Y-%m-%d')), ('renewal_date','&lt;=', (context_today().replace(day=1) + relativedelta(months=1, days=-1)).strftime('%Y-%m-%d'))]"/>
+                <filter name="renew_30" string="Renewal Next 30 Days"
+                        domain="[('renewal_date','&gt;=', context_today().strftime('%Y-%m-%d')), ('renewal_date','&lt;=', (context_today() + relativedelta(days=30)).strftime('%Y-%m-%d'))]"/>
+                <separator/>
+                <filter name="group_state" string="Status" context="{'group_by':'state'}"/>
+                <filter name="group_plan" string="Plan" context="{'group_by':'plan_id'}"/>
+                <filter name="group_health" string="Health" context="{'group_by':'health'}"/>
+                <filter name="group_user" string="Responsible" context="{'group_by':'responsible_user_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_subscription" model="ir.actions.act_window">
+        <field name="name">Subscriptions</field>
+        <field name="res_model">subscription.subscription</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="search_view_id" ref="view_subscription_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create your first subscription</p>
+            <p>Pick a customer and a plan, start a trial or activate, then generate
+               the recurring billing schedule.</p>
+        </field>
+    </record>
+
+    <record id="action_subscription_renewals" model="ir.actions.act_window">
+        <field name="name">Renewals</field>
+        <field name="res_model">subscription.subscription</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state','=','active'),('renewal_date','&lt;=', (context_today() + relativedelta(days=30)).strftime('%Y-%m-%d'))]</field>
+        <field name="search_view_id" ref="view_subscription_search"/>
+    </record>
+
+</odoo>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_pause_list" model="ir.ui.view">
+        <field name="name">subscription.pause.list</field>
+        <field name="model">subscription.pause</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="subscription_id"/>
+                <field name="partner_id" optional="show"/>
+                <field name="pause_start_date"/>
+                <field name="pause_end_date"/>
+                <field name="reason"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_pause_form" model="ir.ui.view">
+        <field name="name">subscription.pause.form</field>
+        <field name="model">subscription.pause</field>
+        <field name="arch" type="xml">
+            <form><sheet><group>
+                <group>
+                    <field name="subscription_id"/>
+                    <field name="pause_start_date"/>
+                    <field name="pause_end_date"/>
+                </group>
+                <group>
+                    <field name="state"/>
+                    <field name="created_by"/>
+                    <field name="reason"/>
+                </group>
+            </group><field name="notes"/></sheet></form>
+        </field>
+    </record>
+    <record id="action_pause" model="ir.actions.act_window">
+        <field name="name">Pauses</field>
+        <field name="res_model">subscription.pause</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

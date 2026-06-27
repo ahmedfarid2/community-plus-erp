@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_plan_list" model="ir.ui.view">
+        <field name="name">subscription.plan.list</field>
+        <field name="model">subscription.plan</field>
+        <field name="arch" type="xml">
+            <list decoration-muted="state == 'archived'">
+                <field name="name"/>
+                <field name="code" optional="show"/>
+                <field name="plan_type"/>
+                <field name="billing_period"/>
+                <field name="billing_interval"/>
+                <field name="price"/>
+                <field name="mrr_per_unit" optional="show"/>
+                <field name="auto_renew" widget="boolean_toggle"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'active'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_plan_kanban" model="ir.ui.view">
+        <field name="name">subscription.plan.kanban</field>
+        <field name="model">subscription.plan</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="state"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_details">
+                            <strong><field name="name"/></strong>
+                            <div class="text-muted"><field name="plan_type"/></div>
+                            <div class="mt-1">
+                                <field name="price"/> <field name="currency_id"/> /
+                                <field name="billing_period"/>
+                            </div>
+                            <div class="text-muted"><field name="subscription_count"/> subscriptions</div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_plan_form" model="ir.ui.view">
+        <field name="name">subscription.plan.form</field>
+        <field name="model">subscription.plan</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_activate" type="object" string="Activate"
+                            class="btn-primary" invisible="state == 'active'"/>
+                    <button name="action_archive_plan" type="object"
+                            string="Archive" invisible="state == 'archived'"/>
+                    <button name="action_reset_to_draft" type="object"
+                            string="Reset to Draft" invisible="state == 'draft'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,active"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="e.g. Premium Annual Plan"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="plan_type"/>
+                            <field name="product_id"/>
+                            <field name="currency_id" groups="base.group_multi_currency"/>
+                        </group>
+                        <group>
+                            <field name="billing_period"/>
+                            <field name="billing_interval"/>
+                            <field name="price"/>
+                            <field name="setup_fee"/>
+                            <field name="mrr_per_unit"/>
+                        </group>
+                    </group>
+                    <group string="Lifecycle">
+                        <group>
+                            <field name="trial_days"/>
+                            <field name="minimum_contract_months"/>
+                        </group>
+                        <group>
+                            <field name="auto_renew"/>
+                            <field name="grace_period_days"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Description"><field name="description"/></page>
+                        <page string="Cancellation Policy"><field name="cancellation_policy"/></page>
+                        <page string="Notes"><field name="notes"/></page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_plan_search" model="ir.ui.view">
+        <field name="name">subscription.plan.search</field>
+        <field name="model">subscription.plan</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="code"/>
+                <filter name="active_plans" string="Active" domain="[('state','=','active')]"/>
+                <filter name="auto_renew" string="Auto Renew" domain="[('auto_renew','=',True)]"/>
+                <separator/>
+                <filter name="group_type" string="Type" context="{'group_by':'plan_type'}"/>
+                <filter name="group_period" string="Billing Period" context="{'group_by':'billing_period'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_plan" model="ir.actions.act_window">
+        <field name="name">Plans</field>
+        <field name="res_model">subscription.plan</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="search_view_id" ref="view_plan_search"/>
+    </record>
+
+</odoo>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_snapshot_list" model="ir.ui.view">
+        <field name="name">subscription.metric.snapshot.list</field>
+        <field name="model">subscription.metric.snapshot</field>
+        <field name="arch" type="xml">
+            <list create="false">
+                <field name="snapshot_date"/>
+                <field name="active_subscriptions_count"/>
+                <field name="trial_subscriptions_count"/>
+                <field name="paused_subscriptions_count"/>
+                <field name="cancelled_subscriptions_count"/>
+                <field name="mrr"/>
+                <field name="arr"/>
+                <field name="net_mrr"/>
+                <field name="churn_rate"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_snapshot_graph" model="ir.ui.view">
+        <field name="name">subscription.metric.snapshot.graph</field>
+        <field name="model">subscription.metric.snapshot</field>
+        <field name="arch" type="xml">
+            <graph string="MRR over time" type="line">
+                <field name="snapshot_date"/>
+                <field name="mrr" type="measure"/>
+            </graph>
+        </field>
+    </record>
+    <record id="action_snapshot" model="ir.actions.act_window">
+        <field name="name">Metrics</field>
+        <field name="res_model">subscription.metric.snapshot</field>
+        <field name="view_mode">graph,list</field>
+    </record>
+</odoo>

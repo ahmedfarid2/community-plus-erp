@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="cron_subscription_maintenance" model="ir.cron">
+        <field name="name">Subscriptions: daily maintenance</field>
+        <field name="model_id" ref="model_subscription_subscription"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_subscription_maintenance()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active" eval="True"/>
+    </record>
+    <record id="cron_subscription_metrics" model="ir.cron">
+        <field name="name">Subscriptions: monthly metric snapshot</field>
+        <field name="model_id" ref="model_subscription_subscription"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_snapshot_metrics()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">months</field>
+        <field name="active" eval="True"/>
+    </record>
+</odoo>

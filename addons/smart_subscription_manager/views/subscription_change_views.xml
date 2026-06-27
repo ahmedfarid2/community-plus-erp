@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_change_list" model="ir.ui.view">
+        <field name="name">subscription.change.list</field>
+        <field name="model">subscription.change</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="effective_date"/>
+                <field name="subscription_id"/>
+                <field name="change_type"/>
+                <field name="old_plan_id"/>
+                <field name="new_plan_id"/>
+                <field name="old_price"/>
+                <field name="new_price"/>
+                <field name="state" widget="badge"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_change_search" model="ir.ui.view">
+        <field name="name">subscription.change.search</field>
+        <field name="model">subscription.change</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="subscription_id"/>
+                <filter name="group_type" string="Type" context="{'group_by':'change_type'}"/>
+            </search>
+        </field>
+    </record>
+    <record id="action_change" model="ir.actions.act_window">
+        <field name="name">Plan Changes</field>
+        <field name="res_model">subscription.change</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_change_search"/>
+    </record>
+</odoo>

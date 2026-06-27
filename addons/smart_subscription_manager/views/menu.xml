@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_subscription_root" name="Subscriptions"
+              web_icon="smart_subscription_manager,static/description/icon.png"
+              sequence="52"/>
+
+    <menuitem id="menu_subscription_ops" name="Operations"
+              parent="menu_subscription_root" sequence="10"/>
+
+    <menuitem id="menu_subscriptions" name="Subscriptions"
+              parent="menu_subscription_ops" action="action_subscription" sequence="10"/>
+    <menuitem id="menu_billing" name="Billing Lines"
+              parent="menu_subscription_ops" action="action_billing" sequence="20"/>
+    <menuitem id="menu_renewals" name="Renewals"
+              parent="menu_subscription_ops" action="action_subscription_renewals" sequence="30"/>
+    <menuitem id="menu_overdue" name="Overdue Billing"
+              parent="menu_subscription_ops" action="action_billing_overdue" sequence="40"/>
+
+    <menuitem id="menu_plans" name="Plans"
+              parent="menu_subscription_root" action="action_plan" sequence="20"/>
+
+    <menuitem id="menu_metrics" name="Metrics"
+              parent="menu_subscription_root" action="action_snapshot" sequence="30"
+              groups="smart_subscription_manager.group_subscription_manager"/>
+
+    <menuitem id="menu_subscription_config" name="Configuration"
+              parent="menu_subscription_root" sequence="90"
+              groups="smart_subscription_manager.group_subscription_admin"/>
+
+    <menuitem id="menu_pauses" name="Pauses"
+              parent="menu_subscription_config" action="action_pause" sequence="10"/>
+    <menuitem id="menu_changes" name="Plan Changes"
+              parent="menu_subscription_config" action="action_change" sequence="20"/>
+    <menuitem id="menu_events" name="Lifecycle Events"
+              parent="menu_subscription_config" action="action_event" sequence="30"/>
+    <menuitem id="menu_reasons" name="Cancellation Reasons"
+              parent="menu_subscription_config" action="action_reason" sequence="40"/>
+
+</odoo>

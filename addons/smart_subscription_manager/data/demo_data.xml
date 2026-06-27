@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Cancellation reasons -->
+        <record id="demo_reason_expensive" model="subscription.cancellation.reason">
+            <field name="name">Too Expensive</field><field name="code">EXP</field>
+        </record>
+        <record id="demo_reason_switched" model="subscription.cancellation.reason">
+            <field name="name">Switched Provider</field><field name="code">SWITCH</field>
+        </record>
+        <record id="demo_reason_notneeded" model="subscription.cancellation.reason">
+            <field name="name">No Longer Needed</field><field name="code">NONEED</field>
+        </record>
+        <record id="demo_reason_other" model="subscription.cancellation.reason">
+            <field name="name">Other</field><field name="code">OTHER</field>
+        </record>
+
+        <!-- Plans across industries -->
+        <record id="demo_plan_saas" model="subscription.plan">
+            <field name="name">SaaS Pro (Monthly)</field>
+            <field name="code">SAAS-PRO</field>
+            <field name="state">active</field>
+            <field name="plan_type">software</field>
+            <field name="billing_period">monthly</field>
+            <field name="price">49.0</field>
+            <field name="trial_days">14</field>
+            <field name="auto_renew" eval="True"/>
+        </record>
+        <record id="demo_plan_gym" model="subscription.plan">
+            <field name="name">Gym Membership (Annual)</field>
+            <field name="code">GYM-ANN</field>
+            <field name="state">active</field>
+            <field name="plan_type">membership</field>
+            <field name="billing_period">annual</field>
+            <field name="price">600.0</field>
+            <field name="trial_days">7</field>
+            <field name="minimum_contract_months">12</field>
+        </record>
+        <record id="demo_plan_maint" model="subscription.plan">
+            <field name="name">Maintenance Contract (Quarterly)</field>
+            <field name="code">MAINT-Q</field>
+            <field name="state">active</field>
+            <field name="plan_type">maintenance</field>
+            <field name="billing_period">quarterly</field>
+            <field name="price">300.0</field>
+            <field name="grace_period_days">10</field>
+        </record>
+        <record id="demo_plan_service" model="subscription.plan">
+            <field name="name">Service Retainer (Monthly)</field>
+            <field name="code">SVC-RET</field>
+            <field name="state">active</field>
+            <field name="plan_type">service</field>
+            <field name="billing_period">monthly</field>
+            <field name="price">1000.0</field>
+        </record>
+
+        <!-- Sample subscriptions -->
+        <record id="demo_sub_saas" model="subscription.subscription">
+            <field name="partner_id" ref="base.res_partner_2"/>
+            <field name="plan_id" ref="demo_plan_saas"/>
+            <field name="recurring_price">49.0</field>
+            <field name="state">active</field>
+            <field name="start_date" eval="(DateTime.today() - relativedelta(months=2)).strftime('%Y-%m-%d')"/>
+            <field name="next_billing_date" eval="DateTime.today().strftime('%Y-%m-%d')"/>
+            <field name="renewal_date" eval="(DateTime.today() + relativedelta(months=1)).strftime('%Y-%m-%d')"/>
+        </record>
+        <record id="demo_sub_service" model="subscription.subscription">
+            <field name="partner_id" ref="base.res_partner_3"/>
+            <field name="plan_id" ref="demo_plan_service"/>
+            <field name="recurring_price">1000.0</field>
+            <field name="discount_percent">10.0</field>
+            <field name="state">active</field>
+            <field name="start_date" eval="(DateTime.today() - relativedelta(months=1)).strftime('%Y-%m-%d')"/>
+            <field name="next_billing_date" eval="DateTime.today().strftime('%Y-%m-%d')"/>
+            <field name="renewal_date" eval="(DateTime.today() + relativedelta(months=1)).strftime('%Y-%m-%d')"/>
+            <field name="auto_renew" eval="False"/>
+        </record>
+
+    </data>
+</odoo>

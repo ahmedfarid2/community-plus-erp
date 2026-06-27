@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="seq_subscription" model="ir.sequence">
+        <field name="name">Subscription</field>
+        <field name="code">subscription.subscription</field>
+        <field name="prefix">SUB/%(year)s/</field>
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+</odoo>

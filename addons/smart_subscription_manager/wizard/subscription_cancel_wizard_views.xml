@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_subscription_cancel_wizard_form" model="ir.ui.view">
+        <field name="name">subscription.cancel.wizard.form</field>
+        <field name="model">subscription.cancel.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <field name="subscription_id" invisible="1"/>
+                <group>
+                    <field name="reason_id"/>
+                    <field name="note" placeholder="Optional note…"/>
+                </group>
+                <footer>
+                    <button name="action_confirm" type="object" string="Cancel Subscription" class="btn-danger"/>
+                    <button string="Discard" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
