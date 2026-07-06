@@ -1,57 +1,117 @@
-# Odoo Community Plus ERP — multi-company stack
+# Community Plus ERP — Odoo 19 Community Suite
 
-Run a legal **Odoo 19 Community Plus ERP** stack with Docker. The product is Odoo
-Community, audited open-source addons, and custom clean-room modules. It is not unpaid
-Odoo Enterprise, and it must not be sold as official Enterprise unless the client buys
-valid Odoo Enterprise licensing.
+A complete, **license-clean Odoo 19 Community** stack that delivers
+Enterprise-grade capability without Enterprise: a Dockerized multi-company
+platform plus **seven commercial product lines** — each an industry-agnostic,
+reusable engine built from scratch, decoupled at the core (`base` + `mail`, plus
+`product`/`stock` where needed) with optional integrations layered on top.
 
-Every company gets its **own isolated database** — separate data, separate logins, its own
-installed apps — reachable at **`https://<company>.odoo.local`**. The first sellable pack is
-for SME trading companies: CRM, Sales, Invoicing/Accounting, Inventory, Purchase, HR
-basics, Project, Manufacturing basics, Website/eCommerce, POS, Expenses, and Loans Lite.
+It is Odoo Community, audited open-source addons, and custom clean-room modules —
+**not** unpaid Odoo Enterprise, and it must not be sold as official Enterprise
+unless the client buys valid Enterprise licensing.
 
-## Tooling — why it's built this way
+**License:** LGPL-3 · **Odoo:** 19.0 Community · **Stack:** Docker (odoo:19 +
+postgres:16 + nginx) · **Tenancy:** one isolated database per company,
+reachable at `https://<company>.odoo.local`.
 
-- **Docker Compose** orchestrates everything (same as your other backends). There is no
-  nx/pnpm here — those are JavaScript tools; Odoo is Python.
-- **`make`** is the task runner / "manager" — `make up`, `make company name=acme`. Run
-  `make help` to see all targets.
-- **nginx reverse proxy + mkcert HTTPS + `*.odoo.local`** follows the project house style
-  (`.docker/dev/nginx/default.conf` + `certs/`, local domain via `/etc/hosts`).
+---
+
+## The product lines
+
+Each is a standalone, sellable module family: a generic core + optional
+integrations, Requester/User/Manager/Admin security profiles, demo data, an
+app-store description page, and an idempotent seeder.
+
+| Product | Core | Optional integrations |
+|---------|------|-----------------------|
+| **Payment Plans & Collections** | `payment_plan_core` | `payment_plan_account`, `payment_plan_reports` |
+| **Smart Approval Workflow** | `smart_approval_workflow` | `_purchase`, `_account`, `_sale`, `_inventory`, `_hr`, `_payment_plan` (+ portal approve-link & escalation cron) |
+| **Smart CPQ & Quotation Builder** | `smart_cpq_builder` | `smart_cpq_sale`, `smart_cpq_approval_workflow` |
+| **Smart Subscription Manager** | `smart_subscription_manager` | `smart_subscription_account`, `smart_subscription_approval` |
+| **Smart Field Service Suite** | `smart_field_service_suite` | `smart_fsm_account`, `smart_fsm_approval_workflow` |
+| **Advanced Procurement Suite** | `advanced_procurement_suite` | `advanced_procurement_purchase`, `advanced_procurement_approval_workflow` |
+| **Advanced Inventory Optimization** | `advanced_inventory_optimization` | `advanced_inventory_purchase`, `advanced_inventory_procurement`, `advanced_inventory_approval_workflow` |
+
+Plus **Enterprise-parity `*_lite` apps** (Helpdesk, Field Service, Subscriptions
+dashboards, Appraisals, Quality, Sign, Referrals, Documents, Knowledge, Marketing
+Automation, an AI assistant, Phone, and more), a shared `community_plus_theme`,
+and the `community_plus_sme_trading` meta-pack.
+
+## What makes it composable
+
+- **Decoupled cores.** Every product engine depends only on `base`+`mail` (plus
+  `product`/`stock` when it genuinely reads them). Sale / account / purchase /
+  approval coupling lives in *separate* optional modules — so a core is sellable
+  on its own.
+
+- **A cross-product approval mesh.** One generic `smart_approval_workflow` engine
+  gates **12 document types across 6 products** — via a domain/amount rule and a
+  single `create_for_record` call, with **zero changes** to any core:
+
+  | Trigger | Product |
+  |---------|---------|
+  | PO / vendor bill > 5,000 | Purchase / Account |
+  | Sales discount > 1,000 | Sales |
+  | Payment-plan waiver > 500 | Payment Plans |
+  | Expense > 300 | HR |
+  | Outgoing delivery | Inventory (stock) |
+  | CPQ margin < 15% | CPQ |
+  | Subscription cancel, MRR ≥ 500 | Subscriptions |
+  | Work order cost ≥ 500 | Field Service |
+  | Procurement award ≥ 5,000 | Procurement |
+  | Reorder cost ≥ 1,000 | Inventory Optimization |
+  | Dead-stock disposal ≥ 500 | Inventory Optimization |
+
+- **A procure-to-stock chain.** Inventory Optimization detects a reorder need →
+  Procurement sources it via RFQ / vendor comparison / award → Purchase raises the
+  PO. Three separate products composing into one pipeline.
+
+## Design & compatibility
+
+- **Odoo 19-native throughout:** `<list>` / `<chatter/>`, `t-name="card"` kanban,
+  `res.groups.privilege`, `models.Constraint`, `group_ids` / `all_user_ids`, no
+  `<group expand>` in search views, no `@string` xpath selectors, and safe formula
+  evaluation via `odoo.tools.safe_eval` (never raw `eval`).
+- **No Enterprise dependencies** — everything runs on Community.
+- **Read-only where it matters** — the inventory engine reads `stock` data but
+  never writes stock quantities or alters Odoo stock behavior.
+
+---
 
 ## Architecture
 
-- **One Odoo + one PostgreSQL, multi-database.** Each company is a separate Odoo database.
-- **nginx reverse proxy** terminates HTTPS and routes `https://<company>.odoo.local` to Odoo.
-- **Subdomain → company database** (opt-in): set `dbfilter = ^%d$` in
-  `config/odoo.conf.template` so each subdomain serves only its own company (no selector).
-  Off by default — the database selector works everywhere until you turn it on.
-- **Isolated stack per company** (optional): `make isolated name=acme` runs a completely
-  separate Odoo + PostgreSQL on its own port/volumes — the bridge to per-client cloud hosting.
+- **One Odoo + one PostgreSQL, multi-database.** Each company is a separate Odoo
+  database — separate data, logins, and installed apps.
+- **nginx reverse proxy** terminates HTTPS and routes `https://<company>.odoo.local`
+  to Odoo. Set `dbfilter = ^%d$` to make each subdomain serve only its own company
+  (true multi-tenant); off by default (the database selector works everywhere).
+- **Isolated stack per company** (optional): `make isolated name=acme` runs a
+  separate Odoo + PostgreSQL on its own port/volumes — the bridge to per-client
+  cloud hosting.
 
 ```
-docker-compose.yml             reverse_proxy (nginx) + db (postgres) + web (odoo)
-.docker/dev/nginx/default.conf nginx config (web + websocket upstreams, HTTPS)
-.docker/dev/nginx/certs/       mkcert certs (gitignored)
-config/odoo.conf.template      base config; rendered to config/odoo.conf on start
-addons/                        your custom modules (mounted into the container)
-Makefile                       task runner — `make help`
-scripts/start.sh|stop.sh       lifecycle
-scripts/new-company.sh         add a company (DB by default, or --isolated stack)
-scripts/backup.sh|restore.sh   per-company backup / restore
-scripts/dev/setup-https.sh     generate local HTTPS certs (mkcert)
-.env                           versions, ports, passwords (gitignored)
+addons/                     custom modules (each with its own README + manifest)
+  <product>_*/              the 7 product lines (core + integrations)
+  *_lite/                   Enterprise-parity apps · community_plus_theme/
+  oca/  odoomates/          vendored third-party (AGPL/LGPL upstream)
+config/odoo.conf.template   base config, rendered on start (secrets from .env)
+docker-compose.yml          nginx + postgres:16 + odoo:19
+Makefile                    task runner — `make help`
+scripts/                    lifecycle, onboarding, backup, dev seeders, pack-test
+docs/                       positioning, deployment, feature matrix
 ```
 
-## Prerequisites
-
-- **Docker Desktop** (running): `docker compose version`
-- **mkcert** for local HTTPS: `brew install mkcert nss`
+Each module has its own `README.md` and `static/description/index.html` (its
+app-store page) — start there for feature detail.
 
 ## Quick start
 
+Prerequisites: **Docker Desktop** running, and **mkcert** for local HTTPS
+(`brew install mkcert nss`).
+
 ```bash
-cd /Users/farid/Documents/odoo
+git clone https://github.com/ahmedfarid2/community-plus-erp.git
+cd community-plus-erp
 cp .env.example .env            # then edit MASTER_PASSWORD / POSTGRES_PASSWORD
 make https                      # one-time: trust local CA + issue *.odoo.local cert
 make up                         # start (renders config, waits until reachable)
@@ -63,82 +123,48 @@ Add the local domains to `/etc/hosts` (once, sudo):
 sudo sh -c 'echo "127.0.0.1 odoo.local acme.odoo.local globex.odoo.local" >> /etc/hosts'
 ```
 
-Open **http://localhost:8069** (admin / database manager) — master password =
-`MASTER_PASSWORD` from `.env`.
+Open **http://localhost:8069** (database manager; master password =
+`MASTER_PASSWORD` from `.env`), create a company database, and install any product.
 
-### Create a sellable Community Plus client
-
-```bash
-make client-init name=acme country=EG company="Acme Trading LLC"
-make client-health db=acme
-make client-export db=acme
-make client-upgrade db=acme
-```
-
-This installs `community_plus_sme_trading`, brands the main company, and checks the
-database. Deep seeded smoke tests are still available with:
+### Create a company
 
 ```bash
-make seed db=acme
-CLIENT_HEALTH_DEEP=1 make client-health db=acme
+make client-init name=acme country=EG company="Acme Trading LLC"   # sellable pack
+make company name=globex modules=base,crm,sale_management,stock    # custom app set
+make company name=newco modules=all                                 # every Community app
 ```
 
-### Create a local/demo company
-
-```bash
-make company name=acme                       # Community Plus SME trading pack
-make company name=globex modules=base,crm,sale_management,stock   # custom app set
-make company name=newco modules=all          # EVERY Community app installed
-```
-Add every Community app to an existing company (POS, eCommerce, Events, Marketing,
-Recruitment, Fleet, Maintenance, Surveys, eLearning, Time Off, Expenses...). It skips
-Odoo's Enterprise-only upsells automatically:
-```bash
-make all-apps db=acme
-```
-- Subdomain: **https://acme.odoo.local**
-- Direct/admin: **http://localhost:8069** → pick database `acme`
+- Subdomain: **https://acme.odoo.local** · Direct/admin: **http://localhost:8069**
 - Login: `admin` / `admin` — **change it on first login**
+
+### Demo data & seeders
+
+Each product ships an idempotent seeder under `scripts/dev/`:
+
+```bash
+docker compose run --rm --no-deps -T web odoo shell -d acme --no-http < scripts/dev/seed-cpq.py
+# seed-payment-plans.py · seed-subscriptions.py · seed-fsm.py · seed-procurement.py
+# seed-inventory.py · seed-approval-workflows.py · seed-approval-requests.py
+```
 
 ### Daily commands
 
 ```bash
-make ps                 # status
-make logs               # tail Odoo logs
-make seed db=acme       # load demo data (customers, products, SO/PO, invoices,
-                        #   CRM, stock on-hand, employees). reset=1 to re-create.
-make backup db=acme     # dump one company (DB + filestore)
-make shell db=acme      # Odoo python shell
-make psql db=acme       # SQL console
-make down               # stop (keeps data)
-make wipe               # DANGER: delete ALL company data
+make ps            # status              make logs           # tail Odoo logs
+make backup db=acme# dump one company    make shell db=acme  # Odoo python shell
+make down          # stop (keeps data)   make wipe           # DANGER: delete all data
 ```
 
-### Turn on subdomain-per-company (true multi-tenant)
-
-Uncomment `dbfilter = ^%d$` in `config/odoo.conf.template`, then `make restart`. Now
-`https://acme.odoo.local` serves **only** the `acme` database (no selector). Verified:
-each subdomain's database list returns just its own company.
-
-## Accounting note (Community vs Enterprise)
-
-Community includes **Invoicing/Accounting** foundations: chart of accounts, journals,
-journal entries, taxes, invoices, payments, and bank reconciliation. Enterprise adds
-proprietary polish and additional apps. This repo avoids unlicensed Enterprise code.
-
-The disabled `account_financial_reports_lite` module is kept as reference work. For client
-delivery, use maintained open-source reporting modules after a license/version audit, or
-build clean custom reports. See [docs/FEATURE_MATRIX.md](docs/FEATURE_MATRIX.md).
+`./scripts/dev/pack-test.sh` runs the fresh-DB install gate for the meta-pack.
 
 ## Path to the cloud
 
-The same compose runs on a Linux VPS: keep the nginx `reverse_proxy`, swap mkcert certs for
-Let's Encrypt (or Caddy), point a real domain's wildcard `*.yourdomain.com` at the server,
-set strong passwords, and schedule `make backup`. `proxy_mode = True` is already set.
+The same compose runs on a Linux VPS: keep the nginx `reverse_proxy`, swap mkcert
+certs for Let's Encrypt (or Caddy), point a wildcard `*.yourdomain.com` at the
+server, set strong passwords, and schedule `make backup`. `proxy_mode = True` is
+already set. See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
-## Troubleshooting
+## License
 
-- **Port 80/443 in use:** set `HTTP_PORT`/`HTTPS_PORT` in `.env` (e.g. 8080/8443), `make restart`.
-- **Cert warning in browser:** re-run `make https`, restart the browser.
-- **Subdomain not resolving:** confirm the `/etc/hosts` line (`make hosts` prints it).
-- **Logs:** `make logs` · **Status:** `make ps`
+**LGPL-3** — see [LICENSE](LICENSE). Every module declares `"license": "LGPL-3"`.
+This repo contains no unlicensed Enterprise code.
