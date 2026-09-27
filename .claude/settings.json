@@ -1,0 +1,68 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/orchestration/scripts/readonly-edit-guard.mjs\" || true",
+            "timeout": 10
+          }
+        ],
+        "matcher": "Edit|Write|MultiEdit|NotebookEdit"
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/orchestration/scripts/readonly-bash-guard.mjs\" || true",
+            "timeout": 10
+          }
+        ],
+        "matcher": "Bash"
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/orchestration/scripts/fable-gate.mjs\" || true",
+            "timeout": 10
+          }
+        ],
+        "matcher": "Agent"
+      }
+    ],
+    "SubagentStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/orchestration/scripts/lifecycle-log.mjs\" || true",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/orchestration/scripts/lifecycle-log.mjs\" || true",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  },
+  "permissions": {
+    "ask": [
+      "Agent(system-architect)",
+      "Agent(critical-architect)",
+      "Agent(fable-strategist)",
+      "Agent(fable-rescue)",
+      "Agent(standard-reviewer)",
+      "Agent(critical-reviewer)"
+    ]
+  }
+}

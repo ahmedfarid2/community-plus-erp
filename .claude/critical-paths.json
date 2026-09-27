@@ -1,0 +1,14 @@
+[
+  "docker-compose.prod.yml",
+  ".docker/production/**",
+  "scripts/prod/**",
+  "scripts/onboard-client.sh",
+  "scripts/client-init.sh",
+  "scripts/new-company.sh",
+  "scripts/client-upgrade.sh",
+  "scripts/client-export.sh",
+  "config/odoo.prod.conf.template",
+  "config/odoo.conf.template",
+  "secrets/**",
+  "addons/*/security/**"
+]
