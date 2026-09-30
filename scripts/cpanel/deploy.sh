@@ -4,7 +4,6 @@ set -Eeuo pipefail
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 cd "$ROOT"
 
-DB_NAME="${ONESUITE_DB:-onesuite}"
 ENV_FILE=".env.cpanel"
 COMPOSE_FILE="docker-compose.cpanel.yml"
 
@@ -40,13 +39,13 @@ set -a
 # shellcheck disable=SC1090
 . "./$ENV_FILE"
 set +a
+
 DB_NAME="${ONESUITE_DB:-onesuite}"
 
 for required in POSTGRES_PASSWORD MASTER_PASSWORD ADMIN_PASSWORD; do
   [ -n "${!required:-}" ] || { echo "[ERROR] $required is empty in $ENV_FILE"; exit 1; }
 done
 
-# Do not collide with another live Odoo stack.
 if curl -fsS "http://127.0.0.1:${ONESUITE_HTTP_PORT:-18069}/web/login" >/dev/null 2>&1; then
   if ! ${COMPOSE[@]} ps 2>/dev/null | grep -q "onesuite-nextgen-web"; then
     echo "[STOP] Port ${ONESUITE_HTTP_PORT:-18069} already serves another Odoo instance."
@@ -56,7 +55,7 @@ if curl -fsS "http://127.0.0.1:${ONESUITE_HTTP_PORT:-18069}/web/login" >/dev/nul
   fi
 fi
 
-sed "s|__MASTER_PASSWORD__|${MASTER_PASSWORD}|g"   config/odoo.cpanel.conf.template > config/odoo.conf
+sed   -e "s|__MASTER_PASSWORD__|${MASTER_PASSWORD}|g"   -e "s|__DB_NAME__|${DB_NAME}|g"   config/odoo.cpanel.conf.template > config/odoo.conf
 chmod 600 config/odoo.conf
 
 echo "======================================================================"
@@ -68,11 +67,15 @@ echo " Websocket : 127.0.0.1:${ONESUITE_CHAT_PORT:-18072}"
 echo "======================================================================"
 
 echo
-echo "=== 1. Build OneSuite image ==="
+echo "=== 1. Fetch Community dependencies ==="
+bash scripts/dev/fetch-thirdparty.sh
+
+echo
+echo "=== 2. Build OneSuite Odoo 19 image ==="
 ${COMPOSE[@]} build web
 
 echo
-echo "=== 2. Start PostgreSQL ==="
+echo "=== 3. Start PostgreSQL ==="
 ${COMPOSE[@]} up -d db
 
 echo "Waiting for PostgreSQL..."
@@ -85,14 +88,17 @@ for i in $(seq 1 60); do
   sleep 2
 done
 
-echo
-echo "=== 3. Install/upgrade OneSuite database ==="
-${COMPOSE[@]} run --rm web   odoo -d "$DB_NAME"   -i community_plus_sme_trading,onesuite_hub   -u community_plus_theme,dashboards_lite,onesuite_hub   --stop-after-init --without-demo=all
+CUSTOM_MODULES="onesuite_nextgen_pack,community_plus_sme_trading,community_plus_theme,dashboards_lite,onesuite_hub,payment_plan_core,payment_plan_account,payment_plan_reports,smart_approval_workflow,smart_approval_purchase,smart_approval_account,smart_approval_sale,smart_approval_inventory,smart_approval_hr,smart_approval_payment_plan,smart_cpq_builder,smart_cpq_sale,smart_cpq_approval_workflow,smart_subscription_manager,smart_subscription_account,smart_subscription_approval,smart_field_service_suite,smart_fsm_account,smart_fsm_approval_workflow,advanced_procurement_suite,advanced_procurement_purchase,advanced_procurement_approval_workflow,advanced_inventory_optimization,advanced_inventory_purchase,advanced_inventory_procurement,advanced_inventory_approval_workflow"
 
 echo
-echo "=== 4. Apply NextGen identity and secure admin ==="
-${COMPOSE[@]} run --rm --no-deps -T   -e ONESUITE_ADMIN_PASSWORD="$ADMIN_PASSWORD"   web odoo shell -d "$DB_NAME" --no-http <<'PY'
+echo "=== 4. Install/upgrade complete NextGen OneSuite pack ==="
+${COMPOSE[@]} run --rm web   odoo -d "$DB_NAME"   -i onesuite_nextgen_pack   -u "$CUSTOM_MODULES"   --workers=0   --stop-after-init   --without-demo=all
+
+echo
+echo "=== 5. Apply NextGen identity and secure admin ==="
+${COMPOSE[@]} run --rm --no-deps -T   -e ONESUITE_ADMIN_PASSWORD="$ADMIN_PASSWORD"   web odoo shell -d "$DB_NAME" --no-http --workers=0 <<'PY'
 import os
+
 company = env.ref("base.main_company")
 country = env["res.country"].search([("code", "=", "PG")], limit=1)
 vals = {
@@ -109,13 +115,19 @@ admin.write({
     "login": "admin",
     "password": os.environ["ONESUITE_ADMIN_PASSWORD"],
 })
+
+params = env["ir.config_parameter"].sudo()
+params.set_param("web.base.url", "https://onesuite.nextgenpng.net")
+params.set_param("web.base.url.freeze", "True")
+
 env.cr.commit()
 print("Company:", company.name)
 print("Admin login: admin")
+print("Base URL: https://onesuite.nextgenpng.net")
 PY
 
 echo
-echo "=== 5. Start Odoo ==="
+echo "=== 6. Start Odoo ==="
 ${COMPOSE[@]} up -d web
 
 echo "Waiting for Odoo..."
@@ -127,14 +139,14 @@ for i in $(seq 1 90); do
   fi
   [ "$i" -eq 90 ] && {
     echo "[ERROR] Odoo did not become reachable."
-    ${COMPOSE[@]} logs --tail=120 web || true
+    ${COMPOSE[@]} logs --tail=160 web || true
     exit 1
   }
   sleep 2
 done
 
 echo
-echo "=== 6. Final status ==="
+echo "=== 7. Final status ==="
 ${COMPOSE[@]} ps
 
 echo
