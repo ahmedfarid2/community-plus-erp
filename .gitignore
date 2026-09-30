@@ -1,6 +1,7 @@
 # Secrets / local env
 .env
 .env.production
+.env.cpanel
 secrets/*
 !secrets/*.example
 
