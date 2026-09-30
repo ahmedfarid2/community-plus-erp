@@ -7,6 +7,26 @@ cd "$ROOT"
 ENV_FILE=".env.cpanel"
 COMPOSE_FILE="docker-compose.cpanel.yml"
 
+# The checkout may live inside a cPanel document root. Protect source, secrets,
+# scripts, configs and Git metadata until Apache is switched to reverse proxy.
+HTACCESS=".htaccess"
+if [ -f "$HTACCESS" ] && ! grep -q "BEGIN ONESUITE SOURCE PROTECTION" "$HTACCESS"; then
+  cp -p "$HTACCESS" "$HTACCESS.pre_onesuite_$(date +%Y%m%d_%H%M%S).bak"
+  cat >> "$HTACCESS" <<'HT'
+# BEGIN ONESUITE SOURCE PROTECTION
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule ^(?:\.git|addons|config|docker|docs|scripts|secrets|backups)(?:/|$) - [F,L,NC]
+RewriteRule ^(?:\.env(?:\..*)?|docker-compose.*|Makefile)$ - [F,L,NC]
+</IfModule>
+<FilesMatch "(?i)^(?:\.env.*|docker-compose.*|Makefile)$">
+  Require all denied
+</FilesMatch>
+# END ONESUITE SOURCE PROTECTION
+HT
+  echo "[PASS] Protected OneSuite source/secrets in cPanel document root."
+fi
+
 if command -v podman-compose >/dev/null 2>&1; then
   COMPOSE=(podman-compose -f "$COMPOSE_FILE")
   RUNTIME="podman"
