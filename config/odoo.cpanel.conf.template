@@ -1,0 +1,25 @@
+[options]
+admin_passwd = __MASTER_PASSWORD__
+
+addons_path = /mnt/extra-addons,/mnt/extra-addons/odoomates,/mnt/extra-addons/oca/web,/mnt/extra-addons/oca/reporting-engine,/mnt/extra-addons/oca/server-tools,/mnt/extra-addons/oca/server-ux,/mnt/extra-addons/oca/mis-builder,/mnt/extra-addons/oca/account-financial-tools,/mnt/extra-addons/oca/bank-statement-import,/mnt/extra-addons/oca/account-reconcile,/mnt/extra-addons/oca/queue,/mnt/extra-addons/oca/partner-contact,/mnt/extra-addons/oca/sale-workflow,/mnt/extra-addons/oca/stock-logistics-workflow,/mnt/extra-addons/oca/crm,/mnt/extra-addons/oca/hr
+
+db_host = db
+db_port = 5432
+db_user = odoo
+
+list_db = False
+dbfilter = ^onesuite$
+
+proxy_mode = True
+http_port = 8069
+gevent_port = 8072
+
+workers = 2
+max_cron_threads = 1
+limit_time_cpu = 600
+limit_time_real = 1200
+limit_request = 8192
+limit_memory_soft = 1073741824
+limit_memory_hard = 1610612736
+
+data_dir = /var/lib/odoo
