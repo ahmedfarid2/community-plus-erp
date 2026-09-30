@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="app_nexerp" model="onesuite.app">
+        <field name="name">NexERP</field>
+        <field name="description">NextGen ERP, HRMS, CRM and Asset Management</field>
+        <field name="category">erp</field>
+        <field name="url">https://nexerp.nextgenpng.net</field>
+        <field name="icon">fa-building</field>
+        <field name="sequence">10</field>
+    </record>
+
+    <record id="app_b2b" model="onesuite.app">
+        <field name="name">NextGen B2B</field>
+        <field name="description">Business-to-business ordering and customer platform</field>
+        <field name="category">commerce</field>
+        <field name="url">https://store.nextgenpng.net</field>
+        <field name="icon">fa-shopping-cart</field>
+        <field name="sequence">20</field>
+    </record>
+
+    <record id="app_turprotrack" model="onesuite.app">
+        <field name="name">TurProTrack</field>
+        <field name="description">GPS tracking and fleet operations</field>
+        <field name="category">operations</field>
+        <field name="url">https://turprotrack.nextgenpng.net</field>
+        <field name="icon">fa-map-marker</field>
+        <field name="sequence">30</field>
+    </record>
+
+    <record id="app_nextgen" model="onesuite.app">
+        <field name="name">NextGen Technology</field>
+        <field name="description">Corporate website and service catalogue</field>
+        <field name="category">service</field>
+        <field name="url">https://nextgenpng.net</field>
+        <field name="icon">fa-globe</field>
+        <field name="sequence">40</field>
+    </record>
+</odoo>
